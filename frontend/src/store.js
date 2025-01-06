@@ -70,7 +70,7 @@ const initialState = {
 };
 
 const middelware = [thunk];
-
+ 
 const store = createStore(
   reducer,
   initialState,

@@ -82,7 +82,7 @@ const getProductById = asyncHandler(async (req, res) => {
 const deleteProduct = asyncHandler(async (req, res) => {
     const product =  await Product.findById(req.params.id)
     if(product){
-        await product.remove()
+              await Product.findByIdAndDelete(req.params.id);
         res.json({message : 'Product Removed'})
     } else{
         // status it's 500 by default cuz of errHandler

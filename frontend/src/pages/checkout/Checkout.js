@@ -215,7 +215,7 @@ const Checkout = ({ history }) => {
                     <p key={index}>
                       {item.qty} X{" "}
                       <Link to={`/product/${item.product}`}>{item.name}</Link>{" "}
-                      <b>${item.qty * item.price}</b>
+                      <b>Rs. {item.qty * item.price}</b>
                     </p>
                   ))}
                 </div>

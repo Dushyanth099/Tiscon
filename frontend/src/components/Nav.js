@@ -95,13 +95,15 @@ const Nav = ({ history }) => {
   const { userInfo } = userLogin;
 
   const logoutHandler = () => {
-    dispatch(logout());
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+      dispatch(logout());
+    }
   };
-
   return (
     <nav ref={Nav} className={`nav ${nav ? "active" : ""}`}>
       <div className="logo">
-        <Link to="">EAST CLOTHING</Link>
+        <Link to="">E-Commerce</Link>
       </div>
       <ul className="navLinks" ref={navLinks}>
         <NavLink to="/" exact activeClassName="activlink">

@@ -5,7 +5,6 @@ import { CreateOrder } from "../../actions/orderActions";
 import { Helmet } from "react-helmet";
 import "./Placeorder.css";
 
-
 const Placeorder = ({ history }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
@@ -81,7 +80,7 @@ const Placeorder = ({ history }) => {
                     <Link to={`/product/${item.product}`}>{item.name}</Link>
                   </span>{" "}
                   <b>
-                    {item.qty} x ${item.price} = ${item.qty * item.price}
+                    {item.qty} x Rs. {item.price} = Rs. {item.qty * item.price}
                   </b>
                   <hr />
                 </p>
@@ -90,19 +89,20 @@ const Placeorder = ({ history }) => {
           )}
         </div>
       </div>
+
       <div className="your-products">
         <div className="cart-summ">
           <h1>Order Summary</h1>
 
           <div className="calculs-placeorder">
             <h3>Items: </h3>
-            <p>${cart.itemsPrice}</p>
+            <p>Rs. {cart.itemsPrice}</p>
             <h3>Shipping: </h3>
-            <p>${cart.shippingPrice}</p>
+            <p>Rs. {cart.shippingPrice}</p>
             <h3>Tax: </h3>
-            <p>${cart.taxPrice}</p>
+            <p>Rs. {cart.taxPrice}</p>
             <h3>Total: </h3>
-            <p>${cart.totalPrice}</p>
+            <p>Rs. {cart.totalPrice}</p>
             <div className="div-placeorder-btn">
               <button className="placeorder-btn" onClick={Placeorderhanlder}>
                 Place Order
