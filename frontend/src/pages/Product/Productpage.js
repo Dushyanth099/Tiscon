@@ -149,14 +149,22 @@ const Productpage = ({ history, match }) => {
                   text={`${product.numReviews} reviews`}
                 />
                 <div className="product-price">
-                  <p className="last-price">
-                    Old Price:{" "}
-                    <span>
-                      RS.{(product.price + product.price * 0.5).toFixed(2)}
-                    </span>
-                  </p>
+                  {product.oldPrice > 0 && (
+                    <p className="last-price">
+                      Old Price: <span>Rs. {product.oldPrice.toFixed(2)}</span>
+                    </p>
+                  )}
                   <p className="new-price">
-                    New Price: <span>Rs.{product.price} (5%)</span>
+                    New Price:{" "}
+                    <span>
+                      Rs. {product.price.toFixed(2)}{" "}
+                      {product.oldPrice > 0 &&
+                        `(${Math.round(
+                          ((product.oldPrice - product.price) /
+                            product.oldPrice) *
+                            100
+                        )}% off)`}
+                    </span>
                   </p>
                 </div>
 
