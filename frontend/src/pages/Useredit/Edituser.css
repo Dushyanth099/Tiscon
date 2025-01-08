@@ -18,6 +18,10 @@
 .input-div.one {
   margin: 20px;
 }
-.input-div.pass {
-  margin: 20px;
+.input-div.passs {
+  display: flex;
+  flex-direction: column;
+}
+.input-div.passs .div {
+  margin-bottom: 10px;
 }

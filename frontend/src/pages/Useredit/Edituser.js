@@ -19,6 +19,7 @@ const Edituser = ({ match, history }) => {
   const [email, setEmail] = useState("");
   const [isAdmin, setisAdmin] = useState(false);
   const [message, setMessage] = useState(null);
+  const [isDelivery, setIsDelivery] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -45,6 +46,7 @@ const Edituser = ({ match, history }) => {
         setName(user.name);
         setEmail(user.email);
         setisAdmin(user.isAdmin);
+        setIsDelivery(user.isDelivery);
       }
     }
 
@@ -53,7 +55,7 @@ const Edituser = ({ match, history }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(updateUser({ _id: userId, name, email, isAdmin }));
+    dispatch(updateUser({ _id: userId, name, email, isAdmin ,isDelivery}));
   };
 
   const inputs = document.querySelectorAll(".inputa");
@@ -126,7 +128,7 @@ const Edituser = ({ match, history }) => {
                   </div>
                 </div>
 
-                <div className="input-div pass">
+                <div className="input-div passs">
                   <div className="div">
                     <Checkbox
                       isChecked={isAdmin}
@@ -137,6 +139,16 @@ const Edituser = ({ match, history }) => {
                     >
                       isAdmin
                     </Checkbox>
+                  </div>
+                  <div className="input-div passs">
+                    <div className="div">
+                      <Checkbox
+                        isChecked={isDelivery}
+                        onChange={(e) => setIsDelivery(e.target.checked)}
+                      >
+                        isDelivery
+                      </Checkbox>
+                    </div>
                   </div>
                 </div>
                 {message && <h4 className="Message">{message}</h4>}
