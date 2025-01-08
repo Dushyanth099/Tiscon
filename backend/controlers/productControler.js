@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
-
+import multer from "multer";
+import XLSX from "xlsx";
 import Product from "../models/productModel.js";
 
 // @desc Fetch all products
@@ -152,6 +153,58 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Create a bulk product
+// @route Post /api/products
+// @access Private/Admin
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage }).single("file");
+const uploadProducts = asyncHandler(async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: "File upload failed" });
+    }
+
+    const file = req.file;
+
+    // Validate file name
+    if (!file.originalname.match(/\.(xlsx|xls)$/)) {
+      return res.status(400).json({ message: "Only Excel files are allowed" });
+    }
+
+    // Parse Excel file
+    const workbook = XLSX.read(file.buffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+    // Validate and process data
+    const products = [];
+    for (const row of sheetData) {
+      if (!row.name || !row.price || !row.countInStock) {
+        return res.status(400).json({ message: "Invalid data in Excel file" });
+      }
+
+        products.push({
+          user: req.user._id,
+          name: row.name,
+          price: row.price,
+          oldPrice: row.oldPrice || 0,
+          discount: row.discount || 0,
+          category: row.category ? row.category.split(",") : [],
+          sizes: row.sizes ? row.sizes.split(",") : [],
+          description: row.description || "No description",
+          countInStock: row.countInStock,
+          images: row.images ? row.images.split(",") : [],
+        });
+    }
+
+    // Insert products into the database
+    await Product.insertMany(products);
+
+    res.status(201).json({ message: "Products uploaded successfully!" });
+  });
+});
+
 // @desc Create new Review
 // @route PUT /api/products/:id/reviews
 // @access Private
@@ -192,4 +245,5 @@ export {
   createProduct,
   updateProduct,
   createproductreview,
+  uploadProducts,
 };

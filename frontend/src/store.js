@@ -6,9 +6,11 @@ import {
   productDetailsReducer,
   productDeleteReducer,
   productCreateReducer,
+  productBulkUploadReducer,
   productUpdateReducer,
   productreviewCreateReducer,
 } from "./reducers/productReducers";
+
 import { cartReducer } from "./reducers/cartReducers";
 import {
   CreateOrderReducers,
@@ -34,6 +36,7 @@ const reducer = combineReducers({
   productDetails: productDetailsReducer,
   productDelete: productDeleteReducer,
   productCreate: productCreateReducer,
+  productBulkUpload: productBulkUploadReducer,
   productUpdate: productUpdateReducer,
   productReviewCreate: productreviewCreateReducer,
   cart: cartReducer,
@@ -70,7 +73,7 @@ const initialState = {
 };
 
 const middelware = [thunk];
- 
+
 const store = createStore(
   reducer,
   initialState,
