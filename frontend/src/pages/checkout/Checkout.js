@@ -63,10 +63,10 @@ const Checkout = ({ history }) => {
                   variant="flushed"
                   onChange={(e) => setCountry(e.target.value)}
                 >
-                  <option value="Maroc">Maroc</option>
-                  <option value="Algerie">Algerie</option>
+                  <option value="India">India</option>
+                  <option value="America">America</option>
                   <option value="France">France</option>
-                  <option value="Espagne">Espagne</option>
+                  <option value="USA">USA</option>
                 </Select>
               </Stack>
               <div className="city-cp-check">
@@ -187,6 +187,20 @@ const Checkout = ({ history }) => {
                 width="120px"
                 height="40px"
               />
+              {/* Cash on Delivery Option */}
+              <input
+                onChange={(e) => {
+                  setcarddetails(false);
+                  setPayment("COD");
+                }}
+                type="radio"
+                name="payment"
+                id="cod"
+              />
+              <label htmlFor="cod" className="this-label">
+                Cash on Delivery
+              </label>
+
               <div class="confirm">
                 <input
                   type="submit"
