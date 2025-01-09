@@ -184,6 +184,9 @@ const Nav = ({ history }) => {
               <MenuItem>
                 <Link to="/admin/orderlist">Orders</Link>
               </MenuItem>
+              <MenuItem>
+                <Link to="/admin/dashboard">Dashboard</Link>
+              </MenuItem>
             </MenuList>
           </Menu>
         )}

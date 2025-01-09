@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/react";
 import Nav from "./components/Nav";
 import Home from "./pages/Home";
 import About from "./pages/About/About";
@@ -30,6 +31,7 @@ import Editproduct from "./pages/Editproduct/Editproduct";
 import Orders from "./pages/Orders/Orders";
 import AssignOrderScreen from "./pages/Delivery/AssignOrderScreen";
 import DeliveryDashboard from "./pages/Delivery/DeliveryDashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import { useSelector } from "react-redux";
 
 const App = () => {
@@ -57,11 +59,13 @@ const App = () => {
                 {userInfo && userInfo.isDelivery ? (
                   <>
                     <Nav />
-                    <Route
-                      path="/delivery-dashboard"
-                      component={DeliveryDashboard}
-                    />
-                    <Redirect to="/delivery-dashboard" />
+                    <Box mt="60px">
+                      <Route
+                        path="/delivery-dashboard"
+                        component={DeliveryDashboard}
+                      />
+                      <Redirect to="/delivery-dashboard" />
+                    </Box>
                   </>
                 ) : (
                   <>
@@ -87,11 +91,16 @@ const App = () => {
                       path="/admin/product/:id/edit"
                       component={Editproduct}
                     />
-                    <Route
-                      path="/admin/assignorders"
-                      component={AssignOrderScreen}
-                      exact
-                    />
+                    <Box mt="60px">
+                      <Route
+                        path="/admin/assignorders"
+                        component={AssignOrderScreen}
+                        exact
+                      />
+                    </Box>
+                    <Box mt="60px">
+                      <Route path="/admin/dashboard" component={Dashboard} />
+                    </Box>
                     <Footer />
                     <Route component={NotFoundPage} />
                   </>

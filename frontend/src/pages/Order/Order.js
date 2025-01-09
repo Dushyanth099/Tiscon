@@ -49,7 +49,7 @@ const Order = ({ match, history }) => {
       script.async = true;
       script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
       script.onload = () => {
-        setsdkReady(true);
+        setsdkReady(true); 
       };
       document.body.appendChild(script);
     };
