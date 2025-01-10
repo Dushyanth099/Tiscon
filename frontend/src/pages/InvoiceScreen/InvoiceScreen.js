@@ -5,8 +5,12 @@ import {
   Box,
   Text,
   Grid,
-  List,
-  ListItem,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
   Button,
   Stack,
   Spinner,
@@ -43,8 +47,7 @@ const InvoiceScreen = ({ match }) => {
     doc.text(
       `${invoice.shippingAddress?.address || "N/A"}, ${
         invoice.shippingAddress?.city || "N/A"
-      }, 
-       ${invoice.shippingAddress?.postalCode || "N/A"}, ${
+      }, ${invoice.shippingAddress?.postalCode || "N/A"}, ${
         invoice.shippingAddress?.country || "N/A"
       }`,
       20,
@@ -111,17 +114,30 @@ const InvoiceScreen = ({ match }) => {
             <Text fontSize="xl" fontWeight="bold" mb={3}>
               Items
             </Text>
-            <List spacing={3}>
-              {invoice.orderItems && invoice.orderItems.length > 0 ? (
-                invoice.orderItems.map((item, index) => (
-                  <ListItem key={index}>
-                    {item.qty} x {item.name} = ${item.price * item.qty}
-                  </ListItem>
-                ))
-              ) : (
-                <Text>No items in the order.</Text>
-              )}
-            </List>
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Qty</Th>
+                  <Th>Name</Th>
+                  <Th>Price</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {invoice.orderItems && invoice.orderItems.length > 0 ? (
+                  invoice.orderItems.map((item, index) => (
+                    <Tr key={index}>
+                      <Td>{item.qty}</Td>
+                      <Td>{item.name}</Td>
+                      <Td>${item.price * item.qty}</Td>
+                    </Tr>
+                  ))
+                ) : (
+                  <Tr>
+                    <Td colSpan={3}>No items in the order.</Td>
+                  </Tr>
+                )}
+              </Tbody>
+            </Table>
           </Box>
 
           <Box mt={6}>
