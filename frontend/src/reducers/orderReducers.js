@@ -19,6 +19,9 @@ import {
   ORDER_DELIVER_REQUEST,
   ORDER_DELIVER_SUCCESS,
   ORDER_DELIVER_FAIL,
+  INVOICE_REQUEST,
+  INVOICE_SUCCESS,
+  INVOICE_FAIL,
 } from "../constants/orderConstants";
 import {
   ORDER_DELIVERY_LIST_REQUEST,
@@ -248,6 +251,18 @@ export const orderAssignReducer = (state = {}, action) => {
     case ORDER_ASSIGN_SUCCESS:
       return { loading: false, success: true };
     case ORDER_ASSIGN_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+export const invoiceReducer = (state = { invoice: {} }, action) => {
+  switch (action.type) {
+    case INVOICE_REQUEST:
+      return { loading: true };
+    case INVOICE_SUCCESS:
+      return { loading: false, invoice: action.payload };
+    case INVOICE_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

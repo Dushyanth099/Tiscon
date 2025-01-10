@@ -33,6 +33,7 @@ import AssignOrderScreen from "./pages/Delivery/AssignOrderScreen";
 import DeliveryDashboard from "./pages/Delivery/DeliveryDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import { useSelector } from "react-redux";
+import InvoiceScreen from "./pages/InvoiceScreen/InvoiceScreen";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -101,6 +102,12 @@ const App = () => {
                     <Box mt="60px">
                       <Route path="/admin/dashboard" component={Dashboard} />
                     </Box>
+                    <Route
+                      path="/admin/order/:id/invoice"
+                      component={InvoiceScreen}
+                      exact
+                    />
+                    ;
                     <Footer />
                     <Route component={NotFoundPage} />
                   </>

@@ -13,6 +13,7 @@ import {
   markOrderAsCompleted,
   markOrderAsReturned,
   assignOrderToDeliveryPerson,
+  generateInvoice,
 } from "../controlers/orderControler.js";
 import { protect, admin, isDelivery } from "../middleware/authMiddleware.js";
 
@@ -27,10 +28,11 @@ router
   .route("/delivery/return/:id")
   .put(protect, isDelivery, markOrderAsReturned);
 
-// admin routes 
+// admin routes
 router
   .route("/admin/orders/assign/:id")
   .put(protect, admin, assignOrderToDeliveryPerson);
+router.route("/admin/order/:id/invoice").get(protect, admin, generateInvoice);
 
 // user routes
 router.route("/").post(protect, addorderitems).get(protect, admin, GetOrders);

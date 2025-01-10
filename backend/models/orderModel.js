@@ -87,6 +87,10 @@ const orderSchema = mongoose.Schema(
     returnReason: {
       type: String,
     },
+    invoiceDetails: {
+      type: Object,
+      default: null,
+    },
   },
   {
     timestamps: true,

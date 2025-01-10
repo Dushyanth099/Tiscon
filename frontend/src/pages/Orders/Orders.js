@@ -33,7 +33,9 @@ const Orders = ({ history }) => {
       history.push("/login");
     }
   }, [dispatch, history, userInfo]);
-
+  const handleInvoiceClick = (orderId) => {
+    history.push(`/admin/order/${orderId}/invoice`);
+  };
   return (
     <div className="Users">
       <Helmet>
@@ -118,6 +120,13 @@ const Orders = ({ history }) => {
                             Details
                           </Button>
                         </Link>
+                        <Button
+                          colorScheme="teal"
+                          size="xs"
+                          onClick={() => handleInvoiceClick(order._id)}
+                        >
+                          Invoice
+                        </Button>
                       </Stack>
                     </Td>
                   </Tr>

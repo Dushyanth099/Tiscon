@@ -38,6 +38,9 @@ import {
   ORDER_ASSIGN_REQUEST,
   ORDER_ASSIGN_SUCCESS,
   ORDER_ASSIGN_FAIL,
+  INVOICE_REQUEST,
+  INVOICE_SUCCESS,
+  INVOICE_FAIL,
 } from "../constants/orderConstants";
 
 export const CreateOrder = (order) => async (dispatch, getState) => {
@@ -396,3 +399,36 @@ export const assignOrder =
       });
     }
   };
+export const getInvoice = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: INVOICE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `/api/orders/admin/order/${id}/invoice`,
+      config
+    );
+
+    dispatch({
+      type: INVOICE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: INVOICE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
