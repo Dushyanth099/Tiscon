@@ -169,27 +169,6 @@ const Nav = ({ history }) => {
             </div>
           </Link>
         )}
-        {userInfo && userInfo.isAdmin && (
-          <Menu>
-            <MenuButton as={Button} rightIcon={<IoMdArrowDropdown />}>
-              Admin
-            </MenuButton>
-            <MenuList>
-              <MenuItem>
-                <Link to="/admin/userlist">Users</Link>
-              </MenuItem>
-              <MenuItem>
-                <Link to="/admin/productlist">Products</Link>
-              </MenuItem>
-              <MenuItem>
-                <Link to="/admin/orderlist">Orders</Link>
-              </MenuItem>
-              <MenuItem>
-                <Link to="/admin/dashboard">Dashboard</Link>
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        )}
       </div>
     </nav>
   );

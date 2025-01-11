@@ -36,6 +36,7 @@ import { useSelector } from "react-redux";
 import InvoiceScreen from "./pages/InvoiceScreen/InvoiceScreen";
 import DeliveryNavbar from "./pages/Delivery/DeliveryNavbar";
 import DeliveryHomepage from "./pages/Delivery/DeliveryHomepage";
+import AdminLayout from "./pages/Admin/AdminLayout";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -58,7 +59,6 @@ const App = () => {
               </div>
             ) : (
               <Switch>
-                {/* Delivery Dashboard for Delivery Personnel */}
                 {userInfo && userInfo.isDelivery ? (
                   <>
                     <DeliveryNavbar />
@@ -75,6 +75,34 @@ const App = () => {
                       <Route path="/profile" component={ProfileScreen} />{" "}
                     </Box>
                   </>
+                ) : userInfo && userInfo.isAdmin ? (
+                  <AdminLayout>
+                    <Switch>
+                      <Route path="/profile" component={ProfileScreen} />
+                      <Route path="/admin/dashboard" component={Dashboard} />
+                      <Route path="/admin/userlist" component={Users} />
+                      <Route path="/admin/productlist" component={Products} />
+                      <Route path="/admin/orderlist" component={Orders} />
+                      <Route path="/admin/user/:id/edit" component={Edituser} />
+                      <Route
+                        path="/admin/product/:id/edit"
+                        component={Editproduct}
+                      />
+                      <Route
+                        path="/admin/assignorders"
+                        component={AssignOrderScreen}
+                        exact
+                      />{" "}
+                      <Route path="/search/:keyword" component={Shop} />
+                      <Route path="/shop" component={Shop} />
+                      <Route
+                        path="/admin/order/:id/invoice"
+                        component={InvoiceScreen}
+                        exact
+                      />
+                      <Redirect to="/admin/dashboard" />
+                    </Switch>
+                  </AdminLayout>
                 ) : (
                   <>
                     <Nav />
@@ -90,31 +118,7 @@ const App = () => {
                     <Route path="/shipping" component={Checkout} />
                     <Route path="/placeorder" component={Placeorder} />
                     <Route path="/order/:id" component={Order} />
-                    <Route path="/admin/userlist" component={Users} />
-                    <Route path="/admin/productlist" component={Products} />
-                    <Route path="/admin/orderlist" component={Orders} />
                     <Route path="/search/:keyword" component={Shop} />
-                    <Route path="/admin/user/:id/edit" component={Edituser} />
-                    <Route
-                      path="/admin/product/:id/edit"
-                      component={Editproduct}
-                    />
-                    <Box mt="60px">
-                      <Route
-                        path="/admin/assignorders"
-                        component={AssignOrderScreen}
-                        exact
-                      />
-                    </Box>
-                    <Box mt="60px">
-                      <Route path="/admin/dashboard" component={Dashboard} />
-                    </Box>
-                    <Route
-                      path="/admin/order/:id/invoice"
-                      component={InvoiceScreen}
-                      exact
-                    />
-                    ;
                     <Footer />
                     <Route component={NotFoundPage} />
                   </>
