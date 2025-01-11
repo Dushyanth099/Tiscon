@@ -17,6 +17,8 @@ import {
   ORDER_DELIVER_RESET,
 } from "../../constants/orderConstants";
 import { Button } from "@chakra-ui/button";
+import OrderTracking from "../Tracking/OrderTracking";
+
 const Order = ({ match, history }) => {
   const [sdkReady, setsdkReady] = useState(false);
   const orderId = match.params.id;
@@ -49,7 +51,7 @@ const Order = ({ match, history }) => {
       script.async = true;
       script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
       script.onload = () => {
-        setsdkReady(true); 
+        setsdkReady(true);
       };
       document.body.appendChild(script);
     };
@@ -155,6 +157,7 @@ const Order = ({ match, history }) => {
             </div>
           )}
         </div>
+        <OrderTracking order={order} />
       </div>
       <div className="your-products">
         <div className="cart-summ">

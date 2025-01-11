@@ -282,9 +282,13 @@ export const acceptOrder = (orderId) => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     };
 
-    await axios.put(`/api/orders/delivery/accept/${orderId}`, {}, config);
+    const { data } = await axios.put(
+      `/api/orders/delivery/accept/${orderId}`,
+      {},
+      config
+    );
 
-    dispatch({ type: ORDER_ACCEPT_SUCCESS });
+    dispatch({ type: ORDER_ACCEPT_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: ORDER_ACCEPT_FAIL,
@@ -306,9 +310,13 @@ export const rejectOrder = (orderId) => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     };
 
-    await axios.put(`/api/orders/delivery/reject/${orderId}`, {}, config);
+    const { data } = await axios.put(
+      `/api/orders/delivery/reject/${orderId}`,
+      {},
+      config
+    );
 
-    dispatch({ type: ORDER_REJECT_SUCCESS });
+    dispatch({ type: ORDER_REJECT_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: ORDER_REJECT_FAIL,
@@ -330,9 +338,13 @@ export const completeOrder = (orderId) => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     };
 
-    await axios.put(`/api/orders/delivery/complete/${orderId}`, {}, config);
+    const { data } = await axios.put(
+      `/api/orders/delivery/complete/${orderId}`,
+      {},
+      config
+    );
 
-    dispatch({ type: ORDER_COMPLETE_SUCCESS });
+    dispatch({ type: ORDER_COMPLETE_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: ORDER_COMPLETE_FAIL,
@@ -354,13 +366,13 @@ export const returnOrder = (orderId, reason) => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     };
 
-    await axios.put(
+    const { data } = await axios.put(
       `/api/orders/delivery/return/${orderId}`,
       { returnReason: reason },
       config
     );
 
-    dispatch({ type: ORDER_RETURN_SUCCESS });
+    dispatch({ type: ORDER_RETURN_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: ORDER_RETURN_FAIL,

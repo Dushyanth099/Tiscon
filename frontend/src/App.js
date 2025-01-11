@@ -34,6 +34,8 @@ import DeliveryDashboard from "./pages/Delivery/DeliveryDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import { useSelector } from "react-redux";
 import InvoiceScreen from "./pages/InvoiceScreen/InvoiceScreen";
+import DeliveryNavbar from "./pages/Delivery/DeliveryNavbar";
+import DeliveryHomepage from "./pages/Delivery/DeliveryHomepage";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -59,13 +61,18 @@ const App = () => {
                 {/* Delivery Dashboard for Delivery Personnel */}
                 {userInfo && userInfo.isDelivery ? (
                   <>
-                    <Nav />
+                    <DeliveryNavbar />
                     <Box mt="60px">
+                      <Route
+                        path="/deliveryhomepage"
+                        component={DeliveryHomepage}
+                      />
                       <Route
                         path="/delivery-dashboard"
                         component={DeliveryDashboard}
                       />
-                      <Redirect to="/delivery-dashboard" />
+                      <Redirect to="/deliveryhomepage" />
+                      <Route path="/profile" component={ProfileScreen} />{" "}
                     </Box>
                   </>
                 ) : (

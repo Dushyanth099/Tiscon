@@ -42,7 +42,8 @@ const DeliveryDashboard = () => {
     }
   }, [dispatch, userInfo, history]);
   const handleAccept = (id) => {
-    dispatch(acceptOrder(id));  toast({
+    dispatch(acceptOrder(id));
+    toast({
       title: "Order Accepted",
       description: `Order ${id} has been successfully accepted.`,
       status: "success",
@@ -52,7 +53,8 @@ const DeliveryDashboard = () => {
   };
 
   const handleReject = (id) => {
-    dispatch(rejectOrder(id)); toast({
+    dispatch(rejectOrder(id));
+    toast({
       title: "Order Rejected",
       description: `Order ${id} has been rejected.`,
       status: "warning",
@@ -62,7 +64,8 @@ const DeliveryDashboard = () => {
   };
 
   const handleComplete = (id) => {
-    dispatch(completeOrder(id));toast({
+    dispatch(completeOrder(id));
+    toast({
       title: "Order Completed",
       description: `Order ${id} has been marked as completed.`,
       status: "success",
@@ -80,17 +83,12 @@ const DeliveryDashboard = () => {
 
   return (
     <Box p={4}>
-      <Heading as="h1" size="lg" mb={6}>
-        Delivery Dashboard
-      </Heading>
-
       {/* Show loading spinner */}
       {loading && (
         <Box textAlign="center" mb={4}>
           <Spinner size="xl" color="blue.500" />
         </Box>
       )}
-
       {/* Show error message */}
       {error && (
         <Alert status="error" mb={4}>
