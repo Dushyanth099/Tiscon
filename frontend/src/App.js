@@ -82,6 +82,7 @@ const App = () => {
                       <Route path="/admin/dashboard" component={Dashboard} />
                       <Route path="/admin/userlist" component={Users} />
                       <Route path="/admin/productlist" component={Products} />
+                      <Route path="/product/:id" component={Productpage} />
                       <Route path="/admin/orderlist" component={Orders} />
                       <Route path="/admin/user/:id/edit" component={Edituser} />
                       <Route
