@@ -72,6 +72,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       isDelivery: user.isDelivery,
+      address: user.address,
     });
   } else {
     res.status(404);
@@ -88,6 +89,16 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+    user.address = {
+      doorNo: req.body.address?.doorNo || user.address.doorNo,
+      street: req.body.address?.street || user.address.street,
+      nearestLandmark:
+        req.body.address?.nearestLandmark || user.address.nearestLandmark,
+      city: req.body.address?.city || user.address.city,
+      state: req.body.address?.state || user.address.state,
+      pin: req.body.address?.pin || user.address.pin,
+      phoneNumber: req.body.address?.phoneNumber || user.address.phoneNumber,
+    };
     if (req.body.password) {
       user.password = req.body.password || user.password;
     }
@@ -99,6 +110,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
       isDelivery: updatedUser.isDelivery,
+      address: updatedUser.address,
       token: generateToken(updatedUser._id),
     });
   } else {
@@ -118,8 +130,8 @@ const updateUser = asyncHandler(async (req, res) => {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     user.isAdmin = req.body.isAdmin;
-    user.isDelivery = req.body.isDelivery; 
-    
+    user.isDelivery = req.body.isDelivery;
+
     const updatedUser = await user.save();
     res.json({
       _id: updatedUser._id,
@@ -167,7 +179,6 @@ const deleteUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 });
-
 
 export {
   authUser,

@@ -8,6 +8,7 @@ import {
   Button,
   Input,
   Table,
+  Text,
   Thead,
   Tbody,
   Tr,
@@ -69,6 +70,9 @@ const Users = ({ history }) => {
                 <Th textAlign="center" w="50%">
                   Email
                 </Th>
+                <Th textAlign="center" w="20%">
+                  Address
+                </Th>
                 <Th textAlign="center" w="10%">
                   Admin
                 </Th>
@@ -86,6 +90,25 @@ const Users = ({ history }) => {
                   <Td>
                     <a href={`mailto:${user.email}`}></a>
                     {user.email}
+                  </Td>
+                  <Td>
+                    {user.address &&
+                    Object.values(user.address).some((val) => val) ? (
+                      <Text>
+                        {[
+                          user.address.doorNo,
+                          user.address.street,
+                          user.address.city,
+                          user.address.phoneNumber,
+                          user.address.state,
+                          user.address.pin,
+                        ]
+                          .filter((field) => field) 
+                          .join(", ")}{" "}
+                      </Text>
+                    ) : (
+                      <Text color="gray.500">No Address Provided</Text>
+                    )}
                   </Td>
                   <Td>
                     {user.isAdmin ? (
