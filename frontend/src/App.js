@@ -37,6 +37,7 @@ import InvoiceScreen from "./pages/InvoiceScreen/InvoiceScreen";
 import DeliveryNavbar from "./pages/Delivery/DeliveryNavbar";
 import DeliveryHomepage from "./pages/Delivery/DeliveryHomepage";
 import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminBannerScreen from "./pages/AdminBanner/AdminBannerScreen";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -96,6 +97,10 @@ const App = () => {
                       />{" "}
                       <Route path="/search/:keyword" component={Shop} />
                       <Route path="/shop" component={Shop} />
+                      <Route
+                        path="/adminbanner"
+                        component={AdminBannerScreen}
+                      />
                       <Route
                         path="/admin/order/:id/invoice"
                         component={InvoiceScreen}

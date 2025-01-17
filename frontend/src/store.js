@@ -44,6 +44,12 @@ import {
   ordersReducer,
 } from "./reducers/dashboardReducers";
 
+import {
+  bannerAddReducer,
+  bannerListReducer,
+  bannerDeleteReducer,
+} from "./reducers/bannerReducers";
+
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
@@ -76,6 +82,9 @@ const reducer = combineReducers({
   revenue: revenueReducer,
   orders: ordersReducer,
   invoiceDetails: invoiceReducer,
+  bannerAdd: bannerAddReducer,
+  bannerList: bannerListReducer,
+  bannerDelete: bannerDeleteReducer,
 });
 const cartItemsFromStorage = localStorage.getItem("cartItems")
   ? JSON.parse(localStorage.getItem("cartItems"))

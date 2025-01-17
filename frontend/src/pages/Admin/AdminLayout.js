@@ -66,6 +66,15 @@ const AdminLayout = ({ children }) => {
             >
               Shop Page
             </Button>
+            <Button
+              onClick={() => setActiveTab("banner")}
+              as={RouterLink}
+              to="/adminbanner"
+              colorScheme={activeTab === "banner" ? "teal" : "gray"}
+              variant="ghost"
+            >
+              BannerPage
+            </Button>
           </VStack>
         </Box>
 

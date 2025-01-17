@@ -15,6 +15,26 @@ const reviewSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+const bannerSchema = mongoose.Schema(
+  {
+    image: { type: String, required: true },
+    title: { type: String, required: true },
+    subtitle: { type: String, required: true },
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const productSchema = mongoose.Schema(
   {
     user: {
@@ -76,6 +96,7 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    banners: [bannerSchema],
   },
   {
     timestamps: true,

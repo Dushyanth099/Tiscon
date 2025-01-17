@@ -184,18 +184,18 @@ const uploadProducts = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "Invalid data in Excel file" });
       }
 
-        products.push({
-          user: req.user._id,
-          name: row.name,
-          price: row.price,
-          oldPrice: row.oldPrice || 0,
-          discount: row.discount || 0,
-          category: row.category ? row.category.split(",") : [],
-          sizes: row.sizes ? row.sizes.split(",") : [],
-          description: row.description || "No description",
-          countInStock: row.countInStock,
-          images: row.images ? row.images.split(",") : [],
-        });
+      products.push({
+        user: req.user._id,
+        name: row.name,
+        price: row.price,
+        oldPrice: row.oldPrice || 0,
+        discount: row.discount || 0,
+        category: row.category ? row.category.split(",") : [],
+        sizes: row.sizes ? row.sizes.split(",") : [],
+        description: row.description || "No description",
+        countInStock: row.countInStock,
+        images: row.images ? row.images.split(",") : [],
+      });
     }
 
     // Insert products into the database
