@@ -85,6 +85,7 @@ const App = () => {
                       <Route path="/admin/productlist" component={Products} />
                       <Route path="/product/:id" component={Productpage} />
                       <Route path="/admin/orderlist" component={Orders} />
+                      <Route path="/order/:id" component={Order} />
                       <Route path="/admin/user/:id/edit" component={Edituser} />
                       <Route
                         path="/admin/product/:id/edit"
