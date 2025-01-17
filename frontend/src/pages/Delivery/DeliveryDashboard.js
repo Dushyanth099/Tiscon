@@ -42,7 +42,16 @@ const DeliveryDashboard = () => {
     }
   }, [dispatch, userInfo, history]);
   const handleAccept = (id) => {
-    dispatch(acceptOrder(id));
+    // Update the UI optimistically
+    const updatedOrders = orders.map((order) =>
+      order._id === id ? { ...order, isAcceptedByDelivery: true } : order
+    );
+    dispatch({ type: "ORDER_UPDATE_LOCAL", payload: updatedOrders });
+
+    // Perform the API call and refetch orders
+    dispatch(acceptOrder(id)).then(() => {
+      dispatch(listOrdersForDelivery());
+    });
     toast({
       title: "Order Accepted",
       description: `Order ${id} has been successfully accepted.`,
@@ -53,7 +62,15 @@ const DeliveryDashboard = () => {
   };
 
   const handleReject = (id) => {
-    dispatch(rejectOrder(id));
+    const updatedOrders = orders.map((order) =>
+      order._id === id
+        ? { ...order, isRejected: true }
+        : order
+    );
+    dispatch({ type: "ORDER_UPDATE_LOCAL", payload: updatedOrders });
+    dispatch(rejectOrder(id)).then(() => {
+      dispatch(listOrdersForDelivery());
+    });
     toast({
       title: "Order Rejected",
       description: `Order ${id} has been rejected.`,
@@ -64,7 +81,14 @@ const DeliveryDashboard = () => {
   };
 
   const handleComplete = (id) => {
-    dispatch(completeOrder(id));
+    const updatedOrders = orders.map((order) =>
+      order._id === id ? { ...order, isDelivered: true } : order
+    );
+    dispatch({ type: "ORDER_UPDATE_LOCAL", payload: updatedOrders });
+    dispatch(completeOrder(id)).then(() => {
+      dispatch(listOrdersForDelivery());
+    });
+
     toast({
       title: "Order Completed",
       description: `Order ${id} has been marked as completed.`,
@@ -77,10 +101,25 @@ const DeliveryDashboard = () => {
   const handleReturn = (id) => {
     const reason = prompt("Enter the reason for return:");
     if (reason) {
-      dispatch(returnOrder(id, reason));
+      const updatedOrders = orders.map((order) =>
+        order._id === id
+          ? { ...order, isReturned: true, returnReason: reason }
+          : order
+      );
+      dispatch({ type: "ORDER_UPDATE_LOCAL", payload: updatedOrders });
+      dispatch(returnOrder(id, reason)).then(() => {
+        dispatch(listOrdersForDelivery());
+      });
+
+      toast({
+        title: "Order Returned",
+        description: `Order ${id} has been returned with the reason: "${reason}".`,
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
-
   return (
     <Box p={4}>
       {/* Show loading spinner */}

@@ -5,17 +5,15 @@ import {
   Button,
   Select,
   Spinner,
-  Alert,
-  AlertIcon,
   Heading,
+  useToast,
 } from "@chakra-ui/react";
 import { ListUsers } from "../../actions/userActions";
 import { assignOrder, listOrders } from "../../actions/orderActions";
 
-
 const AssignOrderScreen = () => {
   const dispatch = useDispatch();
-
+  const toast = useToast();
   // Fetch orders
   const orderList = useSelector((state) => state.orderList);
   const { loading: loadingOrders, error: errorOrders, orders } = orderList;
@@ -38,7 +36,28 @@ const AssignOrderScreen = () => {
   useEffect(() => {
     dispatch(listOrders());
     dispatch(ListUsers());
-  }, [dispatch, successAssign]);
+  }, [dispatch]);
+  useEffect(() => {
+    if (successAssign) {
+      toast({
+        title: "Order assigned successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+    if (errorAssign) {
+      toast({
+        title: "Error assigning order.",
+        description: errorAssign,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+  }, [successAssign, errorAssign, toast]);
 
   const handleAssignOrder = () => {
     if (selectedOrderId && selectedDeliveryPersonId) {
@@ -47,84 +66,73 @@ const AssignOrderScreen = () => {
   };
 
   return (
-      <Box p={4}>
-        <Heading as="h1" size="lg" mb={6}>
-          Assign Orders
-        </Heading>
+    <Box p={4}>
+      <Heading as="h1" size="lg" mb={6}>
+        Assign Orders
+      </Heading>
 
-        {(loadingOrders || loadingUsers) && (
-          <Box textAlign="center" mb={4}>
-            <Spinner size="xl" />
-          </Box>
-        )}
+      {(loadingOrders || loadingUsers) && (
+        <Box textAlign="center" mb={4}>
+          <Spinner size="xl" />
+        </Box>
+      )}
 
-        {(errorOrders || errorUsers) && (
-          <Alert status="error" mb={4}>
-            <AlertIcon />
-            {errorOrders || errorUsers}
-          </Alert>
-        )}
+      {(errorOrders || errorUsers) &&
+        toast({
+          title: "Error loading data.",
+          description: errorOrders || errorUsers,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-right",
+        })}
+      {!loadingOrders && !loadingUsers && (
+        <Box>
+          <Heading as="h2" size="md" mb={2}>
+            Orders
+          </Heading>
+          <Select
+            placeholder="Select an Order"
+            onChange={(e) => setSelectedOrderId(e.target.value)}
+            value={selectedOrderId}
+            mb={4}
+          >
+            {orders.map((order) => (
+              <option key={order._id} value={order._id}>
+                {order._id} - ${order.totalPrice}
+              </option>
+            ))}
+          </Select>
 
-        {!loadingOrders && !loadingUsers && (
-          <Box>
-            <Heading as="h2" size="md" mb={2}>
-              Orders
-            </Heading>
-            <Select
-              placeholder="Select an Order"
-              onChange={(e) => setSelectedOrderId(e.target.value)}
-              value={selectedOrderId}
-              mb={4}
-            >
-              {orders.map((order) => (
-                <option key={order._id} value={order._id}>
-                  {order._id} - ${order.totalPrice}
+          <Heading as="h2" size="md" mb={2}>
+            Delivery Persons
+          </Heading>
+          <Select
+            placeholder="Select a Delivery Person"
+            onChange={(e) => setSelectedDeliveryPersonId(e.target.value)}
+            value={selectedDeliveryPersonId}
+            mb={4}
+          >
+            {users
+              .filter((user) => user.isDelivery)
+              .map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.name}
                 </option>
               ))}
-            </Select>
+          </Select>
 
-            <Heading as="h2" size="md" mb={2}>
-              Delivery Persons
-            </Heading>
-            <Select
-              placeholder="Select a Delivery Person"
-              onChange={(e) => setSelectedDeliveryPersonId(e.target.value)}
-              value={selectedDeliveryPersonId}
-              mb={4}
-            >
-              {users
-                .filter((user) => user.isDelivery)
-                .map((user) => (
-                  <option key={user._id} value={user._id}>
-                    {user.name}
-                  </option>
-                ))}
-            </Select>
-
-            <Button
-              colorScheme="blue"
-              onClick={handleAssignOrder}
-              isLoading={loadingAssign}
-              mb={4}
-            >
-              Assign Order
-            </Button>
-
-            {successAssign && (
-              <Alert status="success" mb={4}>
-                <AlertIcon />
-                Order assigned successfully!
-              </Alert>
-            )}
-            {errorAssign && (
-              <Alert status="error" mb={4}>
-                <AlertIcon />
-                {errorAssign}
-              </Alert>
-            )}
-          </Box>
-        )}
-      </Box>
+          <Button
+            colorScheme="blue"
+            onClick={handleAssignOrder}
+            isLoading={loadingAssign}
+            mb={4}
+          >
+            Assign Order
+          </Button>
+        </Box>
+      )}
+    </Box>
   );
 };
 
