@@ -42,6 +42,7 @@ import {
   salesReducer,
   revenueReducer,
   ordersReducer,
+  totalOrdersReducer,
 } from "./reducers/dashboardReducers";
 
 import {
@@ -85,6 +86,7 @@ const reducer = combineReducers({
   bannerAdd: bannerAddReducer,
   bannerList: bannerListReducer,
   bannerDelete: bannerDeleteReducer,
+  totalOrders: totalOrdersReducer,
 });
 const cartItemsFromStorage = localStorage.getItem("cartItems")
   ? JSON.parse(localStorage.getItem("cartItems"))

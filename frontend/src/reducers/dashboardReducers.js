@@ -8,6 +8,9 @@ import {
   DASHBOARD_ORDERS_REQUEST,
   DASHBOARD_ORDERS_SUCCESS,
   DASHBOARD_ORDERS_FAIL,
+  DASHBOARD_TOTALORDERS_REQUEST,
+  DASHBOARD_TOTALORDERS_SUCCESS,
+  DASHBOARD_TOTALORDERS_FAIL,
 } from "../constants/dashboardConstants";
 
 export const salesReducer = (state = { sales: [] }, action) => {
@@ -30,6 +33,19 @@ export const revenueReducer = (state = { revenue: [] }, action) => {
     case DASHBOARD_REVENUE_SUCCESS:
       return { loading: false, revenue: action.payload };
     case DASHBOARD_REVENUE_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const totalOrdersReducer = (state = { totalOrders: 0 }, action) => {
+  switch (action.type) {
+    case DASHBOARD_TOTALORDERS_REQUEST:
+      return { loading: true, totalOrders: 0 };
+    case DASHBOARD_TOTALORDERS_SUCCESS:
+      return { loading: false, totalOrders: action.payload };
+    case DASHBOARD_TOTALORDERS_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

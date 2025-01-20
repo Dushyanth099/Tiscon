@@ -35,6 +35,7 @@ import {
   getSalesData,
   getRevenueData,
   getDashboardOrders,
+  getTotalOrders,
 } from "../../actions/dashboardActions";
 
 const Dashboard = () => {
@@ -50,7 +51,12 @@ const Dashboard = () => {
     revenue,
     error: errorRevenue,
   } = revenueDataState;
-
+  const totalOrdersState = useSelector((state) => state.totalOrders);
+  const {
+    loading: loadingTotalOrders,
+    totalOrders,
+    error: errortotalOrders,
+  } = totalOrdersState;
   const ordersDataState = useSelector((state) => state.orders);
   const {
     loading: loadingOrders,
@@ -61,7 +67,7 @@ const Dashboard = () => {
   const [filter, setFilter] = React.useState("Day"); // Default filter
 
   // Calculate totals
-  const totalOrders = orders?.length || 0;
+  const totalOrdersCount = totalOrders || 0;
   const totalSales = sales?.reduce((acc, item) => acc + item.value, 0) || 0;
   const totalRevenue = revenue?.reduce((acc, item) => acc + item.value, 0) || 0;
 
@@ -69,6 +75,7 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(getSalesData(filter));
     dispatch(getRevenueData(filter));
+    dispatch(getTotalOrders(filter));
     dispatch(getDashboardOrders());
   }, [dispatch, filter]);
 
@@ -88,7 +95,7 @@ const Dashboard = () => {
         <GridItem>
           <Stat p={5} bg="blue.50" borderRadius="md" shadow="sm">
             <StatLabel>Total Orders</StatLabel>
-            <StatNumber>{totalOrders}</StatNumber>
+            <StatNumber>{totalOrdersCount}</StatNumber>
             <StatHelpText>Across all time</StatHelpText>
           </Stat>
         </GridItem>
@@ -111,7 +118,7 @@ const Dashboard = () => {
       {/* Filter Dropdown */}
       <Box mb={8}>
         <Select
-          placeholder="Filter by"
+          placeholder="UptoDate"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           mb={5}
@@ -125,13 +132,13 @@ const Dashboard = () => {
       </Box>
 
       {/* Charts and Tables */}
-      {loadingSales || loadingRevenue || loadingOrders ? (
+      {loadingSales || loadingRevenue || loadingOrders || loadingTotalOrders ? (
         <Box textAlign="center" mt={10}>
           <Spinner size="xl" />
         </Box>
-      ) : errorSales || errorRevenue || errorOrders ? (
+      ) : errorSales || errorRevenue || errorOrders || errortotalOrders ? (
         <Alert status="error" mt={4}>
-          {errorSales || errorRevenue || errorOrders}
+          {errorSales || errorRevenue || errorOrders || errortotalOrders}
         </Alert>
       ) : (
         <Box>

@@ -56,6 +56,16 @@ const getRevenueData = asyncHandler(async (req, res) => {
   res.json(revenueData);
 });
 
+// @desc Get total orders
+// @route GET /api/dashboard/totalOrders
+// @access Private/Admin
+const getTotalOrders = asyncHandler(async (req, res) => {
+  const { filter } = req.query;
+  const orders = await Order.find({});
+  const filteredOrders = filterByTime(orders, filter);
+  const totalOrdersCount = filteredOrders.length;
+  res.json(totalOrdersCount);
+});
 // @desc Get latest orders
 // @route GET /api/dashboard/orders
 // @access Private/Admin
@@ -75,4 +85,4 @@ const getLatestOrders = asyncHandler(async (req, res) => {
   res.json(latestOrders);
 });
 
-export { getSalesData, getRevenueData, getLatestOrders };
+export { getSalesData, getRevenueData, getLatestOrders, getTotalOrders };

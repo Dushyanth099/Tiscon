@@ -6,9 +6,9 @@ import {
   DASHBOARD_REVENUE_REQUEST,
   DASHBOARD_REVENUE_SUCCESS,
   DASHBOARD_REVENUE_FAIL,
-  DASHBOARD_PRODUCTS_REQUEST,
-  DASHBOARD_PRODUCTS_SUCCESS,
-  DASHBOARD_PRODUCTS_FAIL,
+  DASHBOARD_TOTALORDERS_REQUEST,
+  DASHBOARD_TOTALORDERS_SUCCESS,
+  DASHBOARD_TOTALORDERS_FAIL,
   DASHBOARD_ORDERS_REQUEST,
   DASHBOARD_ORDERS_SUCCESS,
   DASHBOARD_ORDERS_FAIL,
@@ -65,6 +65,35 @@ export const getRevenueData = (filter) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: DASHBOARD_REVENUE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getTotalOrders = (filter) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: DASHBOARD_TOTALORDERS_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    };
+
+    const { data } = await axios.get(
+      `/api/dashboard/getTotalOrders?filter=${filter}`,
+      config
+    );
+
+    dispatch({ type: DASHBOARD_TOTALORDERS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: DASHBOARD_TOTALORDERS_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
