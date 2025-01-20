@@ -63,9 +63,7 @@ const DeliveryDashboard = () => {
 
   const handleReject = (id) => {
     const updatedOrders = orders.map((order) =>
-      order._id === id
-        ? { ...order, isRejected: true }
-        : order
+      order._id === id ? { ...order, isRejected: true } : order
     );
     dispatch({ type: "ORDER_UPDATE_LOCAL", payload: updatedOrders });
     dispatch(rejectOrder(id)).then(() => {
@@ -158,9 +156,11 @@ const DeliveryDashboard = () => {
                 <Td>{order.user.name}</Td>
                 <Td>${order.totalPrice}</Td>
                 <Td>
-                  {order.shippingAddress.address}, {order.shippingAddress.city},{" "}
-                  {order.shippingAddress.postalCode},{" "}
-                  {order.shippingAddress.country}
+                  {order.shippingAddress.doorNo}, {order.shippingAddress.street}
+                  , {order.shippingAddress.nearestLandmark},<br />
+                  {order.shippingAddress.city},{order.shippingAddress.state}-
+                  {order.shippingAddress.pin} , {order.shippingAddress.country},
+                  {order.shippingAddress.phoneNumber}
                 </Td>
                 <Td>{order.paymentMethod}</Td>
                 <Td>{order.isAcceptedByDelivery ? "Accepted" : "Pending"}</Td>

@@ -127,9 +127,9 @@ const App = () => {
                     <Route path="/order/:id" component={Order} />
                     <Route path="/search/:keyword" component={Shop} />
                     <Footer />
-                    <Route component={NotFoundPage} />
                   </>
                 )}
+                <Route component={NotFoundPage} />
               </Switch>
             )}
           </ScrollIntoView>

@@ -55,8 +55,14 @@ const Placeorder = ({ history }) => {
           <h2>Shipping</h2>
           <p>
             <strong>Address: </strong>
-            {cart.shippingAddress.address}, {cart.shippingAddress.city},{" "}
-            {cart.shippingAddress.cp}, {cart.shippingAddress.country}
+            {cart.shippingAddress.doorNo},{cart.shippingAddress.street},{" "}
+            {cart.shippingAddress.nearestLandmark}, <br />
+            {cart.shippingAddress.city}, {cart.shippingAddress.state} -{" "}
+            {cart.shippingAddress.pin}, {cart.shippingAddress.country}
+          </p>
+          <p>
+            <strong>Phone: </strong>
+            {cart.shippingAddress.phoneNumber}
           </p>
         </div>
         <hr />

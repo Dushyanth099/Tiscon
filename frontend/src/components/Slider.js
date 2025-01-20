@@ -45,29 +45,23 @@ const Slider = () => {
 
   return (
     <div className="slider">
-      {loading ? (
-        <div>Loading banners...</div>
-      ) : error ? (
-        <div>Error: {error}</div>
-      ) : (
-        banners.map((banner, index) => (
-          <div
-            key={banner._id}
-            className={index === current ? "slide current" : "slide"}
-            style={{
-              background: `url(${banner.image}) no-repeat center top/cover`,
-            }}
-          >
-            <h1 className="titleslider">{banner.title}</h1>
-            <h3 className="subtitleslider">{banner.subtitle}</h3>
-            <div className="content">
-              <Link to="/shop">
-                <ShopNowBtn />
-              </Link>
-            </div>
+      {banners.map((banner, index) => (
+        <div
+          key={banner._id}
+          className={index === current ? "slide current" : "slide"}
+          style={{
+            background: `url(${banner.image}) no-repeat center top/cover`,
+          }}
+        >
+          <h1 className="titleslider">{banner.title}</h1>
+          <h3 className="subtitleslider">{banner.subtitle}</h3>
+          <div className="content">
+            <Link to="/shop">
+              <ShopNowBtn />
+            </Link>
           </div>
-        ))
-      )}
+        </div>
+      ))}
       <IoIosArrowForward className="next" size="32" onClick={nextSlide} />
       <IoIosArrowBack className="prev" size="32" onClick={prevSlide} />
     </div>

@@ -32,7 +32,7 @@ const Orders = ({ history }) => {
     } else {
       history.push("/login");
     }
-  }, [dispatch, history, userInfo]);
+  }, [dispatch, history, userInfo?.isAdmin]);
   const handleInvoiceClick = (orderId) => {
     history.push(`/admin/order/${orderId}/invoice`);
   };

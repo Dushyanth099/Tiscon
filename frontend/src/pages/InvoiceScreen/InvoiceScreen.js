@@ -102,10 +102,14 @@ const InvoiceScreen = ({ match }) => {
                 Shipping Address
               </Text>
               <Text>
-                {invoice.shippingAddress?.address || "N/A"},{" "}
-                {invoice.shippingAddress?.city || "N/A"},{" "}
-                {invoice.shippingAddress?.postalCode || "N/A"},{" "}
-                {invoice.shippingAddress?.country || "N/A"}
+                {invoice.shippingAddress?.doorNo},
+                {invoice.shippingAddress?.street},
+                {invoice.shippingAddress?.nearestLandmark},
+                {invoice.shippingAddress?.city},
+                {invoice.shippingAddress?.doorNo},
+                {invoice.shippingAddress?.state},{invoice.shippingAddress?.pin},
+                {invoice.shippingAddress?.country},
+                {invoice.shippingAddress?.phoneNumber},
               </Text>
             </Box>
           </Grid>

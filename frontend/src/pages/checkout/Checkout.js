@@ -13,18 +13,36 @@ const Checkout = ({ history }) => {
   const cart = useSelector((state) => state.cart);
 
   const { shippingAddress } = cart;
-
-  const [address, setAddress] = useState(shippingAddress.address);
-  const [city, setCity] = useState(shippingAddress.city);
-  const [postalCode, setPostalCode] = useState(shippingAddress.postalCode);
-  const [country, setCountry] = useState(shippingAddress.country);
+  const [doorNo, setDoorNo] = useState(shippingAddress?.doorNo || "");
+  const [street, setStreet] = useState(shippingAddress?.street || "");
+  const [nearestLandmark, setNearestLandmark] = useState(
+    shippingAddress?.nearestLandmark || ""
+  );
+  const [city, setCity] = useState(shippingAddress?.city || "");
+  const [state, setState] = useState(shippingAddress?.state || "");
+  const [pin, setPin] = useState(shippingAddress?.pin || "");
+  const [country, setCountry] = useState(shippingAddress?.country || "");
+  const [phoneNumber, setPhoneNumber] = useState(
+    shippingAddress?.phoneNumber || ""
+  );
   const [Payment, setPayment] = useState("Card");
 
   const dispatch = useDispatch();
   const [carddetails, setcarddetails] = useState(true);
   const handleorder = (e) => {
     e.preventDefault();
-    dispatch(saveAddressshipping({ address, city, postalCode, country }));
+    dispatch(
+      saveAddressshipping({
+        doorNo,
+        street,
+        nearestLandmark,
+        city,
+        state,
+        pin,
+        country,
+        phoneNumber,
+      })
+    );
     dispatch(savepaymentmethod(Payment));
     history.push("/placeorder");
   };
@@ -39,28 +57,93 @@ const Checkout = ({ history }) => {
           <form onSubmit={handleorder}>
             <div className="billing-check">
               <h1>Billing Address</h1>
-              {/* <label for="name" className="this-label">Full Name</label><br />
-                        <Input variant="flushed" placeholder="Your name" required id="name"/><br />
-                        <label for="email" className="this-label" >Email</label><br />
-                        <Input variant="flushed" placeholder="Your mail" required id="email"/><br /> */}
-              <label for="address" className="this-label">
-                Address
+
+              <label htmlFor="doorNo" className="this-label">
+                Door Number
               </label>
-              <br />
               <Input
                 variant="flushed"
-                placeholder="Your Address"
+                placeholder="Door No."
                 required
-                value={address}
-                id="address"
-                onChange={(e) => setAddress(e.target.value)}
+                value={doorNo}
+                id="doorNo"
+                onChange={(e) => setDoorNo(e.target.value)}
               />
-              <br />
+
+              <label htmlFor="street" className="this-label">
+                Street
+              </label>
+              <Input
+                variant="flushed"
+                placeholder="Street"
+                required
+                value={street}
+                id="street"
+                onChange={(e) => setStreet(e.target.value)}
+              />
+
+              <label htmlFor="nearestLandmark" className="this-label">
+                Nearest Landmark
+              </label>
+              <Input
+                variant="flushed"
+                placeholder="Nearest Landmark"
+                value={nearestLandmark}
+                id="nearestLandmark"
+                onChange={(e) => setNearestLandmark(e.target.value)}
+              />
+
+              <label htmlFor="city" className="this-label">
+                City
+              </label>
+              <Input
+                variant="flushed"
+                required
+                placeholder="City"
+                value={city}
+                id="city"
+                onChange={(e) => setCity(e.target.value)}
+              />
+
+              <label htmlFor="state" className="this-label">
+                State
+              </label>
+              <Input
+                variant="flushed"
+                required
+                placeholder="State"
+                value={state}
+                id="state"
+                onChange={(e) => setState(e.target.value)}
+              />
+
+              <label htmlFor="pin" className="this-label">
+                Pin Code
+              </label>
+              <Input
+                variant="flushed"
+                required
+                placeholder="Pin Code"
+                value={pin}
+                id="pin"
+                onChange={(e) => setPin(e.target.value)}
+              />
+              <label htmlFor="phoneNumber" className="this-label">
+                Phone Number
+              </label>
+              <Input
+                variant="flushed"
+                required
+                placeholder="Phone Number"
+                value={phoneNumber}
+                id="phoneNumber"
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
               <label className="this-label">Country</label>
-              <br />
               <Stack spacing={3}>
                 <Select
                   variant="flushed"
+                  value={country}
                   onChange={(e) => setCountry(e.target.value)}
                 >
                   <option value="India">India</option>
@@ -69,34 +152,7 @@ const Checkout = ({ history }) => {
                   <option value="USA">USA</option>
                 </Select>
               </Stack>
-              <div className="city-cp-check">
-                <div>
-                  <label for="city" className="this-label">
-                    City
-                  </label>
-                  <Input
-                    variant="flushed"
-                    required
-                    placeholder="Your City"
-                    onChange={(e) => setCity(e.target.value)}
-                    id="city"
-                  />
-                </div>
-                <div>
-                  <label for="zip" className="this-label">
-                    Zip
-                  </label>
-                  <Input
-                    variant="flushed"
-                    required
-                    placeholder="Your Zip"
-                    id="zip"
-                    onChange={(e) => setPostalCode(e.target.value)}
-                  />
-                </div>
-              </div>
             </div>
-
             <div className="payment-check">
               <h1>Payment Method</h1>
 

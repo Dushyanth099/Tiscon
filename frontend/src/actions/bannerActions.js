@@ -15,9 +15,7 @@ import {
 export const listBanners = () => async (dispatch) => {
   try {
     dispatch({ type: BANNER_LIST_REQUEST });
-
     const { data } = await axios.get("/api/banners/banners");
-
     dispatch({ type: BANNER_LIST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({

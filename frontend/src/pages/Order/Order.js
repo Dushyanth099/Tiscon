@@ -105,7 +105,8 @@ const Order = ({ match, history }) => {
         <div className="shipping-placeorder">
           <h2>Shipping</h2>
           <p>
-            <strong>Name: </strong>
+                <strong>Name: </strong>
+                
             {order.user.name}
           </p>
           <p>
@@ -114,8 +115,11 @@ const Order = ({ match, history }) => {
           </p>
           <p>
             <strong>Address: </strong>
-            {order.shippingAddress.address}, {order.shippingAddress.city},{" "}
-            {order.shippingAddress.cp}, {order.shippingAddress.country}
+            {order.shippingAddress.doorNo}, {order.shippingAddress.street},
+            {order.shippingAddress.nearestLandmark},<br />
+            {order.shippingAddress.city}, {order.shippingAddress.state}-
+            {order.shippingAddress.pin}, {order.shippingAddress.country},{" "}
+            {order.shippingAddress.phoneNumber},
             {order.isDelivered ? (
               <div className="paid">Delivered at {order.deliveredAt}</div>
             ) : (
