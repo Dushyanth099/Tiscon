@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   DeleteProduct,
   listProducts,
-  CreateProduct,
   uploadBulkProducts,
 } from "../../actions/productActions";
 import { useDispatch, useSelector } from "react-redux";
@@ -72,7 +71,7 @@ const Products = ({ history, match }) => {
       history.push("/login");
     }
     if (successCreate) {
-      history.push(`/admin/product/${createdproduct._id}/edit`);
+      history.push(`/admin/product/create`);
     } else {
       dispatch(listProducts());
     }
@@ -92,7 +91,7 @@ const Products = ({ history, match }) => {
   };
 
   const createproducthandler = () => {
-    dispatch(CreateProduct());
+    history.push("/admin/product/create");
   };
 
   const bulkUploadHandler = (e) => {

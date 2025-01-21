@@ -94,19 +94,28 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @route Post /api/products
 // @access Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
+  const {
+    name,
+    price,
+    description,
+    sizes,
+    images,
+    category,
+    countInStock,
+    discount,
+    oldPrice,
+  } = req.body; 
   const product = new Product({
-    name: "Sample name",
-    price: 0,
-    description: "sample description",
+    name,
+    price, 
+    oldPrice,
+    discount,
+    description,
     user: req.user._id,
-    sizes: [],
-    images: [
-      "https://i.imgur.com/QN2BSdJ.jpg",
-      "https://i.imgur.com/QN2BSdJ.jpg",
-      "https://i.imgur.com/QN2BSdJ.jpg",
-    ],
-    category: [],
-    countInStock: 0,
+    sizes,
+    images,
+    category,
+    countInStock,
     numReviews: 0,
   });
   const createProduct = await product.save();
@@ -164,19 +173,15 @@ const uploadProducts = asyncHandler(async (req, res) => {
     if (err) {
       return res.status(400).json({ message: "File upload failed" });
     }
-
     const file = req.file;
-
     // Validate file name
     if (!file.originalname.match(/\.(xlsx|xls)$/)) {
       return res.status(400).json({ message: "Only Excel files are allowed" });
     }
-
     // Parse Excel file
     const workbook = XLSX.read(file.buffer, { type: "buffer" });
     const sheetName = workbook.SheetNames[0];
     const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
     // Validate and process data
     const products = [];
     for (const row of sheetData) {

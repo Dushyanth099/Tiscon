@@ -24,7 +24,7 @@ import {
 } from "../../actions/bannerActions";
 
 const AdminBannerScreen = () => {
-  const [image, setImage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [productId, setProductId] = useState("");
@@ -45,18 +45,19 @@ const AdminBannerScreen = () => {
   }, [dispatch, successAdd, successDelete]);
 
   const handleAddBanner = () => {
-    const imageRegex = /\.(jpg|jpeg|png)$/i;
-    if (!image || !title || !subtitle || !productId) {
+    if (!imageFile || !title || !subtitle || !productId) {
       alert("All fields are required.");
       return;
     }
-    if (!imageRegex.test(image)) {
-      alert("Invalid image URL. Only JPG, JPEG, and PNG formats are allowed.");
-      return;
-    }
-    const newBanner = { image, title, subtitle, productId };
-    dispatch(addBanner(newBanner));
-    setImage("");
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    formData.append("title", title);
+    formData.append("subtitle", subtitle);
+    formData.append("productId", productId);
+
+    dispatch(addBanner(formData));
+
+    setImageFile(null);
     setTitle("");
     setSubtitle("");
     setProductId("");
@@ -77,12 +78,11 @@ const AdminBannerScreen = () => {
         </Heading>
         <VStack spacing={4} align="stretch">
           <FormControl id="image" isRequired>
-            <FormLabel>Image URL</FormLabel>
+            <FormLabel>Image File</FormLabel>
             <Input
-              type="text"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              placeholder="Enter image URL"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0])}
             />
           </FormControl>
           <FormControl id="title" isRequired>
@@ -151,7 +151,6 @@ const AdminBannerScreen = () => {
                   boxSize="100px"
                   objectFit="cover"
                   borderRadius="md"
-                  
                 />
                 <Box flex={1}>
                   <Heading size="sm">{banner.title}</Heading>

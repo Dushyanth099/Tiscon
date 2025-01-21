@@ -1,11 +1,12 @@
 import { React, useState, useEffect } from "react";
 import { HiOutlineShoppingCart, HiShoppingCart } from "react-icons/hi";
-import { Image } from "@chakra-ui/react";
+import { Image, useToast } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
 import { addToCart } from "../actions/cartActions";
 import { useDispatch, useSelector } from "react-redux";
 const CardProduct = ({ product }) => {
+  const toast = useToast();
   const [showbtn, setShowbtn] = useState(false);
   const [Incart, setIncart] = useState(false);
   const dispatch = useDispatch();
@@ -19,6 +20,14 @@ const CardProduct = ({ product }) => {
     return () => {};
   });
   const addcart = () => {
+    toast({
+      title: "Product added to cart.",
+      description: `Click to view details.`,
+      status: "success",
+      duration: 5000,
+      position: "top-right",
+      isClosable: true,
+    });
     setIncart(true);
     dispatch(addToCart(product._id, 1));
   };

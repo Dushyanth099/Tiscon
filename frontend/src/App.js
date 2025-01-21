@@ -38,6 +38,7 @@ import DeliveryNavbar from "./pages/Delivery/DeliveryNavbar";
 import DeliveryHomepage from "./pages/Delivery/DeliveryHomepage";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminBannerScreen from "./pages/AdminBanner/AdminBannerScreen";
+import CreateProductPage from "./pages/Editproduct/CreateProductPage";
 
 const App = () => {
   const [loading, setLoading] = useState(false);
@@ -87,6 +88,11 @@ const App = () => {
                       <Route path="/admin/orderlist" component={Orders} />
                       <Route path="/order/:id" component={Order} />
                       <Route path="/admin/user/:id/edit" component={Edituser} />
+                      <Route
+                        path="/admin/product/create"
+                        component={CreateProductPage}
+                        exact
+                      />
                       <Route
                         path="/admin/product/:id/edit"
                         component={Editproduct}
