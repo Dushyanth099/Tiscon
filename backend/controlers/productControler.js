@@ -140,22 +140,25 @@ const updateProduct = asyncHandler(async (req, res) => {
     description,
     category,
     sizes,
-    Images,
     countInStock,
   } = req.body;
-  console.log(name, price, Images);
+
   const product = await Product.findById(req.params.id);
   if (product) {
     product.name = name;
     product.price = price;
     product.description = description;
-    product.category = category;
-    product.sizes = sizes;
-    product.images = Images;
+    product.category = Array.isArray(category)
+      ? category
+      : JSON.parse(category || "[]");
+    product.sizes = Array.isArray(sizes) ? sizes : JSON.parse(sizes || "[]");
     product.countInStock = countInStock;
     product.oldPrice = oldPrice;
     product.discount = discount;
-    
+    if (req.files && req.files.length > 0) {
+      product.images = req.files.map((file) => `/uploads/${file.filename}`);
+    }
+
     const updatedProduct = await product.save();
     console.log(updatedProduct);
     res.json(updateProduct);

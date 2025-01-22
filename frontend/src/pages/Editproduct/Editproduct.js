@@ -6,12 +6,26 @@ import {
   UpdateProduct,
 } from "../../actions/productActions";
 import HashLoader from "react-spinners/HashLoader";
-import { Input, InputGroup } from "@chakra-ui/input";
 import { Helmet } from "react-helmet";
 
-import { Box, Checkbox, Stack, Textarea, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  Stack,
+  Textarea,
+  Divider,
+  Flex,
+  Heading,
+  InputGroup,
+  Text,
+  FormLabel,
+  Input,
+  Button,
+} from "@chakra-ui/react";
 import { PRODUCT_UPDATE_RESET } from "../../constants/productConstants";
 import "./Editproduct.css";
+
 const Editproduct = ({ match, history }) => {
   const productId = match.params.id;
   const [name, setName] = useState("");
@@ -20,11 +34,7 @@ const Editproduct = ({ match, history }) => {
   const [oldPrice, setOldPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [countInStock, setcountInStock] = useState(0);
-  const [Url1, setUrl1] = useState("");
-  const [Url2, setUrl2] = useState("");
-  const [Url3, setUrl3] = useState("");
-
-  const [Images, setImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
   const [sizes, setsizes] = useState([]);
   const [category, setcategory] = useState([]);
   const [Menselected, setMenselected] = useState(false);
@@ -68,11 +78,9 @@ const Editproduct = ({ match, history }) => {
         setOldPrice(product.oldPrice);
         setDiscount(product.discount);
         setdescription(product.description);
-        setUrl1(product.images[0]);
-        setUrl2(product.images[1]);
-        setUrl3(product.images[2]);
         setcategory(product.category);
         setsizes(product.sizes);
+        setNewImages(product.images);
         setcountInStock(product.countInStock);
         setBagselected(category.includes("Bag"));
         setJacketselected(category.includes("Jacket"));
@@ -86,30 +94,45 @@ const Editproduct = ({ match, history }) => {
         setXLselected(sizes.includes("XL"));
       }
     }
-
     return () => {};
   }, [dispatch, productId, history, product, category, sizes, successUpdate]);
-
+  const handleImageChange = (e) => {
+    setNewImages([...newImages, e.target.files[0]]);
+  };
   const submitHandler = (e) => {
-    Images.push(Url1);
-    Images.push(Url2);
-    Images.push(Url3);
     e.preventDefault();
     const calculatedPrice = oldPrice - (oldPrice * discount) / 100;
-    dispatch(
-      UpdateProduct({
-        _id: productId,
-        name,
-        price: calculatedPrice,
-        oldPrice,
-        discount,
-        Images,
-        category,
-        sizes,
-        countInStock,
-        description,
-      })
-    );
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", calculatedPrice);
+    formData.append("oldPrice", oldPrice);
+    formData.append("discount", discount);
+    formData.append("description", description);
+    formData.append("category", JSON.stringify(category));
+    formData.append("sizes", JSON.stringify(sizes));
+    formData.append("countInStock", countInStock);
+    formData.append("Menselected", Menselected);
+    formData.append("Womenselected", Womenselected);
+    formData.append(" Bagselected", Bagselected);
+    formData.append("Watchesselected", Watchesselected);
+    formData.append("Shoesselected", Shoesselected);
+    formData.append("Jacketselected", Jacketselected);
+    formData.append("Sselected", Sselected);
+    formData.append("Mselected", Mselected);
+    formData.append(" Lselected", Lselected);
+    formData.append(" XLselected", XLselected);
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+    newImages.forEach((file) => {
+      if (file) {
+        formData.append("images", file);
+      }
+    });
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+    dispatch(UpdateProduct(productId, formData));
   };
   const checkboxhandler = (D) => {
     let index = sizes.indexOf(D);
@@ -132,10 +155,13 @@ const Editproduct = ({ match, history }) => {
   };
 
   return (
-    <div className="Edituser">
+    <Box maxW="800px" mx="auto" mt={10} p={6} boxShadow="md" borderRadius="md">
       <Helmet>
         <title>Edit Product</title>
       </Helmet>
+      <Heading as="h2" size="lg" mb={6} textAlign="center">
+        Edit Product
+      </Heading>
       {error && <h4>{error}</h4>}
       {/* {successUpdate && <h4>Profile Updated</h4>} */}
       {loading || lodingUpdate ? (
@@ -145,242 +171,200 @@ const Editproduct = ({ match, history }) => {
       ) : errorUpdate ? (
         <h4>{errorUpdate}</h4>
       ) : (
-        <div>
-          <h4 className="Edittitle">Edit Product :</h4>
-          <div className="formedit">
-            <form onSubmit={submitHandler}>
-              <div>
-                <div className="input-div zz">
-                  Name :
-                  <div className="div">
-                    <InputGroup>
-                      <Input
-                        type="text"
-                        value={name}
-                        placeholder="Enter name"
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    </InputGroup>
-                  </div>
-                </div>
-
-                <div className="input-div one">
-                  Old Price:
-                  <div className="div">
-                    <InputGroup>
-                      <Input
-                        type="number"
-                        value={oldPrice}
-                        placeholder="Enter old price"
-                        onChange={(e) => setOldPrice(e.target.value)}
-                      />
-                    </InputGroup>
-                  </div>
-                </div>
-
-                <div className="input-div one">
-                  Discount (%):
-                  <div className="div">
-                    <InputGroup>
-                      <Input
-                        type="number"
-                        value={discount}
-                        placeholder="Enter discount"
-                        onChange={(e) => setDiscount(e.target.value)}
-                      />
-                    </InputGroup>
-                  </div>
-                </div>
-
-                <div className="input-div one">
-                  New Price:
-                  <div className="div">
-                    <InputGroup>
-                      <Input
-                        type="number"
-                        value={(oldPrice - (oldPrice * discount) / 100).toFixed(
-                          2
-                        )}
-                        readOnly
-                      />
-                    </InputGroup>
-                  </div>
-                </div>
-
-                <div className="input-div one">
-                  countInStock :
-                  <div className="div">
-                    <InputGroup>
-                      <Input
-                        type="text"
-                        value={countInStock}
-                        onChange={(e) => setcountInStock(e.target.value)}
-                      />
-                    </InputGroup>
-                  </div>
-                </div>
-                <div className="input-div one">
-                  Description
-                  <div className="div">
-                    <Stack direction="column" spacing={4}>
-                      <InputGroup>
-                        <Textarea
-                          size="sm"
-                          value={description}
-                          placeholder="Type something about product.."
-                          onChange={(e) => setdescription(e.target.value)}
-                        />
-                      </InputGroup>
-                      <Stack direction="row">
-                        <Checkbox
-                          onChange={() => {
-                            checkboxhandlercg("Men");
-                            setMenselected(!Menselected);
-                          }}
-                          isChecked={Menselected}
-                        >
-                          Men{" "}
-                        </Checkbox>
-                        <Checkbox
-                          onChange={() => {
-                            checkboxhandlercg("Women");
-                            setWomenselected(!Watchesselected);
-                          }}
-                          isChecked={Womenselected}
-                        >
-                          Women{" "}
-                        </Checkbox>
-                        <Checkbox
-                          onChange={() => {
-                            checkboxhandlercg("Bag");
-                            setBagselected(!Bagselected);
-                          }}
-                          isChecked={Bagselected}
-                        >
-                          Bag{" "}
-                        </Checkbox>
-                        <Checkbox
-                          onChange={() => {
-                            checkboxhandlercg("Watches");
-                            setWatchesselected(!Watchesselected);
-                          }}
-                          isChecked={Watchesselected}
-                        >
-                          Watches{" "}
-                        </Checkbox>
-                        <Checkbox
-                          onChange={() => {
-                            checkboxhandlercg("Shoes");
-                            setShoesselected(!Shoesselected);
-                          }}
-                          isChecked={Shoesselected}
-                        >
-                          Shoes{" "}
-                        </Checkbox>
-                        <Checkbox
-                          onChange={() => {
-                            checkboxhandlercg("Jacket");
-                            setJacketselected(!Jacketselected);
-                          }}
-                          isChecked={Jacketselected}
-                        >
-                          Jacket{" "}
-                        </Checkbox>
-                      </Stack>
-                    </Stack>
-                  </div>
-                </div>
-
-                <div className="input-div pass">
-                  <div className="div"></div>
-                </div>
-
-                <div className="input-div pass">
-                  Sizes:
-                  <div className="div">
-                    <Stack direction="row">
-                      <Checkbox
-                        onChange={() => {
-                          checkboxhandler("S");
-                          setSselected(!Sselected);
-                        }}
-                        isChecked={Sselected}
-                      >
-                        S{" "}
-                      </Checkbox>
-                      <Checkbox
-                        onChange={() => {
-                          checkboxhandler("M");
-                          setMselected(!Mselected);
-                        }}
-                        isChecked={Mselected}
-                      >
-                        M{" "}
-                      </Checkbox>
-                      <Checkbox
-                        onChange={() => {
-                          checkboxhandler("L");
-                          setLselected(!Lselected);
-                        }}
-                        isChecked={Lselected}
-                      >
-                        L{" "}
-                      </Checkbox>
-                      <Checkbox
-                        onChange={() => {
-                          checkboxhandler("XL");
-                          setXLselected(!XLselected);
-                        }}
-                        isChecked={XLselected}
-                      >
-                        XL{" "}
-                      </Checkbox>
-                    </Stack>
-                  </div>
-                </div>
-                <div className="input-div pass">
-                  Urls for images:
-                  <div className="div urls">
-                    <Box>
-                      <Stack direction="column">
-                        <Input
-                          type="text"
-                          value={Url1}
-                          onChange={(e) => {
-                            setUrl1(e.target.value);
-                          }}
-                        />
-                        <Input
-                          type="text"
-                          value={Url2}
-                          onChange={(e) => {
-                            setUrl2(e.target.value);
-                          }}
-                        />
-                        <Input
-                          type="text"
-                          value={Url3}
-                          onChange={(e) => {
-                            setUrl3(e.target.value);
-                          }}
-                        />
-                      </Stack>
-                    </Box>
-                    {/* <Input type= 'text' value={category} onChange = {(e)=>{setcategory((e.target.value).split(' ')) ; }}/> */}
-                  </div>
-                </div>
-                {message && <h4 className="Message">{message}</h4>}
-                <input
-                  type="submit"
-                  className="btna2 postionbtnupdate"
-                  value="Update"
+        <form onSubmit={submitHandler} encType="multipart/form-data">
+          <Stack spacing={6}>
+            Name :{/* Name */}
+            <FormControl isRequired>
+              <FormLabel>Product Name</FormLabel>
+              <Input
+                type="text"
+                value={name}
+                placeholder="Enter product name"
+                onChange={(e) => setName(e.target.value)}
+              />
+            </FormControl>
+            <Flex justify="space-between" gap={4}>
+              <FormControl isRequired>
+                <FormLabel>Old Price</FormLabel>
+                <Input
+                  type="number"
+                  value={oldPrice}
+                  placeholder="Enter old price"
+                  onChange={(e) => setOldPrice(e.target.value)}
                 />
-              </div>
-            </form>
-          </div>
-        </div>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Discount (%)</FormLabel>
+                <Input
+                  type="number"
+                  value={discount}
+                  placeholder="Enter discount percentage"
+                  onChange={(e) => setDiscount(e.target.value)}
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>New Price</FormLabel>
+                <Input
+                  type="number"
+                  value={(oldPrice - (oldPrice * discount) / 100).toFixed(2)}
+                  readOnly
+                />
+              </FormControl>
+            </Flex>
+            <FormControl isRequired>
+              <FormLabel>Stock Count</FormLabel>
+              <Input
+                type="number"
+                value={countInStock}
+                placeholder="Enter stock count"
+                onChange={(e) => setcountInStock(e.target.value)}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Description</FormLabel>
+              <Stack direction="column" spacing={4}>
+                <InputGroup>
+                  <Textarea
+                    size="sm"
+                    value={description}
+                    placeholder="Type Something about product.."
+                    onChange={(e) => setdescription(e.target.value)}
+                  />
+                </InputGroup>
+                <Stack direction="row">
+                  <Checkbox
+                    onChange={() => {
+                      checkboxhandlercg("Men");
+                      setMenselected(!Menselected);
+                    }}
+                    isChecked={Menselected}
+                  >
+                    Men{" "}
+                  </Checkbox>
+                  <Checkbox
+                    onChange={() => {
+                      checkboxhandlercg("Women");
+                      setWomenselected(!Watchesselected);
+                    }}
+                    isChecked={Womenselected}
+                  >
+                    Women{" "}
+                  </Checkbox>
+                  <Checkbox
+                    onChange={() => {
+                      checkboxhandlercg("Bag");
+                      setBagselected(!Bagselected);
+                    }}
+                    isChecked={Bagselected}
+                  >
+                    Bag{" "}
+                  </Checkbox>
+                  <Checkbox
+                    onChange={() => {
+                      checkboxhandlercg("Watches");
+                      setWatchesselected(!Watchesselected);
+                    }}
+                    isChecked={Watchesselected}
+                  >
+                    Watches{" "}
+                  </Checkbox>
+                  <Checkbox
+                    onChange={() => {
+                      checkboxhandlercg("Shoes");
+                      setShoesselected(!Shoesselected);
+                    }}
+                    isChecked={Shoesselected}
+                  >
+                    Shoes{" "}
+                  </Checkbox>
+                  <Checkbox
+                    onChange={() => {
+                      checkboxhandlercg("Jacket");
+                      setJacketselected(!Jacketselected);
+                    }}
+                    isChecked={Jacketselected}
+                  >
+                    Jacket{" "}
+                  </Checkbox>
+                </Stack>
+              </Stack>
+            </FormControl>
+            <Box>
+              <Text fontWeight="bold" mb={2}>
+                Sizes
+              </Text>
+
+              <Stack direction="row" spacing={4}>
+                <Checkbox
+                  onChange={() => {
+                    checkboxhandler("S");
+                    setSselected(!Sselected);
+                  }}
+                  isChecked={Sselected}
+                >
+                  S{" "}
+                </Checkbox>
+                <Checkbox
+                  onChange={() => {
+                    checkboxhandler("M");
+                    setMselected(!Mselected);
+                  }}
+                  isChecked={Mselected}
+                >
+                  M{" "}
+                </Checkbox>
+                <Checkbox
+                  onChange={() => {
+                    checkboxhandler("L");
+                    setLselected(!Lselected);
+                  }}
+                  isChecked={Lselected}
+                >
+                  L{" "}
+                </Checkbox>
+                <Checkbox
+                  onChange={() => {
+                    checkboxhandler("XL");
+                    setXLselected(!XLselected);
+                  }}
+                  isChecked={XLselected}
+                >
+                  XL{" "}
+                </Checkbox>
+              </Stack>
+            </Box>
+            {/* Upload Images */}
+            <Box>
+              <FormLabel>Upload Images</FormLabel>
+              <Stack spacing={3}>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </Stack>
+            </Box>
+            <Divider />
+            {/* Submit Button */}
+            <Button type="submit" colorScheme="teal" w="full">
+              Update Product
+            </Button>
+          </Stack>
+        </form>
       )}
-    </div>
+    </Box>
   );
 };
 

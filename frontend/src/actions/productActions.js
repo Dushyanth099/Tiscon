@@ -157,11 +157,7 @@ export const CreateProduct = (formData) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post(
-      `/api/products/create`,
-      formData,
-      config
-    );
+    const { data } = await axios.post(`/api/products/create`, formData, config);
     dispatch({
       type: PRODUCT_CREATE_SUCCESS,
       payload: data,
@@ -212,44 +208,45 @@ export const uploadBulkProducts = (file) => async (dispatch, getState) => {
   }
 };
 
-export const UpdateProduct = (product) => async (dispatch, getState) => {
-  console.log(product);
+export const UpdateProduct =
+  (productId, formData) => async (dispatch, getState) => {
+    console.log(productId);
 
-  try {
-    dispatch({
-      type: PRODUCT_UPDATE_REQUEST,
-    });
+    try {
+      dispatch({
+        type: PRODUCT_UPDATE_REQUEST,
+      });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
+      const {
+        userLogin: { userInfo },
+      } = getState();
 
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
 
-    const { data } = await axios.put(
-      `/api/products/${product._id}`,
-      product,
-      config
-    );
-    dispatch({
-      type: PRODUCT_UPDATE_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: PRODUCT_UPDATE_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+      const { data } = await axios.put(
+        `/api/products/${productId}`,
+        formData,
+        config
+      );
+      dispatch({
+        type: PRODUCT_UPDATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: PRODUCT_UPDATE_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
 export const createproductReview =
   (productId, review) => async (dispatch, getState) => {
     try {

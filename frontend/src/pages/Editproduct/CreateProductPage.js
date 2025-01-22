@@ -14,6 +14,8 @@ import {
   Checkbox,
   InputGroup,
   Heading,
+  Flex,
+  Divider,
 } from "@chakra-ui/react";
 import { Helmet } from "react-helmet";
 
@@ -105,81 +107,65 @@ const CreateProductPage = ({ history }) => {
     }
   };
   return (
-    <div className="Create Product">
+    <Box maxW="800px" mx="auto" mt={10} p={6} boxShadow="md" borderRadius="md">
       <Helmet>
         <title>Create Product</title>
       </Helmet>
+      <Heading as="h2" size="lg" mb={6} textAlign="center">
+        Create New Product
+      </Heading>
       {error && <Text color="red.500">{error}</Text>}
       <form onSubmit={submitHandler} encType="multipart/form-data">
-        <div className="input-div one">
-          Name :
-          <div className="div">
-            <InputGroup>
-              <Input
-                type="text"
-                value={name}
-                placeholder="Enter name"
-                onChange={(e) => setName(e.target.value)}
-              />
-            </InputGroup>
-          </div>
-        </div>
-        <div className="input-div one">
-          Old Price:
-          <div className="div">
-            <InputGroup>
+        <Stack spacing={6}>
+          Name :{/* Name */}
+          <FormControl isRequired>
+            <FormLabel>Product Name</FormLabel>
+            <Input
+              type="text"
+              value={name}
+              placeholder="Enter product name"
+              onChange={(e) => setName(e.target.value)}
+            />
+          </FormControl>
+          <Flex justify="space-between" gap={4}>
+            <FormControl isRequired>
+              <FormLabel>Old Price</FormLabel>
               <Input
                 type="number"
                 value={oldPrice}
                 placeholder="Enter old price"
                 onChange={(e) => setOldPrice(e.target.value)}
               />
-            </InputGroup>
-          </div>
-        </div>
-
-        <div className="input-div one">
-          Discount (%):
-          <div className="div">
-            <InputGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Discount (%)</FormLabel>
               <Input
                 type="number"
                 value={discount}
-                placeholder="Enter discount"
+                placeholder="Enter discount percentage"
                 onChange={(e) => setDiscount(e.target.value)}
               />
-            </InputGroup>
-          </div>
-        </div>
-
-        <div className="input-div one">
-          New Price:
-          <div className="div">
-            <InputGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel>New Price</FormLabel>
               <Input
                 type="number"
                 value={(oldPrice - (oldPrice * discount) / 100).toFixed(2)}
                 readOnly
               />
-            </InputGroup>
-          </div>
-        </div>
-
-        <div className="input-div one">
-          countInStock :
-          <div className="div">
-            <InputGroup>
-              <Input
-                type="text"
-                value={countInStock}
-                onChange={(e) => setcountInStock(e.target.value)}
-              />
-            </InputGroup>
-          </div>
-        </div>
-        <div className="input-div one">
-          Description
-          <div className="div">
+            </FormControl>
+          </Flex>
+          <FormControl isRequired>
+            <FormLabel>Stock Count</FormLabel>
+            <Input
+              type="number"
+              value={countInStock}
+              placeholder="Enter stock count"
+              onChange={(e) => setcountInStock(e.target.value)}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Description</FormLabel>
             <Stack direction="column" spacing={4}>
               <InputGroup>
                 <Textarea
@@ -246,17 +232,12 @@ const CreateProductPage = ({ history }) => {
                 </Checkbox>
               </Stack>
             </Stack>
-          </div>
-        </div>
-
-        <div className="input-div pass">
-          <div className="div"></div>
-        </div>
-
-        <div className="input-div pass">
-          Sizes:
-          <div className="div">
-            <Stack direction="row">
+          </FormControl>
+          <Box>
+            <Text fontWeight="bold" mb={2}>
+              Sizes
+            </Text>
+            <Stack direction="row" spacing={4}>
               <Checkbox
                 onChange={() => {
                   checkboxhandler("S");
@@ -294,43 +275,42 @@ const CreateProductPage = ({ history }) => {
                 XL{" "}
               </Checkbox>
             </Stack>
-          </div>
-        </div>
-        <div className="input-div pass">
-          Upload Images:
-          <div className="image">
-            <Box>
-              <Stack direction="column">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(e, "image1")}
-                />
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(e, "image2")}
-                />
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(e, "image3")}
-                />
-              </Stack>
-            </Box>
-            <Button
-              type="submit"
-              colorScheme="teal"
-              isLoading={loading}
-              loadingText="Creating..."
-            >
-              Create Product
-            </Button>
-            <form />
-          </div>
-        </div>
+          </Box>
+          {/* Upload Images */}
+          <Box>
+            <FormLabel>Upload Images</FormLabel>
+            <Stack spacing={3}>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </Stack>
+          </Box>
+          <Divider />
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            colorScheme="teal"
+            isLoading={loading}
+            loadingText="Creating..."
+            w="full"
+          >
+            Create Product
+          </Button>
+        </Stack>
       </form>
-    </div>
+    </Box>
   );
 };
 
