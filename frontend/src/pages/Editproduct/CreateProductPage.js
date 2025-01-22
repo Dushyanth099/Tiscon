@@ -23,9 +23,6 @@ const CreateProductPage = ({ history }) => {
   const [price, setPrice] = useState(0);
   const [oldPrice, setOldPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const [Url1, setUrl1] = useState("");
-  const [Url2, setUrl2] = useState("");
-  const [Url3, setUrl3] = useState("");
   const [category, setCategory] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [countInStock, setcountInStock] = useState(0);
@@ -36,12 +33,10 @@ const CreateProductPage = ({ history }) => {
   const [Watchesselected, setWatchesselected] = useState(false);
   const [Shoesselected, setShoesselected] = useState(false);
   const [Jacketselected, setJacketselected] = useState(false);
-
   const [Sselected, setSselected] = useState(false);
   const [Mselected, setMselected] = useState(false);
   const [Lselected, setLselected] = useState(false);
   const [XLselected, setXLselected] = useState(false);
-
   const [message, setMessage] = useState(null);
   const dispatch = useDispatch();
 
@@ -56,36 +51,39 @@ const CreateProductPage = ({ history }) => {
     }
   }, [dispatch, success, history]);
 
+  const handleImageChange = (e) => {
+    setImages([...images, e.target.files[0]]);
+  };
+
   const submitHandler = (e) => {
-    images.push(Url1);
-    images.push(Url2);
-    images.push(Url3);
     e.preventDefault();
-    const productData = {
-      name,
-      price: oldPrice - (oldPrice * discount) / 100,
-      oldPrice,
-      images: [Url1, Url2, Url3],
-      discount,
-      description,
-      category,
-      sizes,
-      countInStock,
-      Url1,
-      Url2,
-      Url3,
-      Menselected,
-      Womenselected,
-      Bagselected,
-      Watchesselected,
-      Shoesselected,
-      Jacketselected,
-      Sselected,
-      Mselected,
-      Lselected,
-      XLselected,
-    };
-    dispatch(CreateProduct(productData));
+    const calculatedPrice = oldPrice - (oldPrice * discount) / 100;
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", calculatedPrice);
+    formData.append("oldPrice", oldPrice);
+    formData.append("discount", discount);
+    formData.append("description", description);
+    formData.append("category", JSON.stringify(category));
+    formData.append("sizes", JSON.stringify(sizes));
+    formData.append("countInStock", countInStock);
+    formData.append("Menselected", Menselected);
+    formData.append("Womenselected", Womenselected);
+    formData.append(" Bagselected", Bagselected);
+    formData.append("Watchesselected", Watchesselected);
+    formData.append("Shoesselected", Shoesselected);
+    formData.append("Jacketselected", Jacketselected);
+    formData.append("Sselected", Sselected);
+    formData.append("Mselected", Mselected);
+    formData.append(" Lselected", Lselected);
+    formData.append(" XLselected", XLselected);
+
+    Object.values(images).forEach((file) => {
+      if (file) {
+        formData.append("images", file);
+      }
+    });
+    dispatch(CreateProduct(formData));
   };
   const checkboxhandler = (D) => {
     let index = sizes.indexOf(D);
@@ -112,7 +110,7 @@ const CreateProductPage = ({ history }) => {
         <title>Create Product</title>
       </Helmet>
       {error && <Text color="red.500">{error}</Text>}
-      <form onSubmit={submitHandler}>
+      <form onSubmit={submitHandler} encType="multipart/form-data">
         <div className="input-div one">
           Name :
           <div className="div">
@@ -174,21 +172,20 @@ const CreateProductPage = ({ history }) => {
               <Input
                 type="text"
                 value={countInStock}
-                placeholder="Enter price"
                 onChange={(e) => setcountInStock(e.target.value)}
               />
             </InputGroup>
           </div>
         </div>
         <div className="input-div one">
-          Description/Category
+          Description
           <div className="div">
             <Stack direction="column" spacing={4}>
               <InputGroup>
                 <Textarea
                   size="sm"
                   value={description}
-                  placeholder="Enter price"
+                  placeholder="Type Something about product.."
                   onChange={(e) => setdescription(e.target.value)}
                 />
               </InputGroup>
@@ -300,30 +297,24 @@ const CreateProductPage = ({ history }) => {
           </div>
         </div>
         <div className="input-div pass">
-          Urls for images:
-          <div className="div urls">
+          Upload Images:
+          <div className="image">
             <Box>
               <Stack direction="column">
                 <Input
-                  type="text"
-                  value={Url1}
-                  onChange={(e) => {
-                    setUrl1(e.target.value);
-                  }}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, "image1")}
                 />
                 <Input
-                  type="text"
-                  value={Url2}
-                  onChange={(e) => {
-                    setUrl2(e.target.value);
-                  }}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, "image2")}
                 />
                 <Input
-                  type="text"
-                  value={Url3}
-                  onChange={(e) => {
-                    setUrl3(e.target.value);
-                  }}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, "image3")}
                 />
               </Stack>
             </Box>

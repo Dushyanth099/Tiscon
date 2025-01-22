@@ -141,7 +141,7 @@ export const DeleteProduct = (id) => async (dispatch, getState) => {
   }
 };
 
-export const CreateProduct = (productData) => async (dispatch, getState) => {
+export const CreateProduct = (formData) => async (dispatch, getState) => {
   try {
     dispatch({
       type: PRODUCT_CREATE_REQUEST,
@@ -159,7 +159,7 @@ export const CreateProduct = (productData) => async (dispatch, getState) => {
 
     const { data } = await axios.post(
       `/api/products/create`,
-      productData,
+      formData,
       config
     );
     dispatch({

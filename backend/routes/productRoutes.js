@@ -9,10 +9,13 @@ import {
   createproductreview,
   uploadProducts,
 } from "../controlers/productControler.js";
+import { uploadMultipleImages } from "../multer/multer.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
-router.route("/").get(getProducts)
-router.route("/create").post(protect, admin, createProduct);
+router.route("/").get(getProducts);
+router
+  .route("/create")
+  .post(protect, admin, uploadMultipleImages, createProduct);
 router.post("/upload", protect, admin, uploadProducts);
 router.route("/:id/reviews").post(protect, createproductreview);
 router
@@ -20,6 +23,5 @@ router
   .get(getProductById)
   .delete(protect, admin, deleteProduct)
   .put(protect, admin, updateProduct);
-
 
 export default router;

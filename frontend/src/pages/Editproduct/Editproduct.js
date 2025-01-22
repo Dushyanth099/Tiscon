@@ -17,12 +17,12 @@ const Editproduct = ({ match, history }) => {
   const [name, setName] = useState("");
   const [description, setdescription] = useState("");
   const [price, setprice] = useState(0);
+  const [oldPrice, setOldPrice] = useState(0);
+  const [discount, setDiscount] = useState(0);
   const [countInStock, setcountInStock] = useState(0);
   const [Url1, setUrl1] = useState("");
   const [Url2, setUrl2] = useState("");
   const [Url3, setUrl3] = useState("");
-  const [oldPrice, setOldPrice] = useState(0);
-  const [discount, setDiscount] = useState(0);
 
   const [Images, setImages] = useState([]);
   const [sizes, setsizes] = useState([]);
@@ -65,6 +65,8 @@ const Editproduct = ({ match, history }) => {
       } else {
         setName(product.name);
         setprice(product.price);
+        setOldPrice(product.oldPrice);
+        setDiscount(product.discount);
         setdescription(product.description);
         setUrl1(product.images[0]);
         setUrl2(product.images[1]);
@@ -86,19 +88,19 @@ const Editproduct = ({ match, history }) => {
     }
 
     return () => {};
-  }, [dispatch, productId, history, product, category, successUpdate]);
+  }, [dispatch, productId, history, product, category, sizes, successUpdate]);
 
   const submitHandler = (e) => {
     Images.push(Url1);
     Images.push(Url2);
     Images.push(Url3);
-
     e.preventDefault();
+    const calculatedPrice = oldPrice - (oldPrice * discount) / 100;
     dispatch(
       UpdateProduct({
         _id: productId,
         name,
-        price: oldPrice - (oldPrice * discount) / 100,
+        price: calculatedPrice,
         oldPrice,
         discount,
         Images,
@@ -212,21 +214,20 @@ const Editproduct = ({ match, history }) => {
                       <Input
                         type="text"
                         value={countInStock}
-                        placeholder="Enter price"
                         onChange={(e) => setcountInStock(e.target.value)}
                       />
                     </InputGroup>
                   </div>
                 </div>
                 <div className="input-div one">
-                  Description/Category
+                  Description
                   <div className="div">
                     <Stack direction="column" spacing={4}>
                       <InputGroup>
                         <Textarea
                           size="sm"
                           value={description}
-                          placeholder="Enter price"
+                          placeholder="Type something about product.."
                           onChange={(e) => setdescription(e.target.value)}
                         />
                       </InputGroup>
