@@ -87,7 +87,7 @@ const Dashboard = () => {
     }));
 
   return (
-    <Box p={5}>
+    <Box p={14}>
       <Heading mb={5}>Dashboard</Heading>
 
       {/* Key Metrics */}

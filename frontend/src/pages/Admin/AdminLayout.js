@@ -10,7 +10,7 @@ const AdminLayout = ({ children }) => {
     <>
       {/* Admin Navbar */}
       <AdminNavbar />
-      <Box mt="60px" display="flex">
+      <Box  display="flex">
         {/* Sidebar */}
         <Box
           bg="gray.200"

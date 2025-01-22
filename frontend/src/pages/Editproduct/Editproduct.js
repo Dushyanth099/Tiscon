@@ -153,7 +153,6 @@ const Editproduct = ({ match, history }) => {
       category.push(D);
     }
   };
-
   return (
     <Box maxW="800px" mx="auto" mt={10} p={6} boxShadow="md" borderRadius="md">
       <Helmet>

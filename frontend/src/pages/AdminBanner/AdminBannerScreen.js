@@ -68,7 +68,7 @@ const AdminBannerScreen = () => {
   };
 
   return (
-    <Box p={8}>
+    <Box p={14}>
       <Heading mb={6}>Admin Banner Panel</Heading>
 
       {/* Form to Add a New Banner */}

@@ -23,6 +23,7 @@ import {
   Box,
   Input,
   Text,
+  Flex,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { AiFillDelete, AiOutlineEdit } from "react-icons/ai";
@@ -129,11 +130,15 @@ const Products = ({ history, match }) => {
         </Text>
       ) : (
         <>
-          <Stack className="button-container">
+          <Flex
+            className="button-container"
+            align="center"
+            justify="space-between"
+          >
             <Button
               leftIcon={<CgAdd size="20" />}
               className="ADDBUTTON"
-              colorScheme="blue"
+              colorScheme="teal"
               onClick={createproducthandler}
             >
               ADD
@@ -149,7 +154,7 @@ const Products = ({ history, match }) => {
                 Bulk Upload
               </Button>
             </form>
-          </Stack>{" "}
+          </Flex>
           {bulkMessage && (
             <Text color="green.500">
               {typeof bulkMessage === "object"
