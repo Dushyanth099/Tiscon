@@ -10,6 +10,7 @@ import {
   getUserByID,
   updateUser,
 } from "../controlers/userControler.js";
+import { uploadProfileImage } from "../multer/multer.js";
 import { admin, protect } from "../middleware/authMiddleware.js";
 
 router.route("/").post(registerUser).get(protect, admin, getUsers);
@@ -19,7 +20,7 @@ router.post("/login", authUser);
 router
   .route("/profile")
   .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
+  .put(protect, uploadProfileImage, updateUserProfile);
 
 router
   .route("/:id")

@@ -25,6 +25,10 @@ const bannerSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
     },
+    gender: {
+      type: String,
+      required: true,
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -34,18 +38,27 @@ const bannerSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
+const videoBannerSchema = mongoose.Schema(
+  {
+    videoUrl: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 const productSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User", //relation betwen the product and yhe user
+      ref: "User", //relation betwen the product and the user
     },
-    name: {
+    brandname: {
       type: String,
       required: true,
     },
+    SKU: { type: String, unique: true, required: true },
     images: [
       {
         type: String,
@@ -55,18 +68,40 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    category: [
-      {
+    productdetails: {
+      gender: {
         type: String,
         required: true,
       },
-    ],
-    sizes: [
-      {
+      category: {
         type: String,
         required: true,
       },
-    ],
+      subcategory: {
+        type: String,
+        required: true,
+      },
+      type: {
+        type: String,
+        required: true,
+      },
+      ageRange: {
+        type: String,
+        required: true,
+      },
+      color: {
+        type: String,
+        required: true,
+      },
+      fabric: {
+        type: String,
+        required: true,
+      },
+      sizes: {
+        type: String,
+        required: true,
+      },
+    },
     reviews: [reviewSchema],
     rating: {
       type: Number,
@@ -97,6 +132,27 @@ const productSchema = mongoose.Schema(
       default: 0,
     },
     banners: [bannerSchema],
+    VideoBanner: [videoBannerSchema],
+    shippingDetails: {
+      weight: {
+        type: Number,
+        required: true,
+      },
+      dimensions: {
+        length: { type: Number, required: true }, // Length in inches/cm
+        width: { type: Number, required: true }, // Width in inches/cm
+        height: { type: Number, required: true }, // Height in inches/cm
+      },
+      originAddress: {
+        street1: { type: String, required: true },
+        street2: { type: String },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        zip: { type: Number, required: true },
+        country: { type: String, required: true },
+      },
+    },
+    isFeatured: { type: Boolean, default: false },
   },
   {
     timestamps: true,

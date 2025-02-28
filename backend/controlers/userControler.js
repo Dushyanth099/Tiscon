@@ -71,6 +71,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      profilePicture: user.profilePicture,
       isDelivery: user.isDelivery,
       address: user.address,
     });
@@ -84,38 +85,55 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @route PUT /api/users/profile
 // @access Private
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  try {
+    console.log("Incoming profile update request:", req.body);
 
-  if (user) {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      console.error("User not found");
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    // Log file information
+    console.log("Uploaded file:", req.file);
+    console.log("Received address:", req.body.address);
+    // Handle file upload correctly
+    if (req.file) {
+      user.profilePicture = `/uploads/${req.file.filename}`;
+    }
+
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    user.address = {
-      doorNo: req.body.address?.doorNo || user.address.doorNo,
-      street: req.body.address?.street || user.address.street,
-      nearestLandmark:
-        req.body.address?.nearestLandmark || user.address.nearestLandmark,
-      city: req.body.address?.city || user.address.city,
-      state: req.body.address?.state || user.address.state,
-      pin: req.body.address?.pin || user.address.pin,
-      phoneNumber: req.body.address?.phoneNumber || user.address.phoneNumber,
-    };
+    
+    // ✅ Parse address if it exists and is a string
+    if (req.body.address) {
+      try {
+        user.address = JSON.parse(req.body.address); // ✅ Correctly parsing the string into an object
+      } catch (err) {
+        console.error("Error parsing address JSON:", err.message);
+        return res.status(400).json({ message: "Invalid address format" });
+      }
+    }
     if (req.body.password) {
-      user.password = req.body.password || user.password;
+      user.password = req.body.password;
     }
 
     const updatedUser = await user.save();
+    console.log("Updated user details:", updatedUser);
+
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      profilePicture: updatedUser.profilePicture,
       isAdmin: updatedUser.isAdmin,
-      isDelivery: updatedUser.isDelivery,
       address: updatedUser.address,
       token: generateToken(updatedUser._id),
     });
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+  } catch (error) {
+    console.error("Error updating user profile:", error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -150,9 +168,13 @@ const updateUser = asyncHandler(async (req, res) => {
 // @route GET /api/users
 // @access Private/admin
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find({}).populate(
+    "orderHistory",
+    "totalPrice isPaid createdAt _id"
+  );
   res.json(users);
 });
+
 // @desc Get user by ID
 // @route GET /api/users/:id
 // @access Private/admin
@@ -172,7 +194,7 @@ const getUserByID = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (user) {
-    await user.remove();
+    await user.deleteOne({ _id: req.params.id });
     res.json({ message: "User removed" });
   } else {
     res.status(404);

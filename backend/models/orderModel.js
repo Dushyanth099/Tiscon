@@ -1,16 +1,62 @@
 import mongoose from "mongoose";
-
+const shippingRateSchema = mongoose.Schema(
+  {
+    serviceType: { type: String, required: true },
+    totalNetCharge: { type: Number, required: true },
+    estimatedDeliveryDate: { type: String, default: "N/A" },
+    currency: { type: String, default: "USD" },
+  },
+  { timestamps: true }
+);
+const shipmentSchema = mongoose.Schema(
+  {
+    trackingNumber: { type: String, required: true }, // FedEx tracking number
+    shippingLabelUrl: { type: String }, // FedEx shipping label URL
+    shipmentStatus: { type: String, default: "Pending" }, // Shipment status (Pending, Shipped, Delivered, etc.)
+    senderDetails: {
+      contact: {
+        
+        personName: { type: String, required: true },
+        phoneNumber: { type: String, required: true },
+      },
+      address: {
+        streetLines: [{ type: String }],
+        city: { type: String, required: true },
+        stateOrProvinceCode: { type: String, required: true },
+        postalCode: { type: Number, required: true },
+        countryCode: { type: String, required: true },
+      },
+    },
+    recipientDetails: {
+      contact: {
+        personName: { type: String, required: true },
+        phoneNumber: { type: String, required: true },
+      },
+      address: {
+        streetLines: [{ type: String }],
+        city: { type: String, required: true },
+        stateOrProvinceCode: { type: String, required: true },
+        postalCode: { type: Number, required: true },
+        countryCode: { type: String, required: true },
+      },
+    },
+    packageDetails: {
+      weight: {
+        value: { type: Number, required: true },
+        units: { type: String, default: "KG" },
+      },
+    },
+  },
+  { timestamps: true }
+);
 const orderSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User", //relation betwen the order and the user
+      ref: "User",
     },
-    deliveryPerson: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Relation to delivery person
-    },
+
     orderItems: [
       {
         name: { type: String, required: true },
@@ -30,9 +76,9 @@ const orderSchema = mongoose.Schema(
       nearestLandmark: { type: String, default: "" },
       city: { type: String, default: "" },
       state: { type: String, default: "" },
-      pin: { type: String, default: "" },
+      pin: { type: Number, default: "" },
       country: { type: String, default: "" },
-      phoneNumber: { type: String, required: true }, // New field
+      phoneNumber: { type: Number, required: true }, // New field
     },
     paymentMethod: {
       type: String,
@@ -44,20 +90,18 @@ const orderSchema = mongoose.Schema(
       update_time: { type: String },
       email_adress: { type: String },
     },
+
     taxPrice: {
       type: Number,
       required: true,
-      default: 0.0,
     },
     shippingPrice: {
       type: Number,
       required: true,
-      default: 0.0,
     },
     totalPrice: {
       type: Number,
       required: true,
-      default: 0.0,
     },
     isPaid: {
       type: Boolean,
@@ -67,6 +111,7 @@ const orderSchema = mongoose.Schema(
     paidAt: {
       type: Date,
     },
+
     isDelivered: {
       type: Boolean,
       required: true,
@@ -75,26 +120,13 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
-    isPacked: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    isAcceptedByDelivery: {
-      type: Boolean,
-      default: false,
-    },
-    isReturned: {
-      type: Boolean,
-      default: false,
-    },
-    returnReason: {
-      type: String,
-    },
     invoiceDetails: {
       type: Object,
       default: null,
     },
+    trackingNumber: { type: String }, // Store FedEx tracking number
+    shippingRates: { type: [shippingRateSchema], default: [] },
+    shipmentDetails: [shipmentSchema],
   },
   {
     timestamps: true,

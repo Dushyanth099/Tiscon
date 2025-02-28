@@ -25,15 +25,37 @@ const userSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    profilePicture: { type: String, default: "/uploads/default.png" },
     address: {
       doorNo: { type: Number, default: null },
       street: { type: String, default: "" },
       nearestLandmark: { type: String, default: "" },
       city: { type: String, default: "" },
       state: { type: String, default: "" },
-      pin: { type: String, default: "" },
+      pin: { type: Number, default: "" },
       phoneNumber: { type: Number, default: null },
     },
+    cartItems: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "Product",
+        },
+        qty: {
+          type: Number,
+          required: true,
+          default: 1,
+        },
+        price: { type: Number, required: true },
+      },
+    ],
+    orderHistory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
   },
   {
     timestamps: true,

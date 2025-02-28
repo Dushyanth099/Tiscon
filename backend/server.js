@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import deliveryRoutes from "./routes/deliveryRoutes.js";
 import bannerRoutes from "./routes/bannerRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import cors from "cors";
@@ -27,6 +28,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/banners", bannerRoutes);
+app.use("/api/delivery", deliveryRoutes);
 
 app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)

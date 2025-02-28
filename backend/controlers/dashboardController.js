@@ -73,16 +73,43 @@ const getLatestOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({})
     .sort({ createdAt: -1 })
     .limit(10)
-    .populate("user", "name email");
-
+    .populate("user", "name email createdAt")
+    .populate({
+      path: "orderItems.product",
+      select: "name images price", // Select the images field
+    });
   const latestOrders = orders.map((order) => ({
     _id: order._id,
     customerName: order.user.name,
     total: order.totalPrice,
-    status: order.isDelivered ? "Delivered" : "Pending",
+    status: getOrderStatus(order),
+    createdAt: order.createdAt
+      ? new Date(order.createdAt).toLocaleDateString()
+      : "N/A",
+    paidAt: order.paidAt ? new Date(order.paidAt).toLocaleDateString() : "N/A", // Add payment date if needed
+    orderItems: order.orderItems.map((item) => ({
+      productName: item.product.name,
+      productImage: item.product.images,
+      productPrice: item.product.price,
+      quantity: item.quantity,
+      productId: item.product._id, // Make sure productId is added if you need it
+    })),
   }));
 
   res.json(latestOrders);
-});
+});// Function to get order status
+const getOrderStatus = (order) => {
+  if (order.isReturned) {
+    return { label: "Returned", color: "red" };
+  } else if (order.isDelivered) {
+    return { label: "Delivered", color: "green" };
+  } else if (order.isPacked) {
+    return { label: "Packed", color: "orange" };
+  } else if (order.isAcceptedByDelivery) {
+    return { label: "Shipped", color: "blue" };
+  } else {
+    return { label: "Ordered", color: "gray" };
+  }
+};
 
 export { getSalesData, getRevenueData, getLatestOrders, getTotalOrders };

@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-
+import User from "../models/userModel.js";
 import Order from "../models/orderModel.js";
 
 // @desc Create new order
@@ -16,6 +16,8 @@ const addorderitems = asyncHandler(async (req, res) => {
     taxPrice,
     shippingPrice,
     totalPrice,
+    shippingRates,
+    shipmentDetails,
   } = req.body;
   if (orderItems && orderItems.length === 0) {
     res.status(400);
@@ -31,8 +33,14 @@ const addorderitems = asyncHandler(async (req, res) => {
       taxPrice,
       shippingPrice,
       totalPrice,
+      shippingRates,
+      shipmentDetails,
     });
     const createdOrder = await order.save();
+    // Update user orderHistory
+    await User.findByIdAndUpdate(req.user._id, {
+      $push: { orderHistory: createdOrder._id },
+    });
 
     res.status(201).json(createdOrder);
   }
@@ -101,106 +109,13 @@ const GetMyOrders = asyncHandler(async (req, res) => {
 // @route GET /api/admin/orders
 // @access Private/admin
 const GetOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({}).populate("user", "id name");
+  const orders = await Order.find({}).populate("user", "id name").populate({
+    path: "orderItems.product",
+    select: "brandname images",
+  });
   res.json(orders);
 });
 
-//@desc Get orders for delivery person
-//@route GET/Api/orders/delivery
-// access Private Delivery
-const getOrdersForDeliveryPerson = asyncHandler(async (req, res) => {
-  const orders = await Order.find({
-    deliveryPerson: req.user._id,
-    isPacked: true,
-  }).populate("user", "name email");
-  res.json(orders);
-});
-
-//@desc Accept order
-// @route PUT/api/orders/delivery/accept/:id
-// access Private Delivery
-const acceptOrder = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id);
-  if (order && order.isPacked && !order.isAcceptedByDelivery) {
-    order.isAcceptedByDelivery = true;
-    await order.save();
-    res.json({ message: "Order accepted" });
-  } else {
-    res.status(400);
-    throw new Error("Order cannot be accepted");
-  }
-});
-
-// @desc Reject order
-//@route PUT/api/orders/delivery/reject/:id
-// access Private Delivery
-const rejectOrder = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id);
-  if (order && order.isPacked && !order.isAcceptedByDelivery) {
-    order.deliveryPerson = null; // Remove delivery person assignment
-    await order.save();
-    res.json({ message: "Order rejected" });
-  } else {
-    res.status(400);
-    throw new Error("Order cannot be rejected");
-  }
-});
-
-// @desc Mark order as completed
-// @route PUT/api/orders/delivery/complete/:id
-// access Private Delivery
-const markOrderAsCompleted = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id);
-  if (order && order.isAcceptedByDelivery && !order.isDelivered) {
-    order.isDelivered = true;
-    order.deliveredAt = Date.now();
-    if (order.paymentMethod === "COD") {
-      order.isPaid = true;
-      order.paidAt = Date.now();
-    }
-
-    await order.save();
-    res.json({ message: "Order marked as completed" });
-  } else {
-    res.status(400);
-    throw new Error("Order cannot be marked as completed");
-  }
-});
-
-// @desc Mark order as returned
-// @route PUT/api/orders/delivery/return/:id
-// access Private Delivery
-const markOrderAsReturned = asyncHandler(async (req, res) => {
-  const { returnReason } = req.body;
-  const order = await Order.findById(req.params.id);
-  if (order && order.isDelivered) {
-    order.isReturned = true;
-    order.returnReason = returnReason;
-    await order.save();
-    res.json({ message: "Order marked as returned" });
-  } else {
-    res.status(400);
-    throw new Error("Order cannot be marked as returned");
-  }
-});
-
-// @desc Assign order to delivery person
-// @route PUT/api/orders/:id/assign
-// access Private Admin
-const assignOrderToDeliveryPerson = asyncHandler(async (req, res) => {
-  const { deliveryPersonId } = req.body;
-  const order = await Order.findById(req.params.id);
-
-  if (order) {
-    order.deliveryPerson = deliveryPersonId;
-    order.isPacked = true;
-    await order.save();
-    res.json({ message: "Order assigned to delivery person" });
-  } else {
-    res.status(404);
-    throw new Error("Order not found");
-  }
-});
 // @desc    Generate Invoice
 // @route   GET /api/orders/:id/invoice
 // @access  Private/Admin
@@ -237,6 +152,69 @@ const generateInvoice = asyncHandler(async (req, res) => {
     throw new Error("Order not found");
   }
 });
+// @desc  getlocations
+// @route   GET /api/incomebycity
+// @access  Private/Admin
+const incomebycity = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ isPaid: true });
+
+  // Calculate total income
+  const totalIncome = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+
+  // Format total income
+  const formattedTotalIncome = `Rs.${totalIncome}`;
+
+  // Calculate income by city
+  const incomeByCity = orders.reduce((acc, order) => {
+    const city = order.shippingAddress.city || "Unknown"; // Handle missing city
+    acc[city] = (acc[city] || 0) + order.totalPrice;
+    return acc;
+  }, {});
+  res.setHeader("Cache-Control", "no-store");
+  res.json({
+    totalIncome: formattedTotalIncome,
+    incomeByCity: Object.entries(incomeByCity).map(([city, income]) => ({
+      city,
+      income: `Rs. ${income}`, // Format as $k
+    })),
+  });
+});
+// @desc    Fetch transaction details with filters
+// @route   GET /api/orders/transactions
+// @access  Private/Admin
+const getTransactions = asyncHandler(async (req, res) => {
+  let { startDate, endDate, paymentType, status } = req.query;
+
+  let query = {};
+
+  if (startDate && endDate) {
+    query.createdAt = {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    };
+  }
+
+  if (paymentType) {
+    query.paymentMethod = paymentType;
+  }
+
+  if (status) {
+    if (status === "Paid") {
+      query.isPaid = true;
+    } else if (status === "Unpaid") {
+      query.isPaid = false;
+    } else if (status === "Delivered") {
+      query.isDelivered = true;
+    }
+  }
+
+  const transactions = await Order.find(query).select(
+    "createdAt paymentMethod isPaid isDelivered totalPrice taxPrice shippingPrice orderItems"
+  );
+
+  res.json(transactions);
+});
+
 export {
   addorderitems,
   getOrderById,
@@ -244,11 +222,7 @@ export {
   GetMyOrders,
   GetOrders,
   updateOrderToDelivered,
-  getOrdersForDeliveryPerson,
-  acceptOrder,
-  rejectOrder,
-  markOrderAsCompleted,
-  markOrderAsReturned,
-  assignOrderToDeliveryPerson,
   generateInvoice,
+  incomebycity,
+  getTransactions,
 };
