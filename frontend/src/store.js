@@ -19,14 +19,12 @@ import {
   OrderListMyreducer,
   OrderListreducer,
   OrderPayreducer,
-  deliveryOrdersReducer,
-  orderAcceptReducer,
-  orderRejectReducer,
-  orderCompleteReducer,
-  orderReturnReducer,
-  orderAssignReducer,
   invoiceReducer,
+  incomeReducer,
+  transactionListReducer,
 } from "./reducers/orderReducers";
+
+import { shipmentReducer, shippingReducer } from "./reducers/deliveryReducers";
 
 import {
   userLoginReducer,
@@ -49,6 +47,10 @@ import {
   bannerAddReducer,
   bannerListReducer,
   bannerDeleteReducer,
+  videoBannerUploadReducer,
+  videoBannerListReducer,
+  videoBannerDeleteReducer,
+  userVideoBannerListReducer,
 } from "./reducers/bannerReducers";
 
 const reducer = combineReducers({
@@ -73,12 +75,6 @@ const reducer = combineReducers({
   orderMylist: OrderListMyreducer,
   orderList: OrderListreducer,
   orderDeliver: OrderDeliverreducer,
-  deliveryOrders: deliveryOrdersReducer,
-  orderAccept: orderAcceptReducer,
-  orderReject: orderRejectReducer,
-  orderComplete: orderCompleteReducer,
-  orderReturn: orderReturnReducer,
-  orderAssign: orderAssignReducer,
   sales: salesReducer,
   revenue: revenueReducer,
   orders: ordersReducer,
@@ -87,21 +83,23 @@ const reducer = combineReducers({
   bannerList: bannerListReducer,
   bannerDelete: bannerDeleteReducer,
   totalOrders: totalOrdersReducer,
+  addvideoBanners: videoBannerUploadReducer,
+  getvideoBanners: videoBannerListReducer,
+  deletevideoBanners: videoBannerDeleteReducer,
+  userVideoBanners: userVideoBannerListReducer,
+  income: incomeReducer,
+  transactionList: transactionListReducer,
+  shipping: shippingReducer,
+  shipment: shipmentReducer,
 });
-const cartItemsFromStorage = localStorage.getItem("cartItems")
-  ? JSON.parse(localStorage.getItem("cartItems"))
-  : [];
-const shippingAddressFromStorage = localStorage.getItem("shippingAddress")
-  ? JSON.parse(localStorage.getItem("shippingAddress"))
-  : {};
+
 const userInfoFromStorage = localStorage.getItem("userInfo")
   ? JSON.parse(localStorage.getItem("userInfo"))
   : null;
 
 const initialState = {
   cart: {
-    cartItems: cartItemsFromStorage,
-    shippingAddress: shippingAddressFromStorage,
+    cartItems: [],
   },
   userLogin: { userInfo: userInfoFromStorage },
 };

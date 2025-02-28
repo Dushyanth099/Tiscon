@@ -12,9 +12,12 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { USER_UPDATE_RESET } from "../../constants/userConstants";
 import { Helmet } from "react-helmet";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const Edituser = ({ match, history }) => {
-  const userId = match.params.id;
+const Edituser = () => {
+  const { id: userId } = useParams();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isAdmin, setisAdmin] = useState(false);
@@ -38,7 +41,7 @@ const Edituser = ({ match, history }) => {
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: USER_UPDATE_RESET });
-      history.push("/admin/userlist");
+      navigate("/admin/userlist");
     } else {
       if (!user.name || user._id !== userId) {
         dispatch(getUserDetails(userId));
@@ -51,11 +54,11 @@ const Edituser = ({ match, history }) => {
     }
 
     return () => {};
-  }, [dispatch, userId, history, user, successUpdate]);
+  }, [dispatch, userId, navigate, user, successUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(updateUser({ _id: userId, name, email, isAdmin ,isDelivery}));
+    dispatch(updateUser({ _id: userId, name, email, isAdmin, isDelivery }));
   };
 
   const inputs = document.querySelectorAll(".inputa");

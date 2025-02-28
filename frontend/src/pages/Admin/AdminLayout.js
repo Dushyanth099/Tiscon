@@ -1,85 +1,195 @@
 import React, { useState } from "react";
-import { Box, Grid, GridItem, Button, VStack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Grid,
+  GridItem,
+  Button,
+  VStack,
+  MenuList,
+  Menu,
+  MenuItem,
+  MenuButton,
+  IconButton,
+} from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
+import {
+  ChevronDownIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+} from "@chakra-ui/icons";
 import AdminNavbar from "./AdminNavbar";
 
 const AdminLayout = ({ children }) => {
   const [activeTab, setActiveTab] = useState("users");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
     <>
       {/* Admin Navbar */}
       <AdminNavbar />
-      <Box  display="flex">
+      <Box display="flex">
         {/* Sidebar */}
         <Box
-          bg="gray.200"
+          bg="gray.900"
           p={4}
-          minW="250px"
+          color="white"
+          width={isSidebarOpen ? "280px" : "60px"}
           height="100vh"
           position="fixed"
-          top="60px"
+          top="56px"
+          transition="width 0.3s ease-in-out"
+          overflow="hidden"
         >
           <VStack spacing={4} align="stretch">
-            <Button
-              onClick={() => setActiveTab("users")}
-              as={RouterLink}
-              to="/admin/userlist"
-              colorScheme={activeTab === "users" ? "teal" : "gray"}
-              variant="ghost"
-            >
-              Users
-            </Button>
-            <Button
-              onClick={() => setActiveTab("orders")}
-              as={RouterLink}
-              to="/admin/orderlist"
-              colorScheme={activeTab === "orders" ? "teal" : "gray"}
-              variant="ghost"
-            >
-              Orders List
-            </Button>
-            <Button
-              onClick={() => setActiveTab("products")}
-              as={RouterLink}
-              to="/admin/productlist"
-              colorScheme={activeTab === "products" ? "teal" : "gray"}
-              variant="ghost"
-            >
-              Product List
-            </Button>
-            <Button
-              onClick={() => setActiveTab("sales")}
-              as={RouterLink}
-              to="/admin/dashboard"
-              colorScheme={activeTab === "sales" ? "teal" : "gray"}
-              variant="ghost"
-            >
-              Sales Report
-            </Button>
-            <Button
-              onClick={() => setActiveTab("shop")}
-              as={RouterLink}
-              to="/shop"
-              colorScheme={activeTab === "shop" ? "teal" : "gray"}
-              variant="ghost"
-            >
-              Shop Page
-            </Button>
-            <Button
-              onClick={() => setActiveTab("banner")}
-              as={RouterLink}
-              to="/adminbanner"
-              colorScheme={activeTab === "banner" ? "teal" : "gray"}
-              variant="ghost"
-            >
-              BannerPage
-            </Button>
+            {/* Toggle Sidebar Button */}
+            <IconButton
+              icon={
+                isSidebarOpen ? (
+                  <ArrowLeftIcon boxSize={6} color="white" />
+                ) : (
+                  <ArrowRightIcon boxSize={6} color="white" />
+                )
+              }
+              bg="transparent"
+              _hover={{ bg: "gray.700" }}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              aria-label="Toggle Sidebar"
+            />
+
+            {isSidebarOpen && (
+              <>
+                <Button
+                  onClick={() => setActiveTab("users")}
+                  as={RouterLink}
+                  to="/admin/userlist"
+                  bg="white"
+                  color="black"
+                  colorScheme={activeTab === "users" ? "teal" : "gray"}
+                  variant="ghost"
+                >
+                  🧑‍💼 Users
+                </Button>
+                {/* Orders Dropdown */}
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    bg="white"
+                    color="black"
+                    variant="ghost"
+                  >
+                    📦Orders
+                  </MenuButton>
+                  <MenuList bg="white" borderColor="gray.300" color="black">
+                    <MenuItem as={RouterLink} to="/admin/orderlist">
+                      Orders Page
+                    </MenuItem>
+                    <MenuItem as={RouterLink} to="/admin/assignorders">
+                      Assign Orders
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+                {/* Products Dropdown */}
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    bg="white"
+                    color="black"
+                    variant="ghost"
+                  >
+                    🏷️ Products
+                  </MenuButton>
+                  <MenuList bg="white" borderColor="gray.300" color="black">
+                    <MenuItem as={RouterLink} to="/admin/productlist">
+                      Product List
+                    </MenuItem>
+                    <MenuItem as={RouterLink} to="/admin/product/create">
+                      Add Product
+                    </MenuItem>
+                    <MenuItem as={RouterLink} to="/admin/bulkupload">
+                      Bulk Upload
+                    </MenuItem>
+                    <MenuItem as={RouterLink} to="/productsoverview">
+                      Product Overview
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+                <Button
+                  onClick={() => setActiveTab("incomestats")}
+                  as={RouterLink}
+                  to="/admin/incomebycity"
+                  bg="white"
+                  color="black"
+                  variant="ghost"
+                >
+                  📈 Statistics
+                </Button>
+                <Button
+                  onClick={() => setActiveTab("home")}
+                  as={RouterLink}
+                  to="/"
+                  bg="white"
+                  color="black"
+                  variant="ghost"
+                >
+                  🛒 Shop Page
+                </Button>
+                {/* Banners Dropdown */}
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    bg="white"
+                    color="black"
+                    rightIcon={<ChevronDownIcon />}
+                    variant="ghost"
+                  >
+                    📊 Banners
+                  </MenuButton>
+                  <MenuList bg="white" borderColor="gray.300" color="black">
+                    <MenuItem as={RouterLink} to="/adminbanner">
+                      Image Banner
+                    </MenuItem>
+                    <MenuItem as={RouterLink} to="/adminvideobanner">
+                      Video Banner
+                    </MenuItem>
+                  </MenuList>
+                </Menu>{" "}
+                <Button
+                  onClick={() => setActiveTab("transactions")}
+                  as={RouterLink}
+                  to="/transactions"
+                  bg="white"
+                  color="black"
+                  variant="ghost"
+                >
+                  💸 Transactions
+                </Button>
+                <Button
+                  onClick={() => setActiveTab("settings")}
+                  as={RouterLink}
+                  to="/profile"
+                  bg="white"
+                  color="black"
+                  variant="ghost"
+                >
+                  🔧 Settings
+                </Button>
+              </>
+            )}
           </VStack>
         </Box>
 
-        {/* Main Content */}
-        <Box ml="250px" p={6} width="full">
+        {/* Right Side Content */}
+        <Box
+          ml={isSidebarOpen ? "250px" : "60px"}
+          p={6}
+          height="100vh"
+          width="full"
+          bg={"white"}
+          overflowY="auto"
+          transition="margin-left 0.3s ease-in-out"
+        >
           <Grid templateColumns="repeat(1, 1fr)" gap={6}>
             <GridItem>{children}</GridItem>
           </Grid>

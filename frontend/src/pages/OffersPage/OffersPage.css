@@ -1,0 +1,37 @@
+.offers {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+.offers h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.offers-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.offerscard {
+  width: 350px;
+  text-align: center;
+  background: linear-gradient(45deg, #1e90ff, #00bfff);
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.offerscard:hover {
+  transform: translateY(-10px);
+  background-color: #1a1a1a;
+}
+
+.offersimage img {
+  width: 100%;
+  border-radius: 10px;
+}

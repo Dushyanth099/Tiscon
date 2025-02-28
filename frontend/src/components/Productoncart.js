@@ -13,6 +13,7 @@ const Productoncart = ({ product }) => {
   const select = useRef(null);
   useEffect(() => {
     console.log(product.images);
+    console.log("product details in productoncart Page", product);
     return () => {};
   }, []);
 
@@ -50,9 +51,9 @@ const Productoncart = ({ product }) => {
         <h2>
           {(qty === 0
             ? product.qty * product.price
-            : qty * product.price 
+            : qty * product.price
           ).toFixed(2)}
-          Rs 
+          Rs
         </h2>
       </div>
       <VscChromeClose

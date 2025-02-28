@@ -10,6 +10,7 @@ import {
   Table,
   Text,
   Thead,
+  Avatar,
   Tbody,
   Tr,
   Th,
@@ -18,11 +19,14 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { Helmet } from "react-helmet";
+import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import { AiFillDelete, AiOutlineEdit } from "react-icons/ai";
+import UsersPieChart from "./UsersPieChart";
 
-const Users = ({ history }) => {
+const Users = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const userList = useSelector((state) => state.userList);
   const { loading, error, users } = userList;
@@ -35,9 +39,9 @@ const Users = ({ history }) => {
     if (userInfo && userInfo.isAdmin) {
       dispatch(ListUsers());
     } else {
-      history.push("/login");
+      navigate("/login");
     }
-  }, [dispatch, history, successDelete, userInfo]);
+  }, [dispatch, navigate, successDelete, userInfo]);
 
   const deletehandler = (id) => {
     if (window.confirm("Are You Sure?")) {
@@ -49,7 +53,7 @@ const Users = ({ history }) => {
       <Helmet>
         <title>Users</title>
       </Helmet>
-      <h1 className="titlepanel"> Users :</h1>
+      <h1 className="titlepanel"> Users</h1>
       {loading ? (
         <div className="loading">
           <HashLoader color={"#1e1e2c"} loading={loading} size={40} />
@@ -58,16 +62,21 @@ const Users = ({ history }) => {
         <h1>error</h1>
       ) : (
         <Box overflowX="auto">
+          <UsersPieChart />
+          <h1 className="titlepanel"> Details</h1>
           <Table className="tableusers" variant="striped">
             <Thead>
               <Tr>
-                <Th textAlign="center" w="10%">
+                <Th textAlign="center" w="5%">
                   ID
                 </Th>
-                <Th textAlign="center" w="20%">
+                <Th textAlign="center" w="10%">
+                  Profile
+                </Th>
+                <Th textAlign="center" w="15%">
                   Name
                 </Th>
-                <Th textAlign="center" w="50%">
+                <Th textAlign="center" w="20%">
                   Email
                 </Th>
                 <Th textAlign="center" w="20%">
@@ -79,6 +88,9 @@ const Users = ({ history }) => {
                 <Th textAlign="center" w="10%">
                   Delivery
                 </Th>
+                <Th textAlign="center" w="10%">
+                  Orders
+                </Th>
                 <Th textAlign="center" w="10%"></Th>
               </Tr>
             </Thead>
@@ -86,6 +98,16 @@ const Users = ({ history }) => {
               {users.map((user) => (
                 <Tr key={user._id}>
                   <Td>{user._id}</Td>
+                  {/* Profile Picture */}
+                  <Td textAlign="center">
+                    <Avatar
+                      size="sm"
+                      name={user.name}
+                      src={
+                        user.profilePicture || "https://via.placeholder.com/50"
+                      }
+                    />
+                  </Td>
                   <Td>{user.name}</Td>
                   <Td>
                     <a href={`mailto:${user.email}`}></a>
@@ -103,7 +125,7 @@ const Users = ({ history }) => {
                           user.address.state,
                           user.address.pin,
                         ]
-                          .filter((field) => field) 
+                          .filter((field) => field)
                           .join(", ")}{" "}
                       </Text>
                     ) : (
@@ -124,6 +146,16 @@ const Users = ({ history }) => {
                       <div className="notpaid">NO</div>
                     )}
                   </Td>
+
+                  <Td textAlign="center">
+                    <Button colorScheme="purple" size="xs" fontWeight="bold">
+                      {user.orderHistory?.length
+                        ? user.orderHistory.length
+                        : "0"}{" "}
+                      Orders
+                    </Button>
+                  </Td>
+
                   <Td>
                     <Stack>
                       <Link to={`/admin/user/${user._id}/edit`}>

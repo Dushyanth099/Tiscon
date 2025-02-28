@@ -14,6 +14,7 @@ import {
   AlertTitle,
   AlertDescription,
   Heading,
+  Select,
   Text,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +29,7 @@ const AdminBannerScreen = () => {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [productId, setProductId] = useState("");
+  const [gender, setGender] = useState("male");
 
   const dispatch = useDispatch();
 
@@ -43,9 +45,9 @@ const AdminBannerScreen = () => {
   useEffect(() => {
     dispatch(listBanners());
   }, [dispatch, successAdd, successDelete]);
-
+  console.log("Banners in Redux:", banners);
   const handleAddBanner = () => {
-    if (!imageFile || !title || !subtitle || !productId) {
+    if (!imageFile || !title || !subtitle || !productId || !gender) {
       alert("All fields are required.");
       return;
     }
@@ -54,6 +56,7 @@ const AdminBannerScreen = () => {
     formData.append("title", title);
     formData.append("subtitle", subtitle);
     formData.append("productId", productId);
+    formData.append("gender", gender);
 
     dispatch(addBanner(formData));
 
@@ -61,6 +64,7 @@ const AdminBannerScreen = () => {
     setTitle("");
     setSubtitle("");
     setProductId("");
+    setGender("male");
   };
 
   const handleDeleteBanner = (id) => {
@@ -68,8 +72,8 @@ const AdminBannerScreen = () => {
   };
 
   return (
-    <Box p={14}>
-      <Heading mb={6}>Admin Banner Panel</Heading>
+    <Box p={14} bg="white">
+      <h1 className="titlepanel">Image Banners</h1>
 
       {/* Form to Add a New Banner */}
       <Box bg="gray.50" p={6} borderRadius="md" boxShadow="md" mb={8}>
@@ -112,6 +116,13 @@ const AdminBannerScreen = () => {
               placeholder="Enter associated product ID"
             />
           </FormControl>
+          <FormControl id="gender" isRequired>
+            <FormLabel>Gender</FormLabel>
+            <Select value={gender} onChange={(e) => setGender(e.target.value)}>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </Select>
+          </FormControl>
           <Button
             colorScheme="blue"
             onClick={handleAddBanner}
@@ -133,44 +144,91 @@ const AdminBannerScreen = () => {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : (
-        <VStack spacing={6} align="stretch">
-          {banners.map((banner) => (
-            <Box
-              key={banner._id}
-              p={4}
-              bg="white"
-              borderRadius="md"
-              boxShadow="md"
-              border="1px solid"
-              borderColor="gray.200"
-            >
-              <HStack spacing={4} align="center">
-                <Image
-                  src={banner.image}
-                  alt={banner.title}
-                  boxSize="100px"
-                  objectFit="cover"
+        <>
+          <Heading size="md" mb={4}>
+            Male Banners
+          </Heading>
+          <VStack spacing={6} align="stretch">
+            {banners
+              .filter((banner) => banner.gender === "male")
+              .map((banner) => (
+                <Box
+                  key={banner._id}
+                  p={4}
+                  bg="white"
                   borderRadius="md"
-                />
-                <Box flex={1}>
-                  <Heading size="sm">{banner.title}</Heading>
-                  <Text fontSize="sm" color="gray.600">
-                    {banner.subtitle}
-                  </Text>
-                </Box>
-                <Button
-                  colorScheme="red"
-                  onClick={() => handleDeleteBanner(banner._id)}
+                  boxShadow="md"
+                  border="1px solid"
+                  borderColor="gray.200"
                 >
-                  Delete
-                </Button>
-              </HStack>
-            </Box>
-          ))}
-        </VStack>
+                  <HStack spacing={4} align="center">
+                    <Image
+                      src={banner.image}
+                      alt={banner.title}
+                      boxSize="100px"
+                      objectFit="cover"
+                      borderRadius="md"
+                    />
+                    <Box flex={1}>
+                      <Heading size="sm">{banner.title}</Heading>
+                      <Text fontSize="sm" color="gray.600">
+                        {banner.subtitle}
+                      </Text>
+                    </Box>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => handleDeleteBanner(banner._id)}
+                    >
+                      Delete
+                    </Button>
+                  </HStack>
+                </Box>
+              ))}
+          </VStack>
+
+          <Heading size="md" mt={8} mb={4}>
+            Female Banners
+          </Heading>
+          <VStack spacing={6} align="stretch">
+            {banners
+              .filter((banner) => banner.gender === "female")
+              .map((banner) => (
+                <Box
+                  key={banner._id}
+                  p={4}
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                  border="1px solid"
+                  borderColor="gray.200"
+                >
+                  <HStack spacing={4} align="center">
+                    <Image
+                      src={banner.image}
+                      alt={banner.title}
+                      boxSize="100px"
+                      objectFit="cover"
+                      borderRadius="md"
+                    />
+                    <Box flex={1}>
+                      <Heading size="sm">{banner.title}</Heading>
+                      <Text fontSize="sm" color="gray.600">
+                        {banner.subtitle}
+                      </Text>
+                    </Box>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => handleDeleteBanner(banner._id)}
+                    >
+                      Delete
+                    </Button>
+                  </HStack>
+                </Box>
+              ))}
+          </VStack>
+        </>
       )}
     </Box>
   );
 };
-
 export default AdminBannerScreen;

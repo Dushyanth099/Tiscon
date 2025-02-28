@@ -1,0 +1,70 @@
+/* Title Panel Styling */
+.titlepanel {
+  background: linear-gradient(135deg, #4b79a1, #283e51);
+  color: white;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+/* Order Table Styling */
+.tableusers {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableusers th,
+.tableusers td {
+  text-align: center;
+  padding: 12px;
+}
+
+.tableusers th {
+  background-color: #283e51;
+  color: white;
+  font-weight: bold;
+}
+
+.tableusers tr:nth-child(even) {
+  background-color: #f3f3f3;
+}
+
+.tableusers tr:hover {
+  background-color: #d6eaf8;
+  transition: 0.3s;
+}
+
+/* Status Button */
+.status-btn {
+  border-radius: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Paid & Not Paid */
+.paid {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.notpaid {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}

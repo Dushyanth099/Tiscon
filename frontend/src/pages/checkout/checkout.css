@@ -121,6 +121,11 @@
   justify-content: flex-end;
 }
 
+.info-check {
+  background-color: white;
+  color: black;
+}
+
 /* MEDIA QUERIS SCREEN 768px */
 @media screen and (max-width: 768px) {
   .info-check {

@@ -16,7 +16,7 @@ const Empty = () => {
                 Wow Such an empty Cart
             </h1>
              
-            <Link to = '/shop' className ='goshop' onMouseOver = {()=>{setarrow(true)}} onMouseLeave = {()=>{setarrow(false)}}>
+            <Link to = '/' className ='goshop' onMouseOver = {()=>{setarrow(true)}} onMouseLeave = {()=>{setarrow(false)}}>
             Go Shop
             {!arrow ? <RiArrowRightSLine className = 'arrow' /> : <BsArrowBarRight className = 'arrow'/> }
             </Link>

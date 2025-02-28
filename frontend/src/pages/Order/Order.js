@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { PayPalButton } from "react-paypal-button-v2";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdDoneAll } from "react-icons/io";
-import HashLoader from "react-spinners/HashLoader";
+
 import {
   getOrderDetails,
   payOrder,
@@ -18,16 +17,25 @@ import {
 } from "../../constants/orderConstants";
 import { Button } from "@chakra-ui/button";
 import OrderTracking from "../Tracking/OrderTracking";
-
-const Order = ({ match, history }) => {
-  const [sdkReady, setsdkReady] = useState(false);
-  const orderId = match.params.id;
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Text,
+  VStack,
+  HStack,
+  Divider,
+  Stack,
+  Badge,
+  Spinner,
+  useColorModeValue,
+} from "@chakra-ui/react";
+const Order = () => {
+  const { id: orderId } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
-  const orderPay = useSelector((state) => state.orderPay);
-  const { loading: loadingpay, success: successPay } = orderPay;
-
   const orderDeliver = useSelector((state) => state.orderDeliver);
   const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
   const userLogin = useSelector((state) => state.userLogin);
@@ -42,185 +50,161 @@ const Order = ({ match, history }) => {
   }
   useEffect(() => {
     if (!userInfo) {
-      history.push("/login");
+      navigate("/login");
     }
-    const addPaypalscript = async () => {
-      const { data: clientId } = await axios.get("/api/config/paypal");
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.async = true;
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
-      script.onload = () => {
-        setsdkReady(true);
-      };
-      document.body.appendChild(script);
-    };
-    if (!order || successPay || successDeliver || order._id !== orderId) {
-      dispatch({
-        type: ORDER_PAY_RESET,
-      });
+
+    if (!order || successDeliver || order._id !== orderId) {
       dispatch({
         type: ORDER_DELIVER_RESET,
       });
       dispatch(getOrderDetails(orderId));
-    } else if (!order.isPaid) {
-      if (!window.paypal) {
-        addPaypalscript();
-      } else {
-        setsdkReady(true);
-      }
     }
-  }, [
-    dispatch,
-    orderId,
-    history,
-    order,
-    successPay,
-    orderPay,
-    successDeliver,
-    userInfo,
-  ]);
-  const successpaymenthandler = (paymentResult) => {
-    dispatch(payOrder(orderId, paymentResult));
-  };
-  const deliverhandler = () => {
+  }, [dispatch, orderId, navigate, order, successDeliver, userInfo]);
+
+  const deliverHandler = () => {
     dispatch(deliverOrder(order));
   };
-  return loading || loadingDeliver ? (
-    <div className="loading-product">
-      <HashLoader
-        color={"#1e1e2c"}
-        loading={loading || loadingDeliver}
-        size={50}
-      />
-    </div>
-  ) : error ? (
-    <h1>{error}</h1>
-  ) : (
-    <div className="placeorder">
+  return (
+    <Box bg={useColorModeValue("gray.100", "gray.800")} minH="100vh" py={10}>
       <Helmet>
-        <title>ORDER</title>
+        <title>Order Details</title>
       </Helmet>
-      <div className="informations-placeorder">
-        <div className="shipping-placeorder">
-          <h2>Shipping</h2>
-          <p>
-                <strong>Name: </strong>
-                
-            {order.user.name}
-          </p>
-          <p>
-            <strong> Email: </strong>
-            <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
-          </p>
-          <p>
-            <strong>Address: </strong>
-            {order.shippingAddress.doorNo}, {order.shippingAddress.street},
-            {order.shippingAddress.nearestLandmark},<br />
-            {order.shippingAddress.city}, {order.shippingAddress.state}-
-            {order.shippingAddress.pin}, {order.shippingAddress.country},{" "}
-            {order.shippingAddress.phoneNumber},
-            {order.isDelivered ? (
-              <div className="paid">Delivered at {order.deliveredAt}</div>
-            ) : (
-              <div className="notpaid">NOT Delivered YET</div>
-            )}
-          </p>
-        </div>
-        <hr className="hr" />
-        <div className="payment-placeorder">
-          <h2>Payment Method</h2>
-          <p>
-            <strong>Method: </strong>
-            {order.paymentMethod}
-            {order.isPaid ? (
-              <div className="paid">PAID AT {order.paidAt}</div>
-            ) : (
-              <div className="notpaid">NOT PAID YET</div>
-            )}
-          </p>
-        </div>
-        <hr className="hr" />
-        <div>
-          <h2>Order Items: </h2>
-          {order.orderItems.length === 0 ? (
-            <p>Your order is empty</p>
-          ) : (
-            <div className="orders-placeorder">
-              {order.orderItems.map((item, index) => (
-                <p key={index}>
-                  <span className="color-name">
-                    <Link to={`/product/${item.product}`}>{item.name}</Link>
-                  </span>{" "}
-                  <b>
-                    {item.qty} x Rs. {item.price} = Rs. {item.qty * item.price}
-                  </b>
-                  <hr className="hr" />
-                </p>
-              ))}
-            </div>
-          )}
-        </div>
-        <OrderTracking order={order} />
-      </div>
-      <div className="your-products">
-        <div className="cart-summ">
-          <h1>Order Summary</h1>
 
-          <div className="calculs-placeorder">
-            <h3>Items: </h3>
-            <p>Rs. {order.itemsPrice}</p>
-            <h3>Shipping: </h3>
-            <p>Rs. {order.shippingPrice}</p>
-            <h3>Tax: </h3>
-            <p>Rs. {order.taxPrice}</p>
-            <h3>Total: </h3>
-            <p>Rs. {order.totalPrice}</p>
-          </div>
-        </div>
-        <div className="bottominfos">
-          <h1 className="orderid">Order : {order._id}</h1>
-          {!order.isPaid && (
-            <>
-              {loadingpay && (
-                <div className="loading-product">
-                  <HashLoader color={"#1e1e2c"} loading={loading} size={50} />
-                </div>
+      {loading || loadingDeliver ? (
+        <VStack justify="center" minH="80vh">
+          <Spinner size="xl" />
+        </VStack>
+      ) : error ? (
+        <Text color="red.500">{error}</Text>
+      ) : (
+        <Box maxW="1200px" mx="auto" p={6}>
+          <Stack direction={{ base: "column", md: "row" }} spacing={6}>
+            {/* Left Side - Order Info */}
+            <VStack
+              flex="2"
+              bg="white"
+              p={6}
+              borderRadius="md"
+              boxShadow="lg"
+              align="stretch"
+            >
+              <Text fontSize="2xl" fontWeight="bold">
+                Shipping Information
+              </Text>
+              <Divider />
+              <Text>
+                <strong>Name:</strong> {order.user.name}
+              </Text>
+              <Text>
+                <strong>Email:</strong>{" "}
+                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+              </Text>
+              <Text>
+                <strong>Address:</strong> {order.shippingAddress.doorNo},{" "}
+                {order.shippingAddress.street},
+                {order.shippingAddress.nearestLandmark},{" "}
+                {order.shippingAddress.city}, {order.shippingAddress.state} -{" "}
+                {order.shippingAddress.pin}, {order.shippingAddress.country}
+                {order.shippingAddress.phoneNumber}
+              </Text>
+              <Text>
+                {order.isDelivered ? (
+                  <Badge colorScheme="green">
+                    Delivered at {order.deliveredAt}
+                  </Badge>
+                ) : (
+                  <Badge colorScheme="red">Not Delivered</Badge>
+                )}
+              </Text>
+
+              <Text fontSize="2xl" fontWeight="bold" mt={4}>
+                Payment Method
+              </Text>
+              <Divider />
+              <Text>
+                <strong>Method:</strong> {order.paymentMethod}
+              </Text>
+              <Text>
+                {order.isPaid ? (
+                  <Badge colorScheme="green">Paid at {order.paidAt}</Badge>
+                ) : (
+                  <Badge colorScheme="red">Not Paid</Badge>
+                )}
+              </Text>
+
+              <Text fontSize="2xl" fontWeight="bold" mt={4}>
+                Order Items
+              </Text>
+              <Divider />
+              {order.orderItems.map((item) => (
+                <HStack key={item.product} justify="space-between">
+                  <Text>
+                    <Link
+                      to={`/product/${item.product}`}
+                      style={{ color: "blue", textDecoration: "underline" }}
+                    >
+                      {item.name}
+                    </Link>
+                  </Text>
+                  <Text>
+                    {item.qty} x Rs. {item.price} = Rs. {item.qty * item.price}
+                  </Text>
+                </HStack>
+              ))}
+
+              <OrderTracking order={order} />
+            </VStack>
+
+            {/* Right Side - Order Summary */}
+            <VStack flex="1" bg="white" p={6} borderRadius="md" boxShadow="lg">
+              <Text fontSize="xl" fontWeight="bold" color="gray.600">
+                Order ID:{" "}
+                <Text as="span" color="blue.500">
+                  {order._id}
+                </Text>
+              </Text>
+              <Divider />
+
+              <Text fontSize="2xl" fontWeight="bold">
+                Order Summary
+              </Text>
+              <Divider />
+
+              <HStack justify="space-between" w="full">
+                <Text>Items:</Text>
+                <Text fontWeight="bold">Rs. {order.itemsPrice}</Text>
+              </HStack>
+              <HStack justify="space-between" w="full">
+                <Text>Shipping:</Text>
+                <Text fontWeight="bold">Rs. {order.shippingPrice}</Text>
+              </HStack>
+              <HStack justify="space-between" w="full">
+                <Text>Tax:</Text>
+                <Text fontWeight="bold">Rs. {order.taxPrice}</Text>
+              </HStack>
+              <HStack justify="space-between" w="full">
+                <Text fontSize="xl" fontWeight="bold">
+                  Total:
+                </Text>
+                <Text fontSize="xl" fontWeight="bold">
+                  Rs. {order.totalPrice}
+                </Text>
+              </HStack>
+
+              {userInfo?.isAdmin && order.isPaid && !order.isDelivered && (
+                <Button
+                  colorScheme="blue"
+                  onClick={deliverHandler}
+                  leftIcon={<IoMdDoneAll size="16" />}
+                >
+                  Mark as Delivered
+                </Button>
               )}
-              {!sdkReady ? (
-                <div className="loading-product">
-                  <HashLoader color={"#1e1e2c"} loading={loading} size={50} />
-                </div>
-              ) : (
-                <div className="paypalbuttons">
-                  <PayPalButton
-                    className="buttonsp"
-                    amount={order.totalPrice}
-                    onSuccess={successpaymenthandler}
-                  />
-                </div>
-              )}
-            </>
-          )}
-          {userInfo &&
-            userInfo.isAdmin &&
-            order.isPaid &&
-            !order.isDelivered && (
-              <Button
-                height="40px"
-                width="200px"
-                size="lg"
-                onClick={deliverhandler}
-                leftIcon={<IoMdDoneAll size="16" />}
-                colorScheme="blue"
-                // size="xs"
-              >
-                DELIVERED
-              </Button>
-            )}
-        </div>
-      </div>
-    </div>
+            </VStack>
+          </Stack>
+        </Box>
+      )}
+    </Box>
   );
 };
 

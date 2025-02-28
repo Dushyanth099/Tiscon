@@ -1,0 +1,24 @@
+.Trust-details {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 3px;
+  background-color: white !important;
+  color: black;
+  height: 50px;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+}
+
+.trust-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.trust-item span {
+  font-size: 16px;
+  font-weight: bold;
+}

@@ -12,7 +12,7 @@
 }
 .line {
   margin: 0 8px;
-  background: #1a202c;
+  background: white;
   height: 0;
   width: 8px;
   transition: all 1s ease;
@@ -22,6 +22,7 @@
   height: 60px;
 }
 .title {
+  color: white;
   position: relative;
   right: 20px;
   opacity: 0;
@@ -33,6 +34,7 @@
 }
 .Content1,
 .Content2 {
+  color: white;
   text-align: justify;
   display: grid;
   column-gap: 60px;

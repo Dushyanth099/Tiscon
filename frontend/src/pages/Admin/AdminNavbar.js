@@ -1,17 +1,30 @@
 import React from "react";
+import { useRef } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Box, Flex, Button, HStack, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Button,
+  HStack,
+  Link,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+} from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../actions/userActions";
 
 const AdminNavbar = () => {
+  const cancelRef = useRef();
   const dispatch = useDispatch();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const logoutHandler = () => {
-    const confirmLogout = window.confirm("Are you sure you want to logout?");
-    if (confirmLogout) {
-      dispatch(logout());
-    }
+    dispatch(logout());
+    onClose();
   };
 
   return (
@@ -49,14 +62,61 @@ const AdminNavbar = () => {
           >
             Profile
           </Link>
-          <Button
-            onClick={logoutHandler}
-            variant="outline"
-            colorScheme="whiteAlpha"
-            size="sm"
+          <Button onClick={onOpen}>Logout</Button>
+          <AlertDialog
+            isOpen={isOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
           >
-            Logout
-          </Button>
+            <AlertDialogOverlay>
+              <AlertDialogContent
+                borderRadius="12px"
+                boxShadow="lg"
+                bg="white"
+                maxW="320px"
+                height={80}
+                p={6} /* ⬅️ Added padding */
+                animation="fadeIn 0.3s ease-in-out"
+              >
+                <AlertDialogHeader
+                  fontSize="md"
+                  fontWeight="bold"
+                  textAlign="center"
+                  p={4}
+                >
+                  🚀 Logout Confirmation
+                </AlertDialogHeader>
+
+                <AlertDialogBody textAlign="center" fontSize="md" p={5}>
+                  Are you sure you want to log out? <br />
+                </AlertDialogBody>
+
+                <AlertDialogFooter display="flex" justifyContent="center" p={4}>
+                  <Button
+                    ref={cancelRef}
+                    onClick={onClose}
+                    borderRadius="8px"
+                    bg="gray.300"
+                    color="black"
+                    px={6}
+                    _hover={{ bg: "gray.400" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={logoutHandler}
+                    ml={3}
+                    px={6}
+                    borderRadius="8px"
+                    _hover={{ bg: "red.600" }}
+                  >
+                    Logout
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
         </HStack>
       </Flex>
     </Box>

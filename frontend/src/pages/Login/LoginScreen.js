@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Form, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { BsArrowRight } from "react-icons/bs";
-import avatar from "./img/avatare.svg";
 import login from "../../actions/userActions";
-import login_svg from "./img/login.svg";
-import wave from "./img/wavev.png";
 import "./logincss.css";
+import { useLocation } from "react-router-dom";
+import Trust from "../../components/Trustdetails/Trust"
 
-const LoginScreen = ({ location, history }) => {
+const LoginScreen = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -23,13 +24,14 @@ const LoginScreen = ({ location, history }) => {
 
   const { error, userInfo } = userLogin;
 
-  const redirect = location.search ? location.search.split("=")[1] : "/";
+  // Extract the "redirect" query parameter safely
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
 
   useEffect(() => {
     if (userInfo) {
-      history.push(redirect);
+      navigate(redirect);
     }
-  }, [history, userInfo, redirect]);
+  }, [navigate, userInfo, redirect]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -56,79 +58,78 @@ const LoginScreen = ({ location, history }) => {
   });
 
   return (
-    <div>
-      <Helmet>
-        <title>Login</title>
-      </Helmet>
-      <Image className="wave" src={wave} />
+    <>
+      <div className="registerSc">
+        <Helmet>
+          <title>Login</title>
+        </Helmet>
 
-      <div className="containera">
-        <div className="imga">
-          <Image src={login_svg} />
-        </div>
-        <div className="login-content">
-          <form onSubmit={submitHandler}>
-            <h1>Member Login</h1>
-            {error && <h4>{error}</h4>}
-            <div className="input-div one">
-              <div className="i">
-                <i class="fas fa-envelope"></i>
+        <div className="containera">
+          <div className="login-content">
+            <form onSubmit={submitHandler}>
+              <h1>Member Login</h1>
+              {error && <h4>{error}</h4>}
+              <div className="input-div one">
+                <div className="i">
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div className="div">
+                  <input
+                    type="text"
+                    value={email}
+                    className="inputa"
+                    placeholder="Email"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="div">
-                <input
-                  type="text"
-                  value={email}
-                  className="inputa"
-                  placeholder="Email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+              <div className="input-div pass">
+                <div className="i">
+                  <i className="fas fa-lock"></i>
+                </div>
+                <div className="div">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    className="inputa"
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <span
+                    onClick={togglePasswordVisibility}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="input-div pass">
-              <div className="i">
-                <i className="fas fa-lock"></i>
-              </div>
-              <div className="div">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  className="inputa"
-                  placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <span
-                  onClick={togglePasswordVisibility}
-                  style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                  }}
-                >
-                  {showPassword ? "🙈" : "👁️"}
-                </span>
-              </div>
-            </div>
 
-            <input type="submit" className="btna" value="Login" />
+              <input type="submit" className="btna" value="Login" />
 
-            <div className="div-forgot">
-              <span>Forgot </span>
-              <Link className="text-forgot" to="/forgot">
-                Password?{" "}
+              <div className="div-forgot">
+                <span>Forgot </span>
+                <Link className="text-forgot" to="/forgot">
+                  Password?{" "}
+                </Link>
+              </div>
+              <Link
+                className="createAcc"
+                to={redirect ? `/register?redirect=${redirect}` : "/register"}
+              >
+                Create your Account <BsArrowRight size="25" />
               </Link>
-            </div>
-            <Link
-              className="createAcc"
-              to={redirect ? `/register?redirect=${redirect}` : "/register"}
-            >
-              Create your Account <BsArrowRight size="25" />
-            </Link>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+      <Trust/>
+    </>
   );
 };
 

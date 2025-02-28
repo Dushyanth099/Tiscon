@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import {
   PRODUCT_LIST_REQUEST,
@@ -42,10 +43,17 @@ export const listProducts =
       });
     }
   };
-export const ListproductbyCg = (Cg) => async (dispatch) => {
+
+export const Listproductbyfiters = (filters) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
-    const { data } = await axios.get(`/api/products/?Cg=${Cg}`);
+    let queryString = "?";
+    for (let key in filters) {
+      if (filters[key]) {
+        queryString += `&${key}=${filters[key]}`;
+      }
+    }
+    const { data } = await axios.get(`/api/products/${queryString}`);
     dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
     console.log(data);
   } catch (error) {
@@ -59,39 +67,6 @@ export const ListproductbyCg = (Cg) => async (dispatch) => {
   }
 };
 
-export const Listproductbyfiter = (filter) => async (dispatch) => {
-  try {
-    dispatch({ type: PRODUCT_LIST_REQUEST });
-    const { data } = await axios.get(`/api/products/?filter=${filter}`);
-    dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
-    console.log(data);
-  } catch (error) {
-    dispatch({
-      type: PRODUCT_LIST_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
-
-export const Listproductbyprice = (from, to) => async (dispatch) => {
-  try {
-    dispatch({ type: PRODUCT_LIST_REQUEST });
-    const { data } = await axios.get(`/api/products/?from=${from}&to=${to}`);
-    dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
-    console.log(data);
-  } catch (error) {
-    dispatch({
-      type: PRODUCT_LIST_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });

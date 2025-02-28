@@ -1,31 +1,24 @@
-import React,{useState,useEffect} from 'react'
-import Slider from '../components/Slider'
-import Cardscg from '../components/Cardscg'
-import CgDiv from '../components/CgDiv'
-import ProductsC from '../components/ProductsC'
-import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom'
-
+import React from "react";
+import ProductsC from "../components/ProductsC";
+import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import "./Home.css";
 
 const Home = () => {
- 
-    return (
-        <>
-        <Helmet>
-            <title>EAST CLOTHING</title>
-        </Helmet>
-             <div>
-                <Slider/>
-                 <div className="cards">
-                         <Cardscg title='Women'/>
-                         <Cardscg title='Men'/>
-                         <Cardscg title='Accessoires'/>                
-                 </div>
-                <CgDiv/>
-                <ProductsC/>
-        </div>
-        </>
-    )
-}
+  const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const gender = searchParams.get("gender");
+  useEffect(() => {
+    if (!gender) {
+      navigate("/?gender=Men", { replace: true });
+    }
+  }, [navigate, location]);
+  return (
+    <div>
+      <ProductsC />
+    </div>
+  );
+};
 
-export default Home
+export default Home;

@@ -6,18 +6,19 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  background-color: white;
 }
 .formedit {
   width: max-content;
   border-top: 2px black solid;
   padding: 20px;
 }
-.input-div.zz {
+/* .input-div.zz {
   margin: 20px;
-}
-.input-div.one {
+} */
+/* .input-div.one {
   margin: 20px;
-}
+} */
 .input-div.passs {
   display: flex;
   flex-direction: column;

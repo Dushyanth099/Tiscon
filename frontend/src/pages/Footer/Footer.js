@@ -13,16 +13,10 @@ const Footer = () => {
           <h1>Categories</h1>
           <ul>
             <li>
-              <Link to="/shop/?cg=Women">Women</Link>
+              <Link to="/?gender=Women">Women</Link>
             </li>
             <li>
-              <Link to="/shop/?cg=Men">Men</Link>
-            </li>
-            <li>
-              <Link to="/shop/?cg=Shoes">Shoes</Link>
-            </li>
-            <li>
-              <Link to="/shop/?cg=Watches">Watches</Link>
+              <Link to="/?gender=Men">Men</Link>
             </li>
           </ul>
         </div>
@@ -34,6 +28,12 @@ const Footer = () => {
             <li>Returns</li>
             <li>Shipping</li>
             <li>FAQs</li>
+            <li>
+              <Link to="/contactus">Contact us</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
           </ul>
         </div>
 
@@ -112,7 +112,6 @@ const Footer = () => {
             Copyright ©2021 All rights reserved | This template is made with ♡
             by Developers of Palette Productions
           </p>
-          <Link to="">Palette Productions</Link>
         </div>
       </footer>
     </div>

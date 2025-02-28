@@ -4,7 +4,7 @@ import {
   Heading,
   Grid,
   GridItem,
-  Text,
+  Stack,
   Select,
   Table,
   Tbody,
@@ -13,6 +13,7 @@ import {
   Thead,
   Tr,
   Spinner,
+  Image,
   Alert,
   Button,
   Stat,
@@ -37,6 +38,8 @@ import {
   getDashboardOrders,
   getTotalOrders,
 } from "../../actions/dashboardActions";
+import { FaBox, FaDollarSign, FaChartLine } from "react-icons/fa";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -85,32 +88,46 @@ const Dashboard = () => {
       name: item.label,
       value: item.value,
     }));
+  console.log("orders", orders);
+  // Function to determine the status of the order
 
   return (
     <Box p={14}>
-      <Heading mb={5}>Dashboard</Heading>
-
       {/* Key Metrics */}
       <Grid templateColumns="repeat(3, 1fr)" gap={6} mb={10}>
         <GridItem>
           <Stat p={5} bg="blue.50" borderRadius="md" shadow="sm">
-            <StatLabel>Total Orders</StatLabel>
-            <StatNumber>{totalOrdersCount}</StatNumber>
-            <StatHelpText>Across all time</StatHelpText>
+            <StatLabel textAlign={"center"}>
+              {" "}
+              <FaBox size={24} />
+              Total Orders
+            </StatLabel>
+            <StatNumber textAlign={"center"}> {totalOrdersCount}</StatNumber>
+            <StatHelpText textAlign={"center"}>Across all time</StatHelpText>
           </Stat>
         </GridItem>
         <GridItem>
-          <Stat p={5} bg="green.50" borderRadius="md" shadow="sm">
-            <StatLabel>Total Sales</StatLabel>
-            <StatNumber>{totalSales} Nos</StatNumber>
-            <StatHelpText>Across all time</StatHelpText>
+          <Stat p={5} bg="blue.50" borderRadius="md" shadow="sm">
+            <StatLabel textAlign={"center"}>
+              {" "}
+              <FaChartLine size={24} />
+              Total Sales
+            </StatLabel>
+            <StatNumber textAlign={"center"}>{totalSales} Nos</StatNumber>
+            <StatHelpText textAlign={"center"}>Across all time</StatHelpText>
           </Stat>
         </GridItem>
         <GridItem>
-          <Stat p={5} bg="purple.50" borderRadius="md" shadow="sm">
-            <StatLabel>Total Revenue</StatLabel>
-            <StatNumber>Rs. {totalRevenue.toFixed(2)}</StatNumber>
-            <StatHelpText>Across all time</StatHelpText>
+          <Stat p={5} bg="blue.50" borderRadius="md" shadow="sm">
+            <StatLabel textAlign={"center"}>
+              {" "}
+              <FaDollarSign size={24} />
+              Total Revenue
+            </StatLabel>
+            <StatNumber textAlign={"center"}>
+              Rs. {totalRevenue.toFixed(2)}
+            </StatNumber>
+            <StatHelpText textAlign={"center"}>Across all time</StatHelpText>
           </Stat>
         </GridItem>
       </Grid>
@@ -145,7 +162,7 @@ const Dashboard = () => {
           {/* Charts Section */}
           <Grid templateColumns="repeat(2, 1fr)" gap={10} mb={10}>
             <GridItem>
-              <Heading as="h3" size="md" mb={3}>
+              <Heading as="h3" size="md" mb={3} textAlign={"center"}>
                 Sales Data
               </Heading>
               <LineChart
@@ -162,7 +179,7 @@ const Dashboard = () => {
               </LineChart>
             </GridItem>
             <GridItem>
-              <Heading as="h3" size="md" mb={3}>
+              <Heading as="h3" size="md" mb={3} textAlign={"center"}>
                 Revenue Data
               </Heading>
               <LineChart
@@ -182,35 +199,93 @@ const Dashboard = () => {
 
           {/* Latest Orders Table */}
           <Box>
-            <Heading as="h3" size="md" mb={3}>
+            <Heading as="h3" size="md" mb={5} textAlign={"center"}>
               Latest Orders
             </Heading>
-            <Table variant="striped" colorScheme="gray">
+            <Table className="tableusers" variant="striped">
               <Thead>
                 <Tr>
-                  <Th>ID</Th>
-                  <Th>Customer</Th>
-                  <Th>Total</Th>
-                  <Th>Status</Th>
-                  <Th>Order Details</Th>
+                  <Th textAlign="center">ID</Th>
+                  <Th textAlign="center">User</Th>
+                  <Th textAlign="center">Date</Th>
+                  <Th textAlign="center">TOTAL</Th>
+                  <Th textAlign="center">PAID</Th>
+                  <Th textAlign="center">Status</Th>
+                  <Th textAlign="center">ProductImage</Th>
+                  <Th textAlign="center">Order Details</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {orders?.map((order) => (
-                  <Tr key={order._id}>
-                    <Td>{order._id}</Td>
-                    <Td>{order.customerName}</Td>
-                    <Td>${order.total}</Td>
-                    <Td>{order.status}</Td>
-                    <Td>
-                      <Link to={`/order/${order._id}`}>
-                        <Button colorScheme="teal" size="sm">
-                          Details
+                {orders?.map((order) => {
+                  const status = order.status;
+                  return (
+                    <Tr key={order._id}>
+                      <Td>{order._id}</Td>
+                      <Td>{order.customerName}</Td>
+                      <Td>
+                        {order.createdAt
+                          ? order.createdAt.substring(0, 10)
+                          : "N/A"}
+                      </Td>
+                      <Td>${order.total}</Td>
+                      <Td>
+                        {order.isPaid ? (
+                          <div className="paid">
+                            {order.paidAt.substring(0, 10)}
+                          </div>
+                        ) : (
+                          <div className="notpaid">NO</div>
+                        )}
+                      </Td>
+                      <Td textAlign="center">
+                        <Button
+                          size="sm"
+                          colorScheme={status.color}
+                          borderRadius="20px"
+                          fontWeight="bold"
+                          textTransform="uppercase"
+                          px={4}
+                          py={1}
+                        >
+                          {status.label}
                         </Button>
-                      </Link>
-                    </Td>
-                  </Tr>
-                ))}
+                      </Td>
+                      <Td>
+                        {order.orderItems.map((item) => (
+                          <Stack
+                            key={item.productId}
+                            spacing={2}
+                            align="center"
+                          >
+                            {/* Display the first image from the images array */}
+                            {item.productImage.length > 0 && (
+                              <Image
+                                src={item.productImage[0]} // Access the first image
+                                alt={item.productName}
+                                boxSize="80px"
+                                objectFit="cover"
+                                borderRadius="5px"
+                              />
+                            )}
+                            {/* Product Link */}
+                            <Link to={`/product/${item.productId}`}>
+                              <Button colorScheme="blue" size="xs">
+                                View Product
+                              </Button>
+                            </Link>
+                          </Stack>
+                        ))}
+                      </Td>
+                      <Td>
+                        <Link to={`/order/${order._id}`}>
+                          <Button colorScheme="teal" size="sm">
+                            Details
+                          </Button>
+                        </Link>
+                      </Td>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           </Box>

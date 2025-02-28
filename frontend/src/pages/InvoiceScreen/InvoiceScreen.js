@@ -16,16 +16,17 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { jsPDF } from "jspdf";
+import { useParams } from "react-router-dom";
 
 const InvoiceScreen = ({ match }) => {
   const dispatch = useDispatch();
-
+  const { id } = useParams();
   const invoiceDetails = useSelector((state) => state.invoiceDetails);
   const { loading, error, invoice } = invoiceDetails;
 
   useEffect(() => {
-    dispatch(getInvoice(match.params.id));
-  }, [dispatch, match]);
+    dispatch(getInvoice(id));
+  }, [dispatch, id]);
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();

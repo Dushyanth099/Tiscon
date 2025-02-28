@@ -1,5 +1,5 @@
 footer {
-  margin-top: 120px;
+  margin-top: 20px;
   height: 450px;
 
   display: grid;
@@ -8,8 +8,8 @@ footer {
   grid-template-columns: repeat(auto-fit, minmax(23%, 1fr));
   grid-template-rows: repeat(auto-fit, minmax(1fr, 50px));
   row-gap: 8px;
-
-  background-color: #252525;
+/* 
+  background-color: black; */
   justify-items: center;
 }
 

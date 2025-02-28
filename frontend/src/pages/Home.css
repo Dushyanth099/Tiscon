@@ -1,0 +1,60 @@
+.cards-container {
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: #000;
+}
+
+.women-card,
+.men-card {
+  margin-top: 90px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 220px;
+  height: 60px;
+  border-radius: 12px;
+  overflow: visible;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+}
+
+/* Background and Borders */
+.women-card {
+  background: linear-gradient(90deg, #4b3849, #ea04a1); /* Gradient for Men */
+  border-color: #ea39e4;
+}
+
+.men-card {
+  background: linear-gradient(90deg, #003366, #0055aa); /* Gradient for Men */
+  border-color: #0055aa;
+}
+
+/* Image Styling */
+.women-card img,
+.men-card img {
+  width: 65px;
+  height: 100px;
+  position: absolute;
+  top: -42px; /* Moves image above container */
+  left: 0px;
+  right: 30px;
+  border-radius: 10px;
+}
+
+/* Title Styling */
+.women-card h3,
+.men-card h3 {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  flex-grow: 1; /* Push text to the right */
+  text-align: center;
+  margin-right: 120px;
+  width: 100%;
+}
