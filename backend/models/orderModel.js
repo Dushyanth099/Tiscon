@@ -10,12 +10,11 @@ const shippingRateSchema = mongoose.Schema(
 );
 const shipmentSchema = mongoose.Schema(
   {
-    trackingNumber: { type: String, required: true }, // FedEx tracking number
-    shippingLabelUrl: { type: String }, // FedEx shipping label URL
-    shipmentStatus: { type: String, default: "Pending" }, // Shipment status (Pending, Shipped, Delivered, etc.)
+    trackingNumber: { type: String, required: true },
+    shippingLabelUrl: { type: String },
+    shipmentStatus: { type: String, default: "Pending" },
     senderDetails: {
       contact: {
-        
         personName: { type: String, required: true },
         phoneNumber: { type: String, required: true },
       },
@@ -124,9 +123,8 @@ const orderSchema = mongoose.Schema(
       type: Object,
       default: null,
     },
-    trackingNumber: { type: String }, // Store FedEx tracking number
     shippingRates: { type: [shippingRateSchema], default: [] },
-    shipmentDetails: [shipmentSchema],
+    shipmentDetails: { type: [shipmentSchema], default: [] },
   },
   {
     timestamps: true,

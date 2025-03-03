@@ -120,38 +120,17 @@ const GetOrders = asyncHandler(async (req, res) => {
 // @route   GET /api/orders/:id/invoice
 // @access  Private/Admin
 const generateInvoice = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id).populate(
-    "user",
-    "name email"
-  );
-
-  if (order) {
-    const invoice = {
-      orderId: order._id,
-      user: {
-        name: order.user?.name || "N/A",
-        email: order.user?.email || "N/A",
-      },
-      orderItems: order.orderItems,
-      shippingAddress: order.shippingAddress,
-      paymentMethod: order.paymentMethod,
-      taxPrice: order.taxPrice,
-      shippingPrice: order.shippingPrice,
-      totalPrice: order.totalPrice,
-      isPaid: order.isPaid,
-      paidAt: order.paidAt,
-      isDelivered: order.isDelivered,
-      deliveredAt: order.deliveredAt,
-      createdAt: order.createdAt,
-    };
-    order.invoiceDetails = invoice;
-    await order.save();
-    res.json(invoice);
-  } else {
+  const order = await Order.findById(req.params.id);
+  if (!order) {
     res.status(404);
     throw new Error("Order not found");
   }
+  // ✅ Extract only the shipping label URL
+  const shippingLabelUrl =
+    order.shipmentDetails?.[0]?.shippingLabelUrl || "N/A";
+  res.json({ shippingLabelUrl });
 });
+
 // @desc  getlocations
 // @route   GET /api/incomebycity
 // @access  Private/Admin

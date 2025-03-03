@@ -105,6 +105,7 @@ const Orders = () => {
                   <Th textAlign="center">TOTAL</Th>
                   <Th textAlign="center">PAID</Th>
                   <Th textAlign="center">Status</Th>
+                  <Th textAlign="center">Tracking No</Th>
                   {/* <Th textAlign="center">Deliverd</Th> */}
                   <Th textAlign="center">ProductImage</Th>
                   <Th textAlign="center">Order Details</Th>
@@ -114,6 +115,7 @@ const Orders = () => {
                 {filteredOrders.length > 0 ? (
                   filteredOrders.map((order) => {
                     const status = getOrderStatus(order);
+                    const shipment = order.shipmentDetails?.[0] || {};
                     return (
                       <Tr key={order._id}>
                         <Td>{order._id}</Td>
@@ -130,6 +132,7 @@ const Orders = () => {
                             <div className="notpaid">NO</div>
                           )}
                         </Td>
+
                         {/* <Td>
                         {order.isDelivered ? (
                           <div className="paid">
@@ -153,6 +156,7 @@ const Orders = () => {
                             {status.label}
                           </Button>
                         </Td>
+                        <Td>{shipment.trackingNumber || "N/A"}</Td>
                         {/* Display Product Images */}
                         <Td>
                           {order.orderItems.map((item) => (

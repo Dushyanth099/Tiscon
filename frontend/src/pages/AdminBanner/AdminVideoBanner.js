@@ -24,7 +24,7 @@ const AdminVideoBanner = () => {
   const dispatch = useDispatch();
   const toast = useToast();
 
-  // Fetch last-used productId from Redux
+  // Redux state for video banners
   const videoBannerList = useSelector((state) => state.getvideoBanners);
   const {
     loading,
@@ -43,25 +43,31 @@ const AdminVideoBanner = () => {
   const videoBannerDelete = useSelector((state) => state.deletevideoBanners);
   const { success: deleteSuccess } = videoBannerDelete;
 
-  // State for productId and video file
-  const [productId, setProductId] = useState(storedProductId || "");
-  const [video, setVideo] = useState(null);
+  // ✅ Product ID state
+  const [productId, setProductId] = useState("");
 
-  // Fetch videos on page load or when changes occur
+  // ✅ Fetch videos on mount if `storedProductId` exists
+  useEffect(() => {
+    if (storedProductId) {
+      setProductId(storedProductId);
+      dispatch(listVideoBanners(storedProductId));
+    }
+  }, [dispatch, storedProductId]);
+
+  // ✅ Fetch videos when `productId` is entered or updated
   useEffect(() => {
     if (productId) {
-      console.log("Fetching video banners for productId:", productId);
       dispatch(listVideoBanners(productId));
     }
   }, [dispatch, productId, uploadSuccess, deleteSuccess]);
 
   // Handle file selection
   const uploadHandler = (e) => {
-    const file = e.target.files[0];
-    setVideo(file);
+    setVideo(e.target.files[0]);
   };
 
   // Handle video upload
+  const [video, setVideo] = useState(null);
   const submitHandler = (e) => {
     e.preventDefault();
     if (!video || !productId.trim()) {
@@ -83,8 +89,11 @@ const AdminVideoBanner = () => {
     setVideo(null);
   };
 
-  // Handle delete
   const deleteHandler = (videoId) => {
+    console.log(
+      `🗑️ Requesting delete for videoId: ${videoId}, productId: ${productId}`
+    );
+
     if (window.confirm("Are you sure you want to delete this video?")) {
       dispatch(deleteVideoBanner(productId, videoId));
     }
@@ -103,6 +112,13 @@ const AdminVideoBanner = () => {
           value={productId}
           onChange={(e) => setProductId(e.target.value.trim())}
         />
+        <Button
+          mt={2}
+          colorScheme="blue"
+          onClick={() => dispatch(listVideoBanners(productId))}
+        >
+          Fetch Videos
+        </Button>
       </FormControl>
 
       {/* Video Upload Form */}

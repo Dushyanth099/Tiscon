@@ -8,7 +8,12 @@ import {
   SAVE_SHIPPING_RATES,
 } from "../constants/cartConstants";
 export const cartReducer = (
-  state = { cartItems: [], shippingAddress: {}, shippingCost: 0, images: [] },
+  state = {
+    cartItems: [],
+    shippingAddress: {},
+    shippingCost: 0,
+    images: [],
+  },
   action
 ) => {
   switch (action.type) {

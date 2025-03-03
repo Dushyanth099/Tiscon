@@ -99,6 +99,7 @@ const Checkout = () => {
       );
     }
   };
+
   useEffect(() => {
     if (cart.cartItems.length > 0) {
       handleFetchRates();
@@ -115,7 +116,7 @@ const Checkout = () => {
   ]);
   useEffect(() => {
     if (rates) {
-      console.log("FedEx API Response:", rates); // 🔍 Check if the response contains rates
+      console.log("FedEx API Response:", rates); 
     }
   }, [rates]);
   const handleOrder = (e) => {
@@ -132,8 +133,9 @@ const Checkout = () => {
         phoneNumber,
       })
     );
+
     dispatch(savepaymentmethod(paymentMethod));
-    navigate("/placeorder");
+      navigate("/placeorder");
   };
 
   useEffect(() => {
@@ -212,7 +214,6 @@ const Checkout = () => {
             <option value="USA">USA</option>
             <option value="France">France</option>
           </Select>
-
           <Text fontSize="2xl" fontWeight="bold" mt={6}>
             Payment Method
           </Text>

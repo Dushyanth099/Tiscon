@@ -49,19 +49,16 @@ export const selectShippingRate = (rate) => (dispatch) => {
 };
 
 export const createShipment =
-  (order, productId) => async (dispatch, getState) => {
-    console.log("✅ Received Order in Action:", order);
-    console.log("✅ Received Product ID in Action:", productId);
- 
+  (shipmentDetails) => async (dispatch, getState) => {
+    console.log("🚀 Creating shipment with details:", shipmentDetails);
+
     try {
       dispatch({ type: CREATE_SHIPMENT_REQUEST });
 
-      // Get user token from Redux state
       const {
         userLogin: { userInfo },
       } = getState();
 
-      // API request config with authorization header
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -69,10 +66,9 @@ export const createShipment =
         },
       };
 
-      // Send a request to backend to create a shipment
       const { data } = await axios.post(
         `/api/delivery/createShipment`,
-        { order, productId },
+        shipmentDetails, // Sending only shipment data
         config
       );
 
@@ -80,6 +76,8 @@ export const createShipment =
         type: CREATE_SHIPMENT_SUCCESS,
         payload: data,
       });
+      console.log("✅ Shipment Created Successfully:", data);
+      return data;
     } catch (error) {
       dispatch({
         type: CREATE_SHIPMENT_FAIL,
@@ -88,5 +86,7 @@ export const createShipment =
             ? error.response.data.message
             : error.message,
       });
+
+      console.error("❌ Shipment Creation Error:", error);
     }
   };

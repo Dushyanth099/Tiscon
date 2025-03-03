@@ -34,7 +34,7 @@ const shipmentrates = asyncHandler(async (req, res) => {
     recipientAddress,
     packageDetails
   );
-  console.log("✅ FedEx API Response (Rates):", JSON.stringify(rates, null, 2)); // DEBUG LOG
+  // console.log("✅ FedEx API Response (Rates):", JSON.stringify(rates, null, 2)); // DEBUG LOG
 
   res.json(rates);
 });
@@ -43,19 +43,48 @@ const shipmentrates = asyncHandler(async (req, res) => {
 // @route   POST/api/delivery/createShipment
 // @access  Public
 const createShipment = asyncHandler(async (req, res) => {
-  const { order, productId } = req.body;
+  const {
+    recipientName,
+    street,
+    city,
+    nearestLandmark,
+    postalCode,
+    countryCode,
+    productId,
+    totalPrice,
+  } = req.body;
   console.log("Incoming Request Body:", req.body);
-  if (!order) {
-    res.status(400);
-    throw new Error("Order data is missing in request body");
+  // Validate required fields
+  // Validate required fields
+  if (
+    !recipientName ||
+    !street ||
+    !city ||
+    !postalCode ||
+    !countryCode ||
+    !productId ||
+    !nearestLandmark ||
+    !totalPrice
+  ) {
+    console.error("❌ Missing shipment details!");
+    return res.status(400).json({ message: "Missing shipment details" });
   }
-  // Fetch user details
-  const user = await User.findById(order.user);
+  // get recipient phoneNumber
+  const user = await User.findById(req.user._id);
   if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+    console.error("❌ User not found:", req.user._id);
+    return res.status(404).json({ message: "User not found" });
   }
-  console.log("✅ User Data Retrieved:", JSON.stringify(user, null, 2)); // Debugging
+  console.log("✅ User Retrieved:", user);
+
+  const phoneNumber = user.address?.phoneNumber;
+  const stateOrProvinceCode = user.address?.state;
+  if (!phoneNumber || !stateOrProvinceCode) {
+    console.error("❌ Missing recipient phone number or state.");
+    return res.status(400).json({ message: "Incomplete recipient address" });
+  }
+  console.log("📞 Recipient Phone Number:", phoneNumber);
+  console.log("🏛 State Code:", stateOrProvinceCode);
 
   // Fetch product details
   const product = await Product.findById(productId).populate(
@@ -88,14 +117,14 @@ const createShipment = asyncHandler(async (req, res) => {
 
   const recipientDetails = {
     contact: {
-      personName: user.name,
-      phoneNumber: user.address.phoneNumber,
+      personName: recipientName,
+      phoneNumber: phoneNumber,
     },
     address: {
-      streetLines: [user.address.street],
-      city: user.address.city,
+      streetLines: [street, nearestLandmark],
+      city,
       stateOrProvinceCode: user.address.state,
-      postalCode: user.address.pin,
+      postalCode,
       countryCode: "IN",
     },
   };
@@ -109,6 +138,7 @@ const createShipment = asyncHandler(async (req, res) => {
     },
   };
   console.log("✅ Package Details:", packageDetails);
+  console.log("💰 Total Price for Shipment:", totalPrice);
 
   // Call FedEx Shipment service with prepared data
   try {
@@ -116,18 +146,40 @@ const createShipment = asyncHandler(async (req, res) => {
       senderDetails,
       recipientDetails,
       packageDetails,
-      order.totalPrice
+      totalPrice
     );
     console.log(
       "✅ FedEx Shipment Created Successfully:",
       JSON.stringify(shipmentData, null, 2)
     );
+    const trackingNumber =
+      shipmentData.trackingNumber ||
+      shipmentData.output?.transactionShipments?.[0]?.masterTrackingNumber ||
+      shipmentData.output?.transactionShipments?.[0]?.pieceResponses?.[0]
+        ?.trackingNumber ||
+      "N/A"; // Default if tracking number not found
 
+    const shippingLabelUrl =
+      shipmentData.shippingLabelUrl ||
+      shipmentData.output?.transactionShipments?.[0]?.pieceResponses?.[0]
+        ?.packageDocuments?.[0]?.url ||
+      "N/A"; // Default if shipping label URL not found
     res.status(200).json({
       success: true,
-      data: shipmentData,
+      data: {
+        trackingNumber,
+        shippingLabelUrl,
+        shipmentStatus: "Pending",
+        senderDetails,
+        recipientDetails,
+        packageDetails,
+      },
     });
   } catch (error) {
+    console.error(
+      "❌ FedEx Shipment Error:",
+      error.response?.data || error.message
+    );
     res.status(500).json({
       success: false,
       message: "Failed to create FedEx shipment",

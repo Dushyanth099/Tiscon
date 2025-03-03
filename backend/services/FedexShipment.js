@@ -21,7 +21,7 @@ const createfedexshipment = async (
 
   try {
     const token = await getFedExToken();
-    // console.log("🔑 FedEx Token Received:", token);
+    console.log("🔑 FedEx Token Received:", token);
     const requestBody = {
       labelResponseOptions: "URL_ONLY",
       requestedShipment: {
