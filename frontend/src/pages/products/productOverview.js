@@ -40,7 +40,7 @@ const ProductOverview = () => {
     } else if (selectedCategory === "Low Selling") {
       filtered = products.filter((product) => product.sales <= 10); // Example filter for low-selling
     } else if (selectedCategory === "Out of Stock") {
-      filtered = products.filter((product) => product.countInStock === 0); // Example filter for out of stock
+      filtered = products.filter((product) => product.countInStock < 5); // Example filter for out of stock
     } else {
       filtered = products; // Show all products if no filter is selected
     }

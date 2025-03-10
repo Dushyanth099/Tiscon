@@ -91,7 +91,7 @@ const CreateProductPage = () => {
     ageRange: ["Kids", "Teen", "Adult"],
     color: ["Red", "Blue", "Black", "White"],
     fabric: ["Cotton", "Polyester", "Leather"],
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
   };
 
   const calculatedPrice = () => {
@@ -134,7 +134,15 @@ const CreateProductPage = () => {
       setNewImages(updatedNewImages);
     }
   };
+  const handleSizeChange = (size) => {
+    setProductdetails((prevDetails) => {
+      const newSizes = prevDetails.sizes.includes(size)
+        ? prevDetails.sizes.filter((s) => s !== size)
+        : [...prevDetails.sizes, size];
 
+      return { ...prevDetails, sizes: newSizes };
+    });
+  };
   return (
     <Box
       mt={10}
@@ -345,19 +353,17 @@ const CreateProductPage = () => {
         </FormControl>
         <FormControl>
           <FormLabel>Sizes</FormLabel>
-          <select
-            value={productdetails.sizes}
-            onChange={(e) =>
-              setProductdetails({ ...productdetails, sizes: e.target.value })
-            }
-          >
-            <option value="">Select Sizes</option>
-            {options.sizes.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
+          <Stack direction="row" wrap="wrap">
+            {options.sizes.map((size) => (
+              <Checkbox
+                key={size}
+                isChecked={productdetails.sizes.includes(size)}
+                onChange={() => handleSizeChange(size)}
+              >
+                {size}
+              </Checkbox>
             ))}
-          </select>
+          </Stack>
         </FormControl>
         <Heading size="md" color="teal.600" fontWeight="bold" mb={4}>
           🚚 Shipping Details

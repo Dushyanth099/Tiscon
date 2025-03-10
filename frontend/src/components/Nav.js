@@ -65,7 +65,6 @@ const Nav = () => {
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-  console.log("User Info:", userInfo);
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -205,7 +204,7 @@ const Nav = () => {
               textAlign="center"
               p={4}
             >
-              🚀 Logout Confirmation
+              Logout!
             </AlertDialogHeader>
 
             <AlertDialogBody textAlign="center" fontSize="md" p={5}>

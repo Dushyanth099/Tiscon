@@ -26,6 +26,7 @@ import Payment from "./Payment";
 import { fetchShippingRates } from "../../actions/deliveryActions";
 import { saveShippingCost } from "../../actions/cartActions";
 import { saveShippingRates } from "../../actions/cartActions";
+import StripePayment from "./Stripepayment";
 
 const Checkout = () => {
   const cart = useSelector((state) => state.cart);
@@ -116,7 +117,7 @@ const Checkout = () => {
   ]);
   useEffect(() => {
     if (rates) {
-      console.log("FedEx API Response:", rates); 
+      console.log("FedEx API Response:", rates);
     }
   }, [rates]);
   const handleOrder = (e) => {
@@ -135,7 +136,7 @@ const Checkout = () => {
     );
 
     dispatch(savepaymentmethod(paymentMethod));
-      navigate("/placeorder");
+    navigate("/placeorder");
   };
 
   useEffect(() => {
@@ -237,6 +238,13 @@ const Checkout = () => {
           </Stack>
           {paymentMethod === "Online Payment" && (
             <Payment
+              totalPrice={totalPrice}
+              onSuccess={() => navigate("/placeorder")}
+              setPaymentMethod={setPaymentMethod}
+            />
+          )}
+          {paymentMethod === "Online Payment" && (
+            <StripePayment
               totalPrice={totalPrice}
               onSuccess={() => navigate("/placeorder")}
               setPaymentMethod={setPaymentMethod}

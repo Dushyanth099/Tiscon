@@ -11,6 +11,8 @@ import {
   getCart,
   deleteCartItem,
   getProductById,
+  approveReview,
+  getPendingReviews,
 } from "../controlers/productControler.js";
 import { uploadMultipleImages } from "../multer/multer.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -29,5 +31,8 @@ router
 router.route("/:id/addtocart").post(protect, addToCart);
 router.route("/:id/getcart").get(protect, getCart);
 router.route("/:cartItemId/deletecart").delete(protect, deleteCartItem);
-
+router.route("/reviews/pending").get(protect, admin, getPendingReviews);
+router
+  .route("/:id/reviews/:reviewId/approve")
+  .put(protect, admin, approveReview);
 export default router;

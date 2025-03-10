@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import Tshirts from "./TopCategories/Tshirts";
 import Pants from "./TopCategories/Pants";
 import SweatPants from "./TopCategories/SweatPants";
+import DiscountTag from "./DiscountTag.js";
 
 const ProductsC = ({ match }) => {
   const location = useLocation();
@@ -52,6 +53,7 @@ const ProductsC = ({ match }) => {
       {gender && <Pants category={gender} subcategory={"Jeans"} />}
       {gender && <SweatPants category={gender} subcategory={"SweatPants"} />}
       <Trust />
+      <DiscountTag />
     </>
   );
 };

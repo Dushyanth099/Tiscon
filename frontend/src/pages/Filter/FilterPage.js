@@ -125,40 +125,55 @@ const FilterPage = () => {
     dispatch(Listproductbyfiters({ gender: currentGender }));
   };
   const renderCheckboxList = (title, name, options) => (
-    <Box borderBottom="3px solid #e2e8f0" pb={3} mb={3}>
-      <FilterCategory title={title}>
-        <VStack align="start" spacing={1}>
-          {options.map((option) => (
-            <Checkbox
-              key={option}
-              isChecked={filters[name].includes(option)}
-              onChange={() => handleCheckboxChange(name, option)}
-              colorScheme="teal"
-            >
-              {option}
-            </Checkbox>
-          ))}
-        </VStack>
-      </FilterCategory>
-    </Box>
+    <FilterCategory title={title} onApplyFilters={handleSubmit}>
+      <VStack align="start" spacing={1}>
+        {options.map((option) => (
+          <Checkbox
+            key={option}
+            isChecked={filters[name].includes(option)}
+            onChange={() => handleCheckboxChange(name, option)}
+            colorScheme="green"
+          >
+            {option}
+          </Checkbox>
+        ))}
+      </VStack>
+    </FilterCategory>
   );
 
   return (
-    <Flex direction={{ base: "column", md: "row" }} p={4}>
+    <Flex direction={{ base: "column", md: "row" }} p={2}>
       <Box
         bg="white"
         width={{ base: "100%", md: "300px" }}
-        p={4}
-        borderRight="3px solid #e2e8f0"
+        borderRight="1px solid black"
       >
-        <Heading as="h3" size="md" mb={4}>
-          <Flex alignItems="center">
-            <Img src={Filterimg} alt="filterimg" boxSize="24px" mr={2} />
-            Filters
-          </Flex>
-        </Heading>
-
-        <Box borderBottom="3px solid #e2e8f0" pb={3} mb={3}></Box>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          p={3}
+          bg="white"
+          borderTop="1px solid black"
+          borderLeft="1px solid black"
+          borderBottom="1px solid black"
+          mb={4}
+        >
+          <Heading as="h3" size="md">
+            <Flex alignItems="center">
+              <Img src={Filterimg} alt="filterimg" boxSize="24px" mr={2} />
+              Filters
+            </Flex>
+          </Heading>
+          <Text
+            cursor="pointer"
+            color="red.500"
+            fontWeight="bold"
+            mr={5}
+            onClick={handleClearFilters}
+          >
+            CLEAR ALL
+          </Text>
+        </Flex>
         <Stack spacing={3}>
           {renderCheckboxList("Brand Name", "brandname", [
             "Puma",
@@ -166,11 +181,11 @@ const FilterPage = () => {
             "TommyHilfigher",
             "Allensolley",
           ])}
-          <Box borderBottom="3px solid #e2e8f0" pb={3} mb={3}>
-            <FilterCategory title="Gender">
-              <Text fontWeight="bold">{filters.gender}</Text>
-            </FilterCategory>
-          </Box>
+
+          <FilterCategory title="Gender">
+            <Text fontWeight="bold">{filters.gender}</Text>
+          </FilterCategory>
+
           {renderCheckboxList("Category", "category", ["Shirts", "Pants"])}
           {renderCheckboxList("Subcategory", "subcategory", [
             "Shirts",
@@ -207,15 +222,6 @@ const FilterPage = () => {
             "4",
             "5",
           ])}
-
-          <Box mt={4}>
-            <Button onClick={handleSubmit} colorScheme="blue" mr={1}>
-              Apply Filters
-            </Button>
-            <Button onClick={handleClearFilters} colorScheme="red">
-              Clear Filters
-            </Button>
-          </Box>
         </Stack>
       </Box>
     </Flex>

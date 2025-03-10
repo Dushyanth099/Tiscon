@@ -1,31 +1,34 @@
-import React,{useState} from 'react'
-import {ReactComponent as EmptyS} from "./Empty.svg"
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import { RiArrowRightSLine } from "react-icons/ri";
-import { TiArrowRight } from "react-icons/ti";
 import { BsArrowBarRight } from "react-icons/bs";
-
+import emptyCart from "../assets/emptyCart.svg";
+import "./Empty.css"; // Import updated CSS
+import { Link } from "react-router-dom";
 
 const Empty = () => {
-    const [arrow, setarrow] = useState(false)
-    return (
-        <div className = 'Emptycart'>
-            <EmptyS className = 'illustration'/>
-            <div className = 'textempty'>
-            <h1>
-                Wow Such an empty Cart
-            </h1>
-             
-            <Link to = '/' className ='goshop' onMouseOver = {()=>{setarrow(true)}} onMouseLeave = {()=>{setarrow(false)}}>
-            Go Shop
-            {!arrow ? <RiArrowRightSLine className = 'arrow' /> : <BsArrowBarRight className = 'arrow'/> }
-            </Link>
-            </div>
+  const [arrow, setArrow] = useState(false);
 
-            
+  return (
+    <div className="emptycart">
+      <img src={emptyCart} alt="Empty Cart" />
 
-        </div>
-    )
-}
+      <h2>Oops! Your cart is empty </h2>
 
-export default Empty
+      <Link
+        to="/"
+        className="goshop"
+        onMouseOver={() => setArrow(true)}
+        onMouseLeave={() => setArrow(false)}
+      >
+        Go Shop
+        {!arrow ? (
+          <RiArrowRightSLine className="arrow" />
+        ) : (
+          <BsArrowBarRight className="arrow" />
+        )}
+      </Link>
+    </div>
+  );
+};
+
+export default Empty;

@@ -21,6 +21,8 @@ import {
   toast,
   useToast,
   Heading,
+  HStack,
+  Text,
 } from "@chakra-ui/react";
 import HashLoader from "react-spinners/HashLoader";
 import { useParams } from "react-router-dom";
@@ -35,9 +37,11 @@ import CardProduct from "../../components/CardProduct";
 import { useNavigate } from "react-router-dom";
 import FeaturesSection from "../../components/Trustdetails/FeatureItem";
 import Trust from "../../components/Trustdetails/Trust";
+import { listMyOrders } from "../../actions/orderActions";
 
 const Productpage = () => {
   const { id } = useParams();
+
   const navigate = useNavigate();
 
   const relatedProductsList = useSelector((state) => state.productList);
@@ -45,6 +49,8 @@ const Productpage = () => {
     relatedProductsList;
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
+  const orderListMy = useSelector((state) => state.orderMylist);
+  const { orders } = orderListMy;
   const [qty, setQty] = useState(1);
   const [rating, setrating] = useState(0);
   const [comment, setcomment] = useState("");
@@ -58,10 +64,12 @@ const Productpage = () => {
   const { loading, error, product } = productDetails;
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+  const [isPurchased, setIsPurchased] = useState(false);
   const productReviewCreate = useSelector((state) => state.productReviewCreate);
   const { success: successProductReview, error: errorProductReview } =
     productReviewCreate;
-
+  const availableSizes = product?.productdetails?.sizes || [];
+  const [selectedSize, setSelectedSize] = useState("");
   imgBtns.forEach((imgItem) => {
     imgItem.addEventListener("click", (event) => {
       event.preventDefault();
@@ -87,10 +95,24 @@ const Productpage = () => {
       dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
     }
     dispatch(listProductDetails(id));
+    if (userInfo) {
+      dispatch(listMyOrders());
+    }
     if (product.category) {
       dispatch(Listproductbyfiters({ category: product.category }));
     }
-  }, [dispatch, id, successProductReview, product.category]);
+  }, [dispatch, id, successProductReview, userInfo, product.category]);
+
+  useEffect(() => {
+    if (orders) {
+      const purchased = orders.some((order) =>
+        order.orderItems.some((item) => item.product === id)
+      );
+      setIsPurchased(purchased);
+    }
+  }, [orders, id]);
+
+  // product.reviews
   const submithanlder = () => {
     dispatch(
       createproductReview(id, {
@@ -114,6 +136,7 @@ const Productpage = () => {
       return;
     }
     dispatch(addToCart(product._id, qty));
+    navigate("/cart");
     toast({
       title: "Product added to cart",
       description: "View your product in the cart page.",
@@ -145,8 +168,8 @@ const Productpage = () => {
                       <a href="#" data-id={index + 1}>
                         <Image
                           objectFit="cover"
-                          width="70px"
-                          height="100px"
+                          width="100%"
+                          height="100%"
                           src={image}
                           alt={`Thumbnail-${index}`}
                         />
@@ -165,71 +188,88 @@ const Productpage = () => {
 
               <div className="product-content">
                 <h2 className="product-title">{product.brandname} </h2>
-                <Link to="/" className="product-link">
-                  visit our store
-                </Link>
-                <Rating
-                  value={product.rating}
-                  text={`${product.numReviews} reviews`}
-                />
                 <div className="product-price">
-                  <p className="last-price">
-                    Old Price:{" "}
-                    <span>
-                      Rs.
-                      {(product.price / (1 - product.discount / 100)).toFixed(
-                        2
-                      )}
-                    </span>
+                  <p style={{ fontWeight: "bold", fontSize: "20px" }}>
+                    MRP: ₹{product.price}
                   </p>
-                  <p className="new-price">
-                    New Price:{" "}
-                    <span>
-                      Rs.{product.price} ({product.discount}% OFF)
-                    </span>
+                  <p style={{ fontSize: "12px", color: "gray" }}>
+                    (Inclusive of all taxes)
+                  </p>
+                  <Rating
+                    value={product.rating}
+                    text={`${product.numReviews} reviews`}
+                  />
+                  <p style={{ fontWeight: "bold", fontSize: "16px" }}>
+                    Color: {product.productdetails?.color || "Not Available"}
                   </p>
                 </div>
                 <div className="product-detail">
                   <h2>about this item: </h2>
                   <p>{product.description}</p>
                   <div>
-                    <ul>
-                      <li>Size</li>{" "}
-                      <Select
-                        className="select-product"
-                        placeholder="Choose an option"
-                      >
-                        {product?.productdetails?.sizes &&
-                          product.productdetails.sizes
-                            .split(",")
-                            .map((size, index) => (
-                              <option key={index} value={size.trim()}>
-                                {size.trim()}
-                              </option>
-                            ))}
-                      </Select>
-                      <li>Qty :</li>
-                      {product.countInStock > 0 ? (
-                        <Select
-                          as="select"
-                          size="md"
-                          maxW={20}
-                          value={qty}
-                          className="select-product"
-                          onChange={(e) => setQty(e.target.value)}
+                    <Text fontSize="lg" fontWeight="bold">
+                      Size: {selectedSize}
+                    </Text>
+                    <HStack spacing={2} mt={2}>
+                      {availableSizes.map((size) => (
+                        <Button
+                          key={size}
+                          onClick={() => setSelectedSize(size)}
+                          border="2px solid"
+                          borderColor={
+                            selectedSize === size ? "black" : "gray.300"
+                          }
+                          bg={selectedSize === size ? "black" : "white"}
+                          color={selectedSize === size ? "white" : "black"}
+                          _hover={{
+                            bg: selectedSize === size ? "black" : "gray.100",
+                          }}
+                          px={4}
+                          py={2}
                         >
-                          {[...Array(product.countInStock).keys()].map((x) => (
-                            <option key={x + 1} value={x + 1}>
-                              {x + 1}
-                            </option>
-                          ))}
-                        </Select>
-                      ) : (
-                        <span style={{ display: "flex" }}>
-                          <MdDoNotDisturb size="26" /> OUT OF STOCK{" "}
-                        </span>
-                      )}
-                    </ul>
+                          {size}
+                        </Button>
+                      ))}
+                    </HStack>
+                    {/* <Text fontSize="lg" fontWeight="bold" mt={3}>
+                      Qty
+                    </Text>
+                    {product.countInStock > 0 ? (
+                      <Select
+                        as="select"
+                        size="md"
+                        maxW={20}
+                        value={qty}
+                        className="select-product"
+                        onChange={(e) => setQty(e.target.value)}
+                      >
+                        {[...Array(product.countInStock).keys()].map((x) => (
+                          <option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </option>
+                        ))}
+                      </Select>
+                    ) : (
+                      <span style={{ display: "flex" }}>
+                        <MdDoNotDisturb size="26" /> OUT OF STOCK{" "}
+                      </span>
+                    )} */}
+                    {product.countInStock === 0 && (
+                      <Text
+                        fontSize="lg"
+                        fontWeight="bold"
+                        color="red.500"
+                        mt={3}
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <MdDoNotDisturb
+                          size="24"
+                          style={{ marginRight: "5px" }}
+                        />{" "}
+                        OUT OF STOCK
+                      </Text>
+                    )}
                   </div>
                   <FeaturesSection />
                   <div className="product-info-table">
@@ -332,10 +372,14 @@ const Productpage = () => {
                       type="button"
                       className="btn-shop"
                       disabled={product.countInStock === 0}
+                      style={{
+                        fontSize: "18px",
+                        padding: "12px 24px",
+                        width: "100%",
+                        borderRadius: "0",
+                      }}
                     >
-                      {" "}
-                      <AiFillShop size="24" />
-                      Add to Cart{" "}
+                      <AiFillShop size="24" /> Add to Cart
                     </Button>
                   </div>
                 </div>{" "}
@@ -362,62 +406,69 @@ const Productpage = () => {
             </div>
           </div>
         )}
-        {/* <div className="REVIEWS">
-          <h1>Reviews :</h1>
-          {product.reviews.length === 0 && <h2>NO REVIEWS</h2>}
-          <div>
-            {product.reviews &&
-              product.reviews.map((review) => (
-                <div key={review._id} className="review">
-                  <h4>{review.name}</h4>
-                  <div className="Ratingreview">
-                    <Rating value={review.rating} />
-                  </div>
-                  <p className="commentreview">{review.comment}</p>
-                  <p className="datereview">
-                    {review.createdAt.substring(0, 10)}
-                  </p>
-                </div>
-              ))} */}
+        {isPurchased && (
+          <div className="REVIEWS">
+            <h1>Reviews :</h1>
+            {product.reviews.length === 0 && <h2>NO REVIEWS</h2>}
+            <div>
+              {product.reviews &&
+                product.reviews
+                  .filter((review) => review.approved)
+                  .map((review) => (
+                    <div key={review._id} className="review">
+                      <h4>{review.name}</h4>
+                      <div className="Ratingreview">
+                        <Rating value={review.rating} />
+                      </div>
+                      <p className="commentreview">{review.comment}</p>
+                      <p className="datereview">
+                        {review.createdAt.substring(0, 10)}
+                      </p>
+                    </div>
+                  ))}
 
-        {/* <div className="createreview">
-              <h1>Create New Review :</h1>
-              {errorProductReview && <h2>{errorProductReview}</h2>}
-              {userInfo ? (
-                <FormControl>
-                  <FormLabel>Rating :</FormLabel>
-                  <Select onChange={(e) => setrating(e.target.value)}>
-                    <option value="1">1 POOR</option>
-                    <option value="2">2 FAIR</option>
-                    <option value="3">3 GOOD</option>
-                    <option value="4">4 VERY GOOD</option>
-                    <option value="5">5 EXCELLENT</option>
-                  </Select>
-                  <FormLabel>Comment :</FormLabel>
-                  <Textarea
-                    onChange={(e) => setcomment(e.target.value)}
-                    placeholder="Leave Comment here :"
-                  />
-                  <Button
-                    className="
+              <div className="createreview">
+                <h1>Create New Review :</h1>
+                {errorProductReview && <h2>{errorProductReview}</h2>}
+                {userInfo ? (
+                  <FormControl>
+                    <FormLabel>Rating :</FormLabel>
+                    <Select onChange={(e) => setrating(e.target.value)}>
+                      <option value="1">1 POOR</option>
+                      <option value="2">2 FAIR</option>
+                      <option value="3">3 GOOD</option>
+                      <option value="4">4 VERY GOOD</option>
+                      <option value="5">5 EXCELLENT</option>
+                    </Select>
+                    <FormLabel>Comment :</FormLabel>
+                    <Textarea
+                      onChange={(e) => setcomment(e.target.value)}
+                      placeholder="Leave Comment here :"
+                    />
+                    <Button
+                      className="
                     submitbutton"
-                    colorScheme="blue"
-                    onClick={submithanlder}
-                  >
-                    Submit
-                  </Button>
-                </FormControl>
-              ) : (
-                <>
-                  Please <Link to="/login">Sign In</Link> To write a review.
-                </>
-              )}
+                      colorScheme="blue"
+                      onClick={submithanlder}
+                    >
+                      Submit
+                    </Button>
+                  </FormControl>
+                ) : (
+                  <>
+                    Please <Link to="/login">Sign In</Link> To write a review.
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div> */}
-
+        )}
         {/* Related Products Section */}
-        <div className="related-products-section">
+        <div
+          className="related-products-section"
+          px={{ base: 4, md: 12 }}
+          my={8}
+        >
           <Heading as="h3" size="lg" mb={4}>
             Related Products
           </Heading>

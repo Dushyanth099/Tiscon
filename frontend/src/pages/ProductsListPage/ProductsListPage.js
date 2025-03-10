@@ -5,11 +5,13 @@ import { Listproductbyfiters } from "../../actions/productActions";
 import CardProduct from "../../components/CardProduct";
 import FilterPage from "../Filter/FilterPage";
 import HashLoader from "react-spinners/HashLoader";
-import { Flex, Box, Text, Select } from "@chakra-ui/react";
+import { Flex, Box, Text, Select, Button } from "@chakra-ui/react";
 import "./ProductsListPage.css";
+import { useNavigate } from "react-router-dom";
 
 const ProductsListPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const category = searchParams.get("category");
   const subcategory = searchParams.get("subcategory");
@@ -32,6 +34,15 @@ const ProductsListPage = () => {
   const dispatch = useDispatch();
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
+  // Maintain selected filters in state
+  const [selectedFilters, setSelectedFilters] = useState(() => {
+    const filters = [];
+    if (gender) filters.push({ name: "Gender", value: gender });
+    if (category) filters.push({ name: "Category", value: category });
+    if (subcategory) filters.push({ name: "Subcategory", value: subcategory });
+    if (brandname) filters.push({ name: "Brand", value: brandname });
+    return filters;
+  });
 
   useEffect(() => {
     dispatch(
@@ -58,18 +69,66 @@ const ProductsListPage = () => {
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
+  const handleRemoveFilter = (filterValue) => {
+    const updatedFilters = selectedFilters.filter(
+      (filter) => filter.value !== filterValue
+    );
+    setSelectedFilters(updatedFilters);
 
+    const updatedParams = new URLSearchParams(location.search);
+    for (const [key, value] of updatedParams.entries()) {
+      if (value === filterValue) {
+        updatedParams.delete(key);
+      }
+    }
+    navigate({ search: `?${updatedParams.toString()}` });
+
+    dispatch(Listproductbyfiters(Object.fromEntries(searchParams.entries())));
+  };
   return (
-    <Box bg="white" minH="100vh" p={4}>
-      <Flex p={4} direction={{ base: "column", md: "row" }} gap={6}>
+    <Box bg="white" p={4}>
+      <Flex p={4} direction={{ base: "column", md: "row" }}>
         {/* Left Side - Filter Section */}
         <Box mt={20} width={{ base: "100%", md: "25%" }}>
           <FilterPage />
         </Box>
+        <Box flex="1" mt={20}>
+          {/* Right Side - Product List */}
+          <Flex
+            justify="space-between"
+            alignItems="center"
+            mb={4}
+            flexWrap="wrap" // Ensures responsiveness if there are too many tags
+          >
+            <Flex wrap="wrap" mb={4} alignItems="center">
+              {selectedFilters.map((filter) => (
+                <Box
+                  key={filter.value}
+                  bg="gray.200"
+                  borderRadius="20px"
+                  px={3}
+                  py={1}
+                  mr={2}
+                  mb={2}
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Text fontSize="sm" mr={2}>
+                    {filter.value}
+                  </Text>
+                  <Button
+                    size="xs"
+                    bg="transparent"
+                    color="black"
+                    _hover={{ bg: "gray.300" }}
+                    onClick={() => handleRemoveFilter(filter.value)}
+                  >
+                    ✖
+                  </Button>
+                </Box>
+              ))}
+            </Flex>
 
-        {/* Right Side - Product List */}
-        <Box mt={20} width={{ base: "100%", md: "75%" }}>
-          <Flex justify="flex-end" mb={4}>
             <Select
               value={sortBy}
               onChange={handleSortChange}
@@ -95,9 +154,14 @@ const ProductsListPage = () => {
               An error occurred while fetching products.
             </Text>
           ) : products.length > 0 ? (
-            <Flex wrap="wrap" gap={4}>
+            <Flex wrap="wrap" gap={3}>
               {products.map((product) => (
-                <CardProduct key={product._id} product={product} />
+                <Box
+                  key={product._id}
+                  width={{ base: "100%", sm: "48%", md: "24%" }} // Ensures 4 cards per row on medium+ screens
+                >
+                  <CardProduct product={product} />
+                </Box>
               ))}
             </Flex>
           ) : (

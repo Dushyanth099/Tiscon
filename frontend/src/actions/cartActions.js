@@ -13,14 +13,14 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
   const {
     userLogin: { userInfo },
   } = getState();
+  const config = {
+    headers: { Authorization: `Bearer ${userInfo.token}` },
+  };
+
   const { data } = await axios.post(
     `/api/products/${id}/addtocart`,
     { id, qty },
-    {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
+    config
   );
   console.log("Cart Items data", data);
   dispatch({
@@ -34,12 +34,11 @@ export const fetchCart = () => async (dispatch, getState) => {
     const {
       userLogin: { userInfo },
     } = getState();
+    const config = {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    };
 
-    const { data } = await axios.get("/api/users/cart", {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    });
+    const { data } = await axios.get("/api/users/cart", config);
 
     dispatch({
       type: CART_FETCH_ITEMS,
@@ -54,14 +53,13 @@ export const removeFromCart = (cartItemId) => async (dispatch, getState) => {
     const {
       userLogin: { userInfo },
     } = getState();
+    const config = {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    };
     console.log("Deleting cart item ID:", cartItemId); // Debugging log
     const { data } = await axios.delete(
       `/api/products/${cartItemId}/deletecart`,
-      {
-        headers: {
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      }
+      config
     );
     dispatch({
       type: CART_REMOVE_ITEM,

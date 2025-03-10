@@ -9,6 +9,8 @@ import {
   productBulkUploadReducer,
   productUpdateReducer,
   productreviewCreateReducer,
+  reviewApproveReducer,
+  reviewListReducer,
 } from "./reducers/productReducers";
 
 import { cartReducer } from "./reducers/cartReducers";
@@ -22,6 +24,7 @@ import {
   invoiceReducer,
   incomeReducer,
   transactionListReducer,
+  StripepaymentReducer,
 } from "./reducers/orderReducers";
 
 import { shipmentReducer, shippingReducer } from "./reducers/deliveryReducers";
@@ -91,6 +94,9 @@ const reducer = combineReducers({
   transactionList: transactionListReducer,
   shipping: shippingReducer,
   shipment: shipmentReducer,
+  stripepayment: StripepaymentReducer,
+  reviewList: reviewListReducer,
+  reviewApprove: reviewApproveReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

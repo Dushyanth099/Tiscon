@@ -1,24 +1,35 @@
+/*  */
 .Trust-details {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 20px;
   align-items: center;
   margin-top: 3px;
-  background-color: white !important;
+  background-color: #f5f5f5 !important;
   color: black;
-  height: 50px;
+  height: 100px;
+  padding: 10px;
 }
 
 .trust-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-}
-
-.trust-icon {
-  font-size: 24px;
-  margin-right: 10px;
+  text-align: center;
 }
 
 .trust-item span {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 500;
+}
+.trust-image {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
+}
+.insta-image {
+  width: 20px;
+  height: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }

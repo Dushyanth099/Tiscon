@@ -4,41 +4,29 @@ import { FaShieldAlt, FaStar, FaShoppingBag, FaUndo } from "react-icons/fa";
 
 const FeaturesSection = () => {
   const features = [
-    { icon: <FaShieldAlt size={28} />, text: "Secure Payments" },
-    { icon: <FaStar size={28} />, text: "Genuine Product" },
-    { icon: <FaShoppingBag size={28} />, text: "Try & Buy" },
-    { icon: <FaUndo size={28} />, text: "7 Day Return" },
+    { icon: <FaShieldAlt size={20} />, text: "Secure" }, // Reduced icon size
+    { icon: <FaStar size={20} />, text: "Genuine " },
+    { icon: <FaShoppingBag size={20} />, text: "Try & Buy" },
+    { icon: <FaUndo size={20} />, text: "7 Day Return" },
   ];
 
   return (
-    <Flex
-      justify="center"
-      align="center"
-      direction={{ base: "column", sm: "row", md: "row", lg: "row" }}
-      gap={{ base: 6, md: 12 }}
-      my={6}
-    >
+    <Flex my={4} gap={{ base: 4, md: 8 }}>
       {features.map((feature, index) => (
-        <Flex
-          key={index}
-          direction="column"
-          align="center"
-          textAlign="center"
-          w="120px" // Set a fixed width for proper alignment
-        >
+        <Flex key={index} direction="column" align="center" textAlign="center">
           <Box
             display="flex"
             justifyContent="center"
             alignItems="center"
-            w="60px"
-            h="60px"
+            w="40px" // Reduced box size
+            h="40px"
             bg="gray.100"
-            borderRadius="15px"
-            mb={2}
+            borderRadius="12px"
+            mb={1}
           >
             {feature.icon}
           </Box>
-          <Text fontSize="14px" fontWeight="bold" whiteSpace="nowrap">
+          <Text fontSize="10px" fontWeight="semibold" whiteSpace="nowrap">
             {feature.text}
           </Text>
         </Flex>

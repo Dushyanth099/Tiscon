@@ -1,10 +1,11 @@
 .cards-container {
-  margin: 0px;
+  margin: 0;
   display: flex;
   justify-content: center;
   gap: 20px;
   padding: 20px;
   background-color: #000;
+  flex-wrap: wrap; /* Ensures responsiveness */
 }
 
 .women-card,
@@ -14,8 +15,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 220px;
-  height: 60px;
+  width: 220px; /* Wider cards for better visual impact */
+  height: 50px;
   border-radius: 12px;
   overflow: visible;
   cursor: pointer;
@@ -26,25 +27,25 @@
 
 /* Background and Borders */
 .women-card {
-  background: linear-gradient(90deg, #4b3849, #ea04a1); /* Gradient for Men */
-  border-color: #ea39e4;
+  background: linear-gradient(135deg, #ff5cac, #ff99cc);
+  border-color: #ff79b0;
 }
 
 .men-card {
-  background: linear-gradient(90deg, #003366, #0055aa); /* Gradient for Men */
-  border-color: #0055aa;
+  background: linear-gradient(135deg, #004488, #0077cc);
+  border-color: #0077cc;
 }
 
 /* Image Styling */
 .women-card img,
 .men-card img {
   width: 65px;
-  height: 100px;
+  height: auto;
   position: absolute;
-  top: -42px; /* Moves image above container */
-  left: 0px;
-  right: 30px;
-  border-radius: 10px;
+  top: 24%;
+  transform: translateY(-50%);
+  left: 15px;
+  object-fit: cover;
 }
 
 /* Title Styling */
@@ -52,9 +53,7 @@
 .men-card h3 {
   color: #fff;
   font-size: 16px;
-  font-weight: bold;
-  flex-grow: 1; /* Push text to the right */
+  font-weight: 600;
   text-align: center;
-  margin-right: 120px;
   width: 100%;
 }

@@ -315,7 +315,7 @@ body {
   margin-right: 13px;
   display: inline-block;
 }
-/*Carads Product*/
+/*Cards Product*/
 .cardsProduct {
   width: auto;
   display: grid;
@@ -327,7 +327,7 @@ body {
   /* margin-left: 120px; */
   /* margin-right: 125px; */
 }
-.cardProduct {
+/* .cardProduct {
   color: black;
   background-color: white;
   color: white;
@@ -340,7 +340,7 @@ body {
   background-position: center;
   border-radius: 15px;
   overflow: hidden;
-}
+} */
 .QuickView {
   position: relative;
   opacity: 0;
@@ -377,7 +377,7 @@ body {
   width: 100%;
   display: grid;
 }
-.imgDiv {
+/* .imgDiv {
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -418,7 +418,7 @@ body {
 .cardsProduct {
   background-color: black;
   margin-left: 60px;
-}
+} */
 
 @media screen and (max-width: 768px) {
   .main {
@@ -507,9 +507,9 @@ body {
   }
 }
 
-img {
+/* img {
   width: 100%;
-}
+} */
 
 .Rating {
   margin-right: 10px;

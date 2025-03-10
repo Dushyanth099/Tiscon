@@ -247,6 +247,8 @@ const createProduct = asyncHandler(async (req, res) => {
     fabric,
     sizes,
   } = parsedProductDetails;
+  // Ensure sizes is an array (in case it's sent as a string)
+  const formattedSizes = Array.isArray(sizes) ? sizes : sizes.split(",");
 
   const parsedShippingDetails =
     typeof shippingDetails === "string"
@@ -287,7 +289,7 @@ const createProduct = asyncHandler(async (req, res) => {
       ageRange,
       color,
       fabric,
-      sizes,
+      sizes: formattedSizes,
     },
     shippingDetails: completeShippingDetails,
     countInStock,
@@ -360,8 +362,11 @@ const updateProduct = asyncHandler(async (req, res) => {
       ageRange = "",
       color = "",
       fabric = "",
-      sizes = "",
+      sizes = [],
     } = parsedProductDetails;
+    // Ensure sizes is an array (fixes the `.split is not a function` error)
+    const formattedSizes =
+      typeof sizes === "string" ? sizes.split(",").map((s) => s.trim()) : sizes;
 
     const product = await Product.findById(req.params.id);
 
@@ -377,7 +382,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         ageRange,
         color,
         fabric,
-        sizes,
+        sizes: formattedSizes,
       };
       product.countInStock = countInStock;
       product.shippingDetails = completeShippingDetails;
@@ -499,6 +504,7 @@ const uploadProducts = asyncHandler(async (req, res) => {
 // @route PUT /api/products/:id/reviews
 // @access Private
 const createproductreview = asyncHandler(async (req, res) => {
+  console.log("Incoming Review Request:", req.body);
   const { rating, comment } = req.body;
   const product = await Product.findById(req.params.id);
   if (product) {
@@ -509,11 +515,16 @@ const createproductreview = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("Product Already Review");
     }
+    if (!product) {
+      console.log("❌ Product not found");
+      return res.status(404).json({ message: "Product not found" });
+    }
     const review = {
       name: req.user.name,
       rating: Number(rating),
       comment,
       user: req.user._id,
+      approved: false,
     };
     product.reviews.push(review);
     product.numReviews = product.reviews.length;
@@ -525,6 +536,76 @@ const createproductreview = asyncHandler(async (req, res) => {
   } else {
     res.status(404);
     throw new Error("Product Not found");
+  }
+});
+const approveReview = asyncHandler(async (req, res) => {
+  console.log(
+    "🔍 Approving Review - Product ID:",
+    req.params.id,
+    "Review ID:",
+    req.params.reviewId
+  );
+
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    console.error("❌ ERROR: Product not found");
+    return res.status(404).json({ message: "Product not found" });
+  }
+
+  const review = product.reviews.find(
+    (r) => r._id.toString() === req.params.reviewId
+  );
+
+  if (!review) {
+    console.error("❌ ERROR: Review not found inside product");
+    return res.status(404).json({ message: "Review not found" });
+  }
+
+  review.approved = true; // ✅ Mark review as approved
+
+  try {
+    console.log("✅ Before Saving:", product.reviews); // ✅ Debugging before saving
+
+    await product.save(); // ✅ Save changes to database
+
+    console.log("✅ After Saving:", product.reviews); // ✅ Debugging after saving
+    res.json({ message: "Review approved" });
+  } catch (error) {
+    console.error("❌ ERROR Saving Review:", error);
+    res.status(500).json({ message: "Error saving approved review" });
+  }
+});
+
+// ✅ Fetch all pending reviews (Admin only)
+const getPendingReviews = asyncHandler(async (req, res) => {
+  try {
+    const products = await Product.find({ "reviews.approved": false }).select(
+      "reviews brandname"
+    );
+
+    let pendingReviews = [];
+    products.forEach((product) => {
+      product.reviews.forEach((review) => {
+        if (!review.approved) {
+          console.log("✅ Adding Review:", review);
+          pendingReviews.push({
+            _id: review._id ? review._id.toString() : null, // ✅ Ensure review._id is extracted
+            productId: product._id ? product._id.toString() : null, // ✅ Ensure productId is included
+            brandname: product.brandname,
+            name: review.name,
+            rating: review.rating,
+            comment: review.comment,
+            createdAt: review.createdAt,
+          });
+        }
+      });
+    });
+
+    res.json(pendingReviews);
+  } catch (error) {
+    console.error("❌ Error fetching pending reviews:", error);
+    res.status(500).json({ message: "Failed to fetch pending reviews" });
   }
 });
 
@@ -539,4 +620,6 @@ export {
   getCart,
   deleteCartItem,
   getProductById,
+  approveReview,
+  getPendingReviews,
 };

@@ -25,9 +25,11 @@ import {
   TRANSACTION_LIST_REQUEST,
   TRANSACTION_LIST_SUCCESS,
   TRANSACTION_LIST_FAIL,
+  STRIPE_PAYMENT_REQUEST,
+  STRIPE_PAYMENT_SUCCESS,
+  STRIPE_PAYMENT_FAIL,
 } from "../constants/orderConstants";
 import {
-
   INCOME_BY_CITY_REQUEST,
   INCOME_BY_CITY_SUCCESS,
   INCOME_BY_CITY_FAIL,
@@ -208,6 +210,24 @@ export const transactionListReducer = (
       return { loading: false, transactions: action.payload };
     case TRANSACTION_LIST_FAIL:
       return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+export const StripepaymentReducer = (
+  state = { clientSecret: null },
+  action
+) => {
+  switch (action.type) {
+    case STRIPE_PAYMENT_REQUEST:
+      return { ...state, loading: true };
+
+    case STRIPE_PAYMENT_SUCCESS:
+      return { loading: false, clientSecret: action.payload, error: null };
+
+    case STRIPE_PAYMENT_FAIL:
+      return { loading: false, error: action.payload };
+
     default:
       return state;
   }

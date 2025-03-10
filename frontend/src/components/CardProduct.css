@@ -1,0 +1,105 @@
+.cardProduct {
+  color: black;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 80% 20%;
+  width: 270px;
+  height: 435px;
+  justify-self: center;
+  background-position: center;
+  background-color: white;
+}
+
+/* Image Section */
+.imgDiv {
+  position: relative;
+  width: 100%;
+  /* height: 320px; */
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.imgProduct {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Discount Badge */
+.discountBadge {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: black;
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+/* Bottom Card Content */
+.bottomcard {
+  margin-left: 7px;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-rows: 50% 50%;
+  width: 100%;
+  margin-top: 20px;
+}
+.bottomcard span {
+  font-size: 16px;
+  color: black;
+  font-weight: bold;
+  font-weight: 600;
+  margin-top: 10px;
+}
+.bottomcard h2 {
+  font-size: 15px;
+  color: rgb(82, 78, 78);
+  font-weight: 300;
+  margin-top: 5px;
+}
+.iconFav {
+  cursor: pointer;
+  justify-self: end;
+  margin-right: 10px;
+}
+.brandName {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.productTitle {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 5px 0;
+  color: #222;
+}
+
+/* Price Section */
+.productpricecard {
+  margin-top: 5px;
+}
+
+.oldPrice {
+  text-decoration: line-through;
+  color: #999;
+  margin-right: 5px;
+  font-size: 14px;
+}
+
+.newPrice {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Favorite Icon */
+.iconFav {
+  cursor: pointer;
+  margin-top: 5px;
+}

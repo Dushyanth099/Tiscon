@@ -24,6 +24,12 @@ import {
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_FAIL,
   PRODUCT_CREATE_REVIEW_RESET,
+  REVIEW_LIST_REQUEST,
+  REVIEW_LIST_SUCCESS,
+  REVIEW_LIST_FAIL,
+  REVIEW_APPROVE_REQUEST,
+  REVIEW_APPROVE_SUCCESS,
+  REVIEW_APPROVE_FAIL,
 } from "../constants/productConstants";
 export const productListReducer = (state = { products: [] }, action) => {
   switch (action.type) {
@@ -121,6 +127,32 @@ export const productreviewCreateReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case PRODUCT_CREATE_REVIEW_RESET:
       return {};
+    default:
+      return state;
+  }
+};
+export const reviewListReducer = (state = { reviews: [] }, action) => {
+  switch (action.type) {
+    case REVIEW_LIST_REQUEST:
+      return { loading: true, reviews: [] };
+    case REVIEW_LIST_SUCCESS:
+      return { loading: false, reviews: action.payload };
+    case REVIEW_LIST_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+// Approve a review (Admin)
+export const reviewApproveReducer = (state = {}, action) => {
+  switch (action.type) {
+    case REVIEW_APPROVE_REQUEST:
+      return { loading: true };
+    case REVIEW_APPROVE_SUCCESS:
+      return { loading: false, success: true };
+    case REVIEW_APPROVE_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

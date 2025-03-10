@@ -10,6 +10,7 @@ const reviewSchema = mongoose.Schema(
       required: true,
       ref: "User", //relation betwen the review and the user
     },
+    approved: { type: Boolean, default: false },
   },
   {
     timestamps: true,
@@ -98,7 +99,7 @@ const productSchema = mongoose.Schema(
         required: true,
       },
       sizes: {
-        type: String,
+        type: [String],
         required: true,
       },
     },

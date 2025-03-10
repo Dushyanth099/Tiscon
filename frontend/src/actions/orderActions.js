@@ -21,15 +21,17 @@ import {
   TRANSACTION_LIST_REQUEST,
   TRANSACTION_LIST_SUCCESS,
   TRANSACTION_LIST_FAIL,
+  STRIPE_PAYMENT_REQUEST,
+  STRIPE_PAYMENT_SUCCESS,
 } from "../constants/orderConstants";
 import {
-
   INVOICE_REQUEST,
   INVOICE_SUCCESS,
   INVOICE_FAIL,
   INCOME_BY_CITY_REQUEST,
   INCOME_BY_CITY_SUCCESS,
   INCOME_BY_CITY_FAIL,
+  STRIPE_PAYMENT_FAIL,
 } from "../constants/orderConstants";
 
 export const CreateOrder = (order) => async (dispatch, getState) => {
@@ -233,7 +235,6 @@ export const listOrders = () => async (dispatch, getState) => {
   }
 };
 
-
 export const getInvoice = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: INVOICE_REQUEST });
@@ -328,6 +329,37 @@ export const listTransactions = (filters) => async (dispatch, getState) => {
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message,
+    });
+  }
+};
+// Action to process Stripe payment
+export const processStripePayment = (amount) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: STRIPE_PAYMENT_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      "/api/orders/stripePayment",
+      { amount },
+      config
+    );
+
+    dispatch({
+      type: STRIPE_PAYMENT_SUCCESS,
+      payload: data.clientSecret,
+    });
+  } catch (error) {
+    dispatch({
+      type: STRIPE_PAYMENT_FAIL,
+      payload: error.response?.data?.message || "Payment failed",
     });
   }
 };

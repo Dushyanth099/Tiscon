@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import "./Cardscg.css";
 
 const Cardscg = ({ title, imageSrc, cardStyle }) => {
   const location = useLocation();
@@ -37,8 +36,7 @@ const Cardscg = ({ title, imageSrc, cardStyle }) => {
             : selected === "Men"
             ? "linear-gradient(90deg, #003366, #0055aa)"
             : "#000",
-        border: selected === null ? "3px solid #888" : "none",
-        padding: selected === null ? "8px" : "10px",
+        border: selected === null ? "1px solid #888" : "none",
       }}
     >
       <Link to={linkPath}>

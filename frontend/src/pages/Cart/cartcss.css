@@ -48,38 +48,9 @@
   column-gap: 5px;
   color: white;
 }
-.Emptycart {
-  position: relative;
-  top: 70px;
-  display: grid;
-  grid-template-columns: 40% 60%;
-}
-.illustration {
-  position: relative;
-  right: 200px;
-  transform: scale(0.5);
-}
-.arrow {
-  display: inline;
-}
-.textempty {
-  align-self: center;
-  justify-self: center;
-  font-size: 30px;
-  color: white;
-}
-.textempty h1 {
-  font-weight: 600;
-  color: white;
-}
-.textempty .goshop {
-  transition: all 0.5s linear;
-  opacity: 0.7;
-  color: white;
-}
-.textempty .goshop:hover {
-  opacity: 1;
-}
+
+
+
 .imagecart {
   display: flex;
   height: 190px;

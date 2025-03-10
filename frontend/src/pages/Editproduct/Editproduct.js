@@ -49,7 +49,7 @@ const Editproduct = () => {
     ageRange: "",
     color: "",
     fabric: "",
-    sizes: "",
+    sizes: [],
   });
   const [shippingDetails, setShippingDetails] = useState({
     weight: "",
@@ -112,7 +112,7 @@ const Editproduct = () => {
           ageRange: product.productdetails?.ageRange || "",
           color: product.productdetails?.color || "",
           fabric: product.productdetails?.fabric || "",
-          sizes: product.productdetails?.sizes || "",
+          sizes: product.productdetails?.sizes || [],
         });
         setShippingDetails({
           weight: product.shippingDetails?.weight || "",
@@ -145,6 +145,15 @@ const Editproduct = () => {
       updatedNewImages[index] = file;
       setNewImages(updatedNewImages);
     }
+  };
+  const handleSizeChange = (size) => {
+    setProductdetails((prevDetails) => {
+      const newSizes = prevDetails.sizes.includes(size)
+        ? prevDetails.sizes.filter((s) => s !== size) // Remove if already selected
+        : [...prevDetails.sizes, size]; // Add if not selected
+
+      return { ...prevDetails, sizes: newSizes };
+    });
   };
   const options = {
     gender: ["Men", "Women", "Unisex"],
@@ -455,22 +464,17 @@ const Editproduct = () => {
           </FormControl>
           <FormControl>
             <FormLabel>Sizes</FormLabel>
-            <select
-              value={productdetails.sizes}
-              onChange={(e) =>
-                setProductdetails({
-                  ...productdetails,
-                  sizes: e.target.value,
-                })
-              }
-            >
-              <option value="">Select Sizes</option>
-              {options.sizes.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
+            <Stack direction="row" wrap="wrap">
+              {["S", "M", "L", "XL", "XXL"].map((size) => (
+                <Checkbox
+                  key={size}
+                  isChecked={productdetails.sizes.includes(size)}
+                  onChange={() => handleSizeChange(size)}
+                >
+                  {size}
+                </Checkbox>
               ))}
-            </select>
+            </Stack>
           </FormControl>
           <Heading size="md" color="teal.600" fontWeight="bold" mb={4}>
             🚚 Shipping Details

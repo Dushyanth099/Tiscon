@@ -10,6 +10,7 @@ import {
   generateInvoice,
   incomebycity,
   getTransactions,
+  StripePayment,
 } from "../controlers/orderControler.js";
 import { createShipment } from "../controlers/deliveryController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -26,5 +27,6 @@ router.route("/myorders").get(protect, GetMyOrders);
 router.route("/:id").get(protect, getOrderById);
 router.route("/:id/pay").put(protect, updateOrderToPaid);
 router.route("/:id/deliver").put(protect, admin, updateOrderToDelivered);
+router.route("/stripePayment").post(protect, StripePayment);
 
 export default router;

@@ -41,6 +41,8 @@ import BulkUploadPage from "./pages/Editproduct/BulkUpload";
 import Overview from "./pages/products/productOverview";
 import IncomeByCity from "./components/IncomeBycity/Incomebycity";
 import TransactionTable from "./pages/Transactions/Transaction";
+import AdminReviewPage from "./pages/Admin/AdminReviewPage";
+import ScrollButtons from "./components/ScrollButtons";
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.userLogin);
@@ -102,6 +104,7 @@ const App = () => {
                   />
                   <Route path="/productsoverview" element={<Overview />} />
                   <Route path="/transactions" element={<TransactionTable />} />
+                  <Route path="/adminreview" element={<AdminReviewPage />} />
                   <Route
                     path="*"
                     element={<Navigate to="/admin/orderlist" />}
@@ -127,6 +130,7 @@ const App = () => {
                   <Route path="/products/" element={<ProductsListPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
+                <ScrollButtons />
                 <Footer />
                 {/* path="/products/:category" */}
               </>

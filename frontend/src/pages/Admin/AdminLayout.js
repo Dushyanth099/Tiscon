@@ -156,6 +156,16 @@ const AdminLayout = ({ children }) => {
                   </MenuList>
                 </Menu>{" "}
                 <Button
+                  onClick={() => setActiveTab("review")}
+                  as={RouterLink}
+                  to="/adminreview"
+                  bg="white"
+                  color="black"
+                  variant="ghost"
+                >
+                  🌟 Reviews
+                </Button>
+                <Button
                   onClick={() => setActiveTab("transactions")}
                   as={RouterLink}
                   to="/transactions"

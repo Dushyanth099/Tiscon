@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import Order from "../models/orderModel.js";
-
 // @desc Create new order
 // @route POST /api/orders
 // @access Private
@@ -194,6 +193,30 @@ const getTransactions = asyncHandler(async (req, res) => {
   res.json(transactions);
 });
 
+// @desc    Stripe payments
+// @route   post /api/orders/stripe
+// @access  public/users
+const StripePayment = asyncHandler(async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    if (!amount) {
+      return res.status(400).json({ error: "Amount is required" });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // Convert to cents
+      currency: "usd",
+      payment_method_types: ["card"],
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error("Stripe Payment Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export {
   addorderitems,
   getOrderById,
@@ -204,4 +227,5 @@ export {
   generateInvoice,
   incomebycity,
   getTransactions,
+  StripePayment,
 };
