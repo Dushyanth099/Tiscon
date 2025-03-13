@@ -16,7 +16,7 @@ import { createShipment } from "../controlers/deliveryController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
 // admin routes
-router.route("/admin/order/:id/invoice").get(protect, admin, generateInvoice);
+router.route("/admin/order/:id/invoice").get(protect, generateInvoice);
 router.route("/admin/incomebycity").get(protect, admin, incomebycity);
 router.route("/transactions").get(protect, admin, getTransactions);
 router.route("/:id/shippo").post(protect, admin, createShipment);

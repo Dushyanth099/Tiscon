@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, Profiler } from "react";
 import Rating from "../../components/Rating";
 import { useDispatch, useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
@@ -38,11 +38,15 @@ import { useNavigate } from "react-router-dom";
 import FeaturesSection from "../../components/Trustdetails/FeatureItem";
 import Trust from "../../components/Trustdetails/Trust";
 import { listMyOrders } from "../../actions/orderActions";
+import ProductSpecification from "./ProductSpecification";
 
 const Productpage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [isZoomVisible, setIsZoomVisible] = useState(false);
+  const [hoveredImageIndex, setHoveredImageIndex] = useState(0);
 
   const relatedProductsList = useSelector((state) => state.productList);
   const { products: relatedProducts, loading: relatedLoading } =
@@ -146,6 +150,18 @@ const Productpage = () => {
       isClosable: true,
     });
   };
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.target.getBoundingClientRect();
+    const x = ((e.pageX - left) / width) * 100;
+    const y = ((e.pageY - top) / height) * 100;
+    setZoomPosition({ x, y });
+  };
+
+  const handleMouseEnter = (index) => {
+    setIsZoomVisible(true);
+    setHoveredImageIndex(index);
+  };
+  const handleMouseLeave = () => setIsZoomVisible(false);
   return (
     <>
       <Helmet>
@@ -177,15 +193,36 @@ const Productpage = () => {
                     </div>
                   ))}
                 </div>
-                <div className="img-display">
+                <div
+                  className="img-display"
+                  onMouseMove={handleMouseMove}
+                  onMouseEnter={() => handleMouseEnter(hoveredImageIndex)}
+                  onMouseLeave={handleMouseLeave}
+                >
                   <div ref={imgShowcase} className="img-showcase">
                     {product.images.map((image, index) => (
-                      <Image key={index} src={image} alt={`Product-${index}`} />
+                      <Image
+                        key={index}
+                        src={image}
+                        alt={`Product-${index}`}
+                        onMouseEnter={() => handleMouseEnter(index)}
+                      />
                     ))}
                   </div>
                 </div>
-              </div>
 
+                {/* Zoomed Image View */}
+                {isZoomVisible && (
+                  <div
+                    className="zoomed-image"
+                    style={{
+                      backgroundImage: `url(${product.images[hoveredImageIndex]})`,
+                      backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                      backgroundSize: "200%",
+                    }}
+                  />
+                )}
+              </div>
               <div className="product-content">
                 <h2 className="product-title">{product.brandname} </h2>
                 <div className="product-price">
@@ -204,8 +241,6 @@ const Productpage = () => {
                   </p>
                 </div>
                 <div className="product-detail">
-                  <h2>about this item: </h2>
-                  <p>{product.description}</p>
                   <div>
                     <Text fontSize="lg" fontWeight="bold">
                       Size: {selectedSize}
@@ -231,29 +266,7 @@ const Productpage = () => {
                         </Button>
                       ))}
                     </HStack>
-                    {/* <Text fontSize="lg" fontWeight="bold" mt={3}>
-                      Qty
-                    </Text>
-                    {product.countInStock > 0 ? (
-                      <Select
-                        as="select"
-                        size="md"
-                        maxW={20}
-                        value={qty}
-                        className="select-product"
-                        onChange={(e) => setQty(e.target.value)}
-                      >
-                        {[...Array(product.countInStock).keys()].map((x) => (
-                          <option key={x + 1} value={x + 1}>
-                            {x + 1}
-                          </option>
-                        ))}
-                      </Select>
-                    ) : (
-                      <span style={{ display: "flex" }}>
-                        <MdDoNotDisturb size="26" /> OUT OF STOCK{" "}
-                      </span>
-                    )} */}
+
                     {product.countInStock === 0 && (
                       <Text
                         fontSize="lg"
@@ -272,100 +285,7 @@ const Productpage = () => {
                     )}
                   </div>
                   <FeaturesSection />
-                  <div className="product-info-table">
-                    <div className="product-info-header">
-                      <span>SPECIFICATION</span>
-                    </div>
-                    <div className="product-info-content">
-                      <div className="product-info-column">
-                        <div className="info-item">
-                          <span>Category</span>
-                          <strong>
-                            {product?.productdetails?.category ||
-                              "Not available"}
-                          </strong>
-                        </div>
-                        <div className="info-item">
-                          <span>Sub Category</span>
-                          <strong>
-                            {product?.productdetails?.subcategory ||
-                              "Not available"}
-                          </strong>
-                        </div>
-                        <div className="info-item">
-                          <span>Age Range</span>
-                          <strong>
-                            {product?.productdetails?.ageRange ||
-                              "Not available"}
-                          </strong>
-                        </div>
-                        <div className="info-item">
-                          <span>Gender</span>
-                          <strong>
-                            {product?.productdetails?.gender || "Not available"}
-                          </strong>
-                        </div>
-                      </div>
-                      <div className="product-info-column">
-                        <div className="info-item">
-                          <span>Product Type</span>
-                          <strong>
-                            {product?.productdetails?.type || "Not available"}
-                          </strong>
-                        </div>
-                        <div className="info-item">
-                          <span>Size</span>
-                          <strong>
-                            {product?.productdetails?.sizes || "Not available"}
-                          </strong>
-                        </div>
-                        <div className="info-item">
-                          <span>Fabric</span>
-                          <strong>
-                            {product?.productdetails?.fabric || "Not available"}
-                          </strong>
-                        </div>
-                        <div className="info-item">
-                          <span>Color</span>
-                          <strong>
-                            {product?.productdetails?.color || "Not available"}
-                          </strong>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="product-info-table">
-                    <div className="product-info-header">
-                      <span>Product Details</span>
-                    </div>
-
-                    <div className="product-info-content">
-                      {/* SKU Code */}
-                      <div className="product-info-column">
-                        <div className="info-item">
-                          <span>Product Code</span>
-                          <strong>{product?.SKU || "Not available"}</strong>
-                        </div>
-                      </div>
-
-                      {/* Origin Address */}
-                      <div className="product-info-column">
-                        <div className="info-item">
-                          <span>Origin Address</span>
-                          <strong>
-                            {product?.shippingDetails?.originAddress?.street1
-                              ? `${product.shippingDetails.originAddress.street1}, 
-               ${product.shippingDetails.originAddress.city}, 
-               ${product.shippingDetails.originAddress.state}, 
-               ${product.shippingDetails.originAddress.zip}, 
-               ${product.shippingDetails.originAddress.country}`
-                              : "Not available"}
-                          </strong>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
+                  <ProductSpecification product={product} />
                   <div className="purchase-info">
                     <Button
                       onClick={addToCartHandler}
@@ -469,8 +389,8 @@ const Productpage = () => {
           px={{ base: 4, md: 12 }}
           my={8}
         >
-          <Heading as="h3" size="lg" mb={4}>
-            Related Products
+          <Heading as="h3" size="sm" mb={4} ml={20}>
+            RECOMMENDED
           </Heading>
           {relatedLoading ? (
             <HashLoader color={"#36D7B7"} />

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdDoneAll } from "react-icons/io";
+import { getInvoice } from "../../actions/orderActions";
 
 import {
   getOrderDetails,
@@ -24,9 +25,13 @@ import {
   Text,
   VStack,
   HStack,
+  Alert,
   Divider,
   Stack,
   Badge,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
   Spinner,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -40,6 +45,13 @@ const Order = () => {
   const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+  const invoiceDetails = useSelector((state) => state.invoiceDetails);
+  const {
+    loading: invoiceLoading,
+    error: invoiceError,
+    invoice,
+  } = invoiceDetails;
+
   const addDecimals = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
   };
@@ -58,14 +70,16 @@ const Order = () => {
         type: ORDER_DELIVER_RESET,
       });
       dispatch(getOrderDetails(orderId));
+      dispatch(getInvoice(orderId));
     }
   }, [dispatch, orderId, navigate, order, successDeliver, userInfo]);
 
   const deliverHandler = () => {
     dispatch(deliverOrder(order));
   };
+  console.log("Invoice Details in orderpage:", invoiceDetails);
   return (
-    <Box bg={useColorModeValue("gray.100", "gray.800")} minH="100vh" py={10}>
+    <Box mx="auto" px={40} py={10} bg="white">
       <Helmet>
         <title>Order Details</title>
       </Helmet>
@@ -77,8 +91,12 @@ const Order = () => {
       ) : error ? (
         <Text color="red.500">{error}</Text>
       ) : (
-        <Box maxW="1200px" mx="auto" p={6}>
-          <Stack direction={{ base: "column", md: "row" }} spacing={6}>
+        <Box mt={20}>
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            spacing={6}
+            justify="center"
+          >
             {/* Left Side - Order Info */}
             <VStack
               flex="2"
@@ -88,16 +106,36 @@ const Order = () => {
               boxShadow="lg"
               align="stretch"
             >
+              <Text fontSize="xl" fontWeight="bold" color="gray.600">
+                Order ID:{" "}
+                <Text as="span" color="blue.500">
+                  {order._id}
+                </Text>
+              </Text>
+              <Alert
+                status="success"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                borderRadius="md"
+                mt={4}
+              >
+                <AlertIcon boxSize="40px" mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize="lg">
+                  🎉 Thank You for Your Order! 🎉
+                </AlertTitle>
+                <AlertDescription maxW="sm">
+                  Your order is being processed and will be delivered soon.
+                </AlertDescription>
+              </Alert>
               <Text fontSize="2xl" fontWeight="bold">
                 Shipping Information
               </Text>
               <Divider />
               <Text>
                 <strong>Name:</strong> {order.user.name}
-              </Text>
-              <Text>
-                <strong>Email:</strong>{" "}
-                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
               </Text>
               <Text>
                 <strong>Address:</strong> {order.shippingAddress.doorNo},{" "}
@@ -135,35 +173,65 @@ const Order = () => {
               <Text fontSize="2xl" fontWeight="bold" mt={4}>
                 Order Items
               </Text>
-              <Divider />
               {order.orderItems.map((item) => (
-                <HStack key={item.product} justify="space-between">
-                  <Text>
-                    <Link
-                      to={`/product/${item.product}`}
-                      style={{ color: "blue", textDecoration: "underline" }}
-                    >
-                      {item.name}
+                <HStack
+                  key={item.product}
+                  justify="space-between"
+                  w="full"
+                  mb={4}
+                >
+                  {/* Left side: Image and Name */}
+                  <HStack spacing={2}>
+                    {/* Product Image */}
+                    <Link to={`/product/${item.product._id}`}>
+                      <img
+                        src={item.product.images?.[0] || "/placeholder.jpg"}
+                        alt={item.name}
+                        style={{
+                          width: "80px",
+                          height: "100px",
+                          objectFit: "cover",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                        }}
+                      />
                     </Link>
-                  </Text>
+
+                    {/* Product Name */}
+                    <Text fontWeight="bold" textAlign="center">
+                      <Link
+                        to={`/product/${item.product._id}`}
+                        style={{
+                          color: "deeppink",
+                          textDecoration: "underline",
+                        }}
+                      >
+                        {item.name}
+                      </Link>
+                    </Text>
+                  </HStack>
                   <Text>
                     {item.qty} x Rs. {item.price} = Rs. {item.qty * item.price}
                   </Text>
                 </HStack>
               ))}
 
-              <OrderTracking order={order} />
-            </VStack>
-
-            {/* Right Side - Order Summary */}
-            <VStack flex="1" bg="white" p={6} borderRadius="md" boxShadow="lg">
-              <Text fontSize="xl" fontWeight="bold" color="gray.600">
-                Order ID:{" "}
-                <Text as="span" color="blue.500">
-                  {order._id}
-                </Text>
+              {/* invoice */}
+              <Text fontSize="2xl" fontWeight="bold">
+                Invoice
               </Text>
-              <Divider />
+
+              <Button
+                bg="pink"
+                color="brown"
+                size="sm"
+                mr="auto"
+                fontWeight="600"
+                p={2}
+                onClick={() => window.open(invoice?.shippingLabelUrl)}
+              >
+                View Invoice
+              </Button>
 
               <Text fontSize="2xl" fontWeight="bold">
                 Order Summary
@@ -190,17 +258,17 @@ const Order = () => {
                   Rs. {order.totalPrice}
                 </Text>
               </HStack>
-
-              {userInfo?.isAdmin && order.isPaid && !order.isDelivered && (
-                <Button
-                  colorScheme="blue"
-                  onClick={deliverHandler}
-                  leftIcon={<IoMdDoneAll size="16" />}
-                >
-                  Mark as Delivered
-                </Button>
-              )}
+              <OrderTracking order={order} />
             </VStack>
+            {userInfo?.isAdmin && order.isPaid && !order.isDelivered && (
+              <Button
+                colorScheme="blue"
+                onClick={deliverHandler}
+                leftIcon={<IoMdDoneAll size="16" />}
+              >
+                Mark as Delivered
+              </Button>
+            )}
           </Stack>
         </Box>
       )}

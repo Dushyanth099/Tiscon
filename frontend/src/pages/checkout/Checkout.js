@@ -11,6 +11,7 @@ import {
   HStack,
   Text,
   Divider,
+  Grid,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { RiShoppingCart2Line } from "react-icons/ri";
@@ -27,10 +28,20 @@ import { fetchShippingRates } from "../../actions/deliveryActions";
 import { saveShippingCost } from "../../actions/cartActions";
 import { saveShippingRates } from "../../actions/cartActions";
 import StripePayment from "./Stripepayment";
+import { createShipment } from "../../actions/deliveryActions";
+import { CreateOrder } from "../../actions/orderActions";
+import { getUserDetails } from "../../actions/userActions";
 
 const Checkout = () => {
-  const cart = useSelector((state) => state.cart);
   const navigate = useNavigate();
+  const cart = useSelector((state) => state.cart);
+  const itemsPrice = cart.cartItems.reduce((acc, item) => {
+    if (item.product && item.product.price) {
+      return acc + item.qty * item.product.price;
+    }
+    return acc;
+  }, 0);
+
   const { shippingAddress } = cart;
   const { rates, loading, error } = useSelector((state) => state.shipping);
   const [doorNo, setDoorNo] = useState(shippingAddress?.doorNo || "");
@@ -49,7 +60,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("Card");
   const dispatch = useDispatch();
   const taxPercentage = 5;
-
+  const shippingRates = cart.shippingRates;
   const subtotal = cart.cartItems.reduce(
     (acc, item) => acc + item.qty * item.product.price,
     0
@@ -57,6 +68,13 @@ const Checkout = () => {
   const taxAmount = (subtotal * taxPercentage) / 100;
   const [shippingCost, setShippingCost] = useState(0);
   const totalPrice = subtotal + taxAmount + shippingCost;
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, success, ordererror } = orderCreate;
+  const userProfile = useSelector((state) => state.userDetails);
+  const { user, loading: userLoading } = userProfile;
+  const recipientAddress = user?.address;
 
   const handleShippingRateChange = (rate) => {
     setSelectedRate(rate);
@@ -105,22 +123,14 @@ const Checkout = () => {
     if (cart.cartItems.length > 0) {
       handleFetchRates();
     }
-  }, [
-    // doorNo,
-    // street,
-    // nearestLandmark,
-    // city,
-    // state,
-    // cart.cartItems,
-    pin,
-    country,
-  ]);
+  }, [pin, country]);
   useEffect(() => {
     if (rates) {
       console.log("FedEx API Response:", rates);
     }
   }, [rates]);
-  const handleOrder = (e) => {
+
+  const handleOrder = async (e) => {
     e.preventDefault();
     dispatch(
       saveAddressshipping({
@@ -136,129 +146,81 @@ const Checkout = () => {
     );
 
     dispatch(savepaymentmethod(paymentMethod));
-    navigate("/placeorder");
-  };
 
+    try {
+      // Prepare shipment details
+      const shipmentDetails = {
+        recipientName: userInfo.name,
+        street: recipientAddress.street,
+        nearestLandmark: recipientAddress.nearestLandmark,
+        city: recipientAddress.city,
+        postalCode: recipientAddress.pin,
+        countryCode: recipientAddress.country || "IN",
+        phoneNumber: recipientAddress?.phoneNumber,
+        productId: cart.cartItems[0].product._id,
+        totalPrice,
+      };
+      console.log("🚀 Sending Shipment Details:", shipmentDetails);
+      // Create shipment with FedEx
+      const shipmentResponse = await dispatch(createShipment(shipmentDetails));
+      console.log("📦 Shipment Response:", shipmentResponse);
+      const shipmentData = shipmentResponse.data;
+
+      const orderData = {
+        user: userInfo._id,
+        orderItems: cart.cartItems.map((item) => ({
+          product: item.product._id,
+          name: item.product.brandname,
+          price: item.product.price,
+          qty: item.qty,
+        })),
+        shippingAddress: recipientAddress,
+        shippingRates,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice,
+        shippingPrice: shippingCost,
+        taxPrice: taxPercentage,
+        totalPrice,
+        shipmentDetails: [shipmentData],
+      };
+
+      console.log("Final Order Payload:", orderData);
+      dispatch(CreateOrder(orderData));
+    } catch (error) {
+      console.error("❌ Error creating order:", error);
+    }
+  };
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(getUserDetails("profile"));
+    }
+  }, [dispatch, userInfo]);
+
+  useEffect(() => {
+    if (success) {
+      console.log(order._id);
+      navigate(`/order/${order._id}`);
+    }
+  }, [navigate, success, order]);
+
   return (
-    <Box
-      bg={useColorModeValue("gray.50", "gray.900")}
-      minH="100vh"
-      p={10}
-      mt={20}
-    >
-      <Helmet>
-        <title>Checkout</title>
-      </Helmet>
-
-      <Flex
-        maxW="1200px"
-        mx="auto"
-        direction={{ base: "column", md: "row" }}
-        gap={8}
-      >
-        {/* Left Side - Billing & Payment */}
-        <VStack flex="2" bg="white" p={6} borderRadius="md" boxShadow="lg">
-          <Text fontSize="2xl" fontWeight="bold">
-            Billing Address
-          </Text>
-          <Divider />
-
-          <Input
-            placeholder="Door No."
-            value={doorNo}
-            onChange={(e) => setDoorNo(e.target.value)}
-          />
-          <Input
-            placeholder="Street"
-            value={street}
-            onChange={(e) => setStreet(e.target.value)}
-          />
-          <Input
-            placeholder="Nearest Landmark"
-            value={nearestLandmark}
-            onChange={(e) => setNearestLandmark(e.target.value)}
-          />
-          <HStack spacing={4}>
-            <Input
-              placeholder="City"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-            <Input
-              placeholder="State"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            />
-          </HStack>
-          <HStack spacing={4}>
-            <Input
-              placeholder="Pin Code"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-            />
-            <Input
-              placeholder="Phone Number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            />
-          </HStack>
-          <Select
-            placeholder="Select Country"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-          >
-            <option value="IN">IN</option>
-            <option value="USA">USA</option>
-            <option value="France">France</option>
-          </Select>
-          <Text fontSize="2xl" fontWeight="bold" mt={6}>
-            Payment Method
-          </Text>
-          <Divider />
-
-          <Stack spacing={4} direction="row">
-            <Button
-              onClick={() => setPaymentMethod("Online Payment")}
-              variant={Payment === "Online Payment" ? "solid" : "outline"}
-              colorScheme="yellow"
-            >
-              Online Payment
-            </Button>
-            <Button
-              onClick={() => setPaymentMethod("COD")}
-              variant={Payment === "COD" ? "solid" : "outline"}
-              colorScheme="green"
-            >
-              Cash on Delivery
-            </Button>
-          </Stack>
-          {paymentMethod === "Online Payment" && (
-            <Payment
-              totalPrice={totalPrice}
-              onSuccess={() => navigate("/placeorder")}
-              setPaymentMethod={setPaymentMethod}
-            />
-          )}
-          {paymentMethod === "Online Payment" && (
-            <StripePayment
-              totalPrice={totalPrice}
-              onSuccess={() => navigate("/placeorder")}
-              setPaymentMethod={setPaymentMethod}
-            />
-          )}
-          <Button colorScheme="blue" size="lg" w="full" onClick={handleOrder}>
-            Place Order
-          </Button>
-        </VStack>
-
+    <Box p={6} maxW="container.xl" mx="auto">
+      <Grid templateColumns={{ base: "1fr", md: "0fr 1fr" }} gap={8}>
         {/* Right Side - Order Summary */}
-        <VStack flex="1" bg="white" p={6} borderRadius="md" boxShadow="lg">
-          <Text fontSize="2xl" fontWeight="bold">
-            <RiShoppingCart2Line size="24" /> Cart ({cart.cartItems.length})
+        <VStack
+          align="start"
+          spacing={4}
+          p={4}
+          borderWidth="1px"
+          borderRadius="lg"
+          shadow="md"
+        >
+          <Text fontSize="xl" fontWeight="bold">
+            Order Summary
           </Text>
           <Divider />
 
@@ -299,41 +261,81 @@ const Checkout = () => {
               Rs. {totalPrice.toFixed(2)}
             </Text>
           </HStack>
-          <Box>
-            {loading ? (
-              <p>Loading...</p>
-            ) : error ? (
-              <p>Error: {error}</p>
-            ) : rates && rates.length > 0 ? (
-              rates.map((rate, index) => {
-                const serviceName =
-                  rate.serviceDescription?.description || "Unknown Service";
-                const netCharge =
-                  rate.ratedShipmentDetails[0]?.totalNetCharge || "N/A";
 
-                return (
-                  <HStack key={index}>
-                    <input
-                      type="radio"
-                      name="shippingRate"
-                      value={rate.serviceType}
-                      onChange={() => handleShippingRateChange(rate)}
-                    />
-                    <Text>
-                      {serviceName} - RS.{netCharge.toFixed(2)} (Est. Delivery:{" "}
-                      {rate.estimatedDeliveryDate})
-                    </Text>
-                  </HStack>
-                );
-              })
-            ) : (
-              <p>
-                No shipping rates available. Please check your address details.
-              </p>
-            )}
-          </Box>
+          {loading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p>Error: {error}</p>
+          ) : rates && rates.length > 0 ? (
+            rates.map((rate, index) => {
+              const serviceName =
+                rate.serviceDescription?.description || "Unknown Service";
+              const netCharge =
+                rate.ratedShipmentDetails[0]?.totalNetCharge || "N/A";
+
+              return (
+                <HStack key={index}>
+                  <input
+                    type="radio"
+                    name="shippingRate"
+                    value={rate.serviceType}
+                    onChange={() => handleShippingRateChange(rate)}
+                  />
+                  <Text>
+                    {serviceName} - RS.{netCharge.toFixed(2)} (Est. Delivery:{" "}
+                    {rate.estimatedDeliveryDate})
+                  </Text>
+                </HStack>
+              );
+            })
+          ) : (
+            <p>
+              No shipping rates available. Please check your address details.
+            </p>
+          )}
+
+          <Text fontSize="2xl" fontWeight="bold">
+            Payment Method
+          </Text>
+          <Divider />
+
+          <HStack spacing={4} w="full">
+            <Button
+              onClick={() => setPaymentMethod("Online Payment")}
+              variant={Payment === "Online Payment" ? "solid" : "outline"}
+              colorScheme="yellow"
+              flex="1"
+            >
+              Online Payment
+            </Button>
+            <Button
+              onClick={() => setPaymentMethod("COD")}
+              variant={Payment === "COD" ? "solid" : "outline"}
+              colorScheme="green"
+              flex="1"
+            >
+              Cash on Delivery
+            </Button>
+          </HStack>
+          {paymentMethod === "Online Payment" && (
+            <Payment
+              totalPrice={totalPrice}
+              onSuccess={() => navigate("/placeorder")}
+              setPaymentMethod={setPaymentMethod}
+            />
+          )}
+          {paymentMethod === "Online Payment" && (
+            <StripePayment
+              totalPrice={totalPrice}
+              onSuccess={() => navigate("/placeorder")}
+              setPaymentMethod={setPaymentMethod}
+            />
+          )}
+          <Button color="black" size="lg" w="full" onClick={handleOrder}>
+            Place Order
+          </Button>
         </VStack>
-      </Flex>
+      </Grid>
     </Box>
   );
 };

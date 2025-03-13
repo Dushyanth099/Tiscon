@@ -57,6 +57,7 @@ export const CreateOrder = (order) => async (dispatch, getState) => {
       payload: data,
     });
   } catch (error) {
+    console.error("❌ Order API Error:", error.response?.data || error.message);
     dispatch({
       type: ORDER_CREATE_FAIL,
       payload:

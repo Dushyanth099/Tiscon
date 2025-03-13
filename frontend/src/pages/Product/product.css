@@ -20,7 +20,11 @@
   padding: 0 20px;
   box-sizing: border-box;
 }
+
+/* image */
 .img-display {
+  position: relative;
+  z-index: 1;
   overflow: hidden;
   max-width: 100%;
 }
@@ -31,6 +35,7 @@
 }
 .img-showcase img {
   min-width: 100%;
+  cursor: crosshair;
 }
 .img-select {
   display: flex;
@@ -63,7 +68,20 @@
 .img-item a:hover {
   border: 2px solid #256eff;
 }
+.zoomed-image {
+  width: 700px;
+  height: 600px;
+  border: 2px solid #ddd;
+  position: absolute;
+  top: 15px;
+  right: -100px;
+  background-repeat: no-repeat;
+  display: block;
+  pointer-events: none;
+  z-index: 900;
+}
 
+/* product */
 .product-content {
   padding: 1rem;
   box-sizing: border-box;
@@ -263,10 +281,16 @@
 
 .related-products-container {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   overflow-x: auto;
   padding: 10px;
+  margin-left: 60px;
+  margin-right: 60px;
+  box-sizing: border-box;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
 .product-imgs {
   margin-top: 15px;
   display: flex;
@@ -290,97 +314,6 @@
   align-items: center;
 }
 
-/* Box container */
-.product-info-box {
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  padding: 15px;
-  margin: 20px 0;
-  font-size: 16px;
-  width: 100%;
-}
-
-/* List styles */
-.product-info-box ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* List item styles */
-.product-info-box li {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
-}
-
-/* Last item no border */
-.product-info-box li:last-child {
-  border-bottom: none;
-}
-
-/* Status styling */
-.in-stock {
-  color: green;
-  font-weight: bold;
-}
-
-.out-of-stock {
-  color: red;
-  font-weight: bold;
-}
-.product-info-table {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-  padding: 15px;
-  width: 100%;
-  margin: 20px auto;
-}
-
-/* Header Styles */
-.product-info-header {
-  display: flex;
-  justify-content: center;
-  font-weight: bold;
-  border-bottom: 2px solid black;
-  padding-bottom: 8px;
-  margin-bottom: 10px;
-}
-
-/* Two-column Layout */
-.product-info-content {
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Column Styling */
-.product-info-column {
-  width: 48%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Top-down label-value layout */
-.info-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
-
-.info-item span {
-  font-size: 14px;
-  color: #555;
-  font-weight: normal;
-}
-
-.info-item strong {
-  font-size: 16px;
-  color: black;
-  font-weight: bold;
-}
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .card {

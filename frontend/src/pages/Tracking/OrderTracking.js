@@ -8,7 +8,14 @@ const OrderTracking = ({ order }) => {
   );
 
   return (
-    <Box borderWidth={1} borderRadius="md" p={5} boxShadow="lg" mt={6}>
+    <Box
+      borderWidth={1}
+      borderRadius="md"
+      p={5}
+      boxShadow="lg"
+      
+      bg={"white"}
+    >
       <Text fontSize="2xl" fontWeight="bold" mb={3}>
         Tracking Details
       </Text>

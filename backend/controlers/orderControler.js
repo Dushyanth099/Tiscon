@@ -48,10 +48,12 @@ const addorderitems = asyncHandler(async (req, res) => {
 // @route GET /api/orders/:id
 // @access Private
 const getOrderById = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id).populate(
-    "user",
-    "name email"
-  );
+  const order = await Order.findById(req.params.id)
+    .populate("user", "name email")
+    .populate({
+      path: "orderItems.product",
+      select: "name images", // Include the fields you need
+    });;
   if (order) {
     res.json(order);
   } else {
@@ -100,7 +102,10 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
 // @route GET /api/orders/myorders
 // @access Private
 const GetMyOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({ user: req.user._id });
+  const orders = await Order.find({ user: req.user._id }).populate({
+    path: "orderItems.product", // Reference to the Product model
+    select: "images ", // Select only the fields you need
+  });;
   res.json(orders);
 });
 

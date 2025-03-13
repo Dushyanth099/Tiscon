@@ -1,11 +1,7 @@
 /*Contactus Page */
-.contactUs {
-  background-color: black;
-  color: white;
-  position: relative;
-  top: 70px;
-  flex-wrap: wrap;
-  margin-bottom: 130px;
+.contactUscontainer {
+  background-color: white;
+  color: black;
 }
 .headerContact {
   position: relative;
@@ -13,7 +9,7 @@
   width: 100%;
 }
 .headerContact .text {
-  color: white;
+  color: black;
   display: flex;
   justify-content: center;
   position: absolute;
@@ -105,13 +101,13 @@
   font-size: 31px;
 }
 .adressCtn h3 {
-  color: white;
+  color: black;
   font-size: 25px;
   font-weight: 700;
 }
 
 .adressCtn p {
-  color: white;
+  color: black;
   margin-top: 20px;
   opacity: 0.6;
 }

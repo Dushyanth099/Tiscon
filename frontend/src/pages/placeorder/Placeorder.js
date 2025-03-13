@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { CreateOrder } from "../../actions/orderActions";
-import { Helmet } from "react-helmet";
 import { fetchCart } from "../../actions/cartActions";
-import "./Placeorder.css";
-import { fetchShippingRates } from "../../actions/deliveryActions";
-import { saveShippingRates } from "../../actions/cartActions";
 import { createShipment } from "../../actions/deliveryActions";
+import { getUserDetails } from "../../actions/userActions";
 
 const Placeorder = () => {
   const navigate = useNavigate();
@@ -16,6 +13,9 @@ const Placeorder = () => {
   const { userInfo } = userLogin;
   const cart = useSelector((state) => state.cart);
   const orderCreate = useSelector((state) => state.orderCreate);
+  const userProfile = useSelector((state) => state.userDetails);
+  const { user, loading: userLoading } = userProfile;
+  const recipientAddress = user?.address;
 
   const { order, success, error } = orderCreate;
   const taxPercentage = 5;
@@ -32,6 +32,7 @@ const Placeorder = () => {
   const shippingCost = cart.shippingCost;
   const shippingRates = cart.shippingRates;
   console.log("Shipping Rates", shippingRates);
+  console.log("recipientAddress", recipientAddress);
   const itemsPrice = cart.cartItems.reduce((acc, item) => {
     if (item.product && item.product.price) {
       return acc + item.qty * item.product.price;
@@ -46,11 +47,12 @@ const Placeorder = () => {
       // Prepare shipment details
       const shipmentDetails = {
         recipientName: userInfo.name,
-        street,
-        nearestLandmark,
-        city,
-        postalCode: pin,
-        countryCode: country,
+        street: recipientAddress.street,
+        nearestLandmark: recipientAddress.nearestLandmark,
+        city: recipientAddress.city,
+        postalCode: recipientAddress.pin,
+        countryCode: recipientAddress.country || "IN",
+        phoneNumber: recipientAddress?.phoneNumber,
         productId: cart.cartItems[0].product._id,
         totalPrice,
       };
@@ -68,16 +70,7 @@ const Placeorder = () => {
           price: item.product.price,
           qty: item.qty,
         })),
-        shippingAddress: {
-          street,
-          city,
-          state,
-          pin,
-          country,
-          phoneNumber,
-          doorNo,
-          nearestLandmark,
-        },
+        shippingAddress: recipientAddress,
         shippingRates,
         paymentMethod: cart.paymentMethod,
         itemsPrice,
@@ -98,96 +91,21 @@ const Placeorder = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (userInfo) {
+      dispatch(getUserDetails("profile"));
+    }
+  }, [dispatch, userInfo]);
+
+  useEffect(() => {
     if (success) {
       console.log(order._id);
       navigate(`/order/${order._id}`);
     }
   }, [navigate, success, order]);
   return (
-    <div className="placeorder">
-      <Helmet>
-        <title>Place Order</title>
-      </Helmet>
-
-      {/* Order Details */}
-      <div className="informations-placeorder">
-        <div className="shipping-placeorder">
-          <h2>📦 Shipping</h2>
-          <p>
-            <strong>Address:</strong> {cart.shippingAddress.doorNo},{" "}
-            {cart.shippingAddress.street},{" "}
-            {cart.shippingAddress.nearestLandmark}, {cart.shippingAddress.city},{" "}
-            {cart.shippingAddress.state} - {cart.shippingAddress.pin},{" "}
-            {cart.shippingAddress.country}
-          </p>
-          <p>
-            <strong>📞 Phone:</strong> {cart.shippingAddress.phoneNumber}
-          </p>
-        </div>
-
-        <div className="payment-placeorder">
-          <h2>💳 Payment Method</h2>
-          <p>
-            <strong>Method:</strong> {cart.paymentMethod}
-          </p>
-        </div>
-
-        {/* Order Items */}
-        <div>
-          <h2>🛒 Order Items</h2>
-          {cart.cartItems.length === 0 ? (
-            <p>Your cart is empty</p>
-          ) : (
-            <div className="orders-placeorder">
-              {cart.cartItems.map((item) => (
-                <p key={item.product._id}>
-                  <Link
-                    to={`/product/${item.product._id}`}
-                    className="color-name"
-                  >
-                    {item.product.brandname}
-                  </Link>
-                  <br />
-                  <b>Price: Rs. {item.product.price.toFixed(2)}</b> | Qty:{" "}
-                  {item.qty}
-                  <hr />
-                </p>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Order Summary */}
-      <div className="your-products">
-        <div className="cart-summ">
-          <h1>📝 Order Summary</h1>
-
-          <h3>
-            Subtotal: <span>Rs. {itemsPrice.toFixed(2)}</span>
-          </h3>
-          <h3>
-            Shipping: <span>Rs. {shippingCost}</span>
-          </h3>
-          <h3>
-            Tax (5%): <span>Rs. {taxPrice.toFixed(2)}</span>
-          </h3>
-          <h3>
-            <b>Total:</b>{" "}
-            <span>
-              <b>Rs. {totalPrice.toFixed(2)}</b>
-            </span>
-          </h3>
-
-          {/* Order Button */}
-          <div className="div-placeorder-btn">
-            <button className="placeorder-btn" onClick={PlaceorderHandler}>
-              🛍️ Place Order
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <button className="placeorder-btn" onClick={PlaceorderHandler}>
+      🛍️ Place Order
+    </button>
   );
 };
 export default Placeorder;

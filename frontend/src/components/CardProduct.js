@@ -7,8 +7,7 @@ import { addToCart } from "../actions/cartActions";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineHeart, HiHeart } from "react-icons/hi";
- import "./CardProduct.css"; 
-
+import "./CardProduct.css";
 
 const CardProduct = ({ product }) => {
   const toast = useToast();
@@ -92,6 +91,7 @@ const CardProduct = ({ product }) => {
         <div className="bottomcard">
           <Link to={`/product/${product._id}`} exact>
             <span>{product.brandname}</span>
+            <p className="productDescription">{product.description}</p>
           </Link>
 
           {/* Shopping Cart Icon */}

@@ -7,7 +7,7 @@ import {
   Input,
   InputGroup,
   useDisclosure,
-  InputRightElement,
+  InputLeftElement,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -16,7 +16,8 @@ import {
   AlertDialogFooter,
 } from "@chakra-ui/react";
 import { RiShoppingCart2Line } from "react-icons/ri";
-import { MdSearch, MdHome } from "react-icons/md";
+import { MdHome } from "react-icons/md";
+import { BiSearch } from "react-icons/bi";
 import { BsArrowRightShort } from "react-icons/bs";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { IoLogOutOutline } from "react-icons/io5";
@@ -89,11 +90,11 @@ const Nav = () => {
               ref={searchRef}
               color="white"
             />
-            <InputRightElement>
-              <Button className="search-button" type="submit" size="sm">
-                <MdSearch size="20" />
+            <InputLeftElement>
+              <Button className="search-button" type="submit" size="40">
+                <BiSearch />
               </Button>
-            </InputRightElement>
+            </InputLeftElement>
           </InputGroup>
         </form>
       </div>

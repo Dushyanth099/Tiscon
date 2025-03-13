@@ -81,8 +81,8 @@
   white-space: nowrap;
 }
 .search-button {
-  background-color: transparent;
-  color: black;
+  background-color: black !important;
+  color: white !important;
 }
 .search-input-group {
   background-color: #2d3748;
@@ -150,7 +150,8 @@
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   background: black;
   width: auto;
   display: flex;
@@ -200,7 +201,6 @@
   width: 24px;
   height: 24px;
 }
-
 
 /* profilepicture */
 .user-name {

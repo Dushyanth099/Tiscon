@@ -32,7 +32,17 @@ import {
   Spinner,
   useToast,
 } from "@chakra-ui/react";
-import { FaUser, FaMapMarkerAlt, FaShoppingBag, FaBars } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaMapMarkerAlt,
+  FaShoppingBag,
+  FaBars,
+  FaCamera,
+} from "react-icons/fa";
+
+import Trust from "../components/Trustdetails/Trust";
+
 const ProfileScreen = ({ history }) => {
   const [activeSection, setActiveSection] = useState("profile");
   const [name, setName] = useState("");
@@ -56,7 +66,10 @@ const ProfileScreen = ({ history }) => {
 
   const orderMylist = useSelector((state) => state.orderMylist);
   const { loading: loadingOrders, error: errorOrders, orders } = orderMylist;
-
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
   useEffect(() => {
     if (!userInfo) {
       navigate("/login");
@@ -75,7 +88,10 @@ const ProfileScreen = ({ history }) => {
 
   // ✅ Handle Image Upload
   const handleImageChange = (e) => {
-    setProfilePicture(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+    }
   };
 
   // ✅ Convert form fields to `FormData`
@@ -120,54 +136,86 @@ const ProfileScreen = ({ history }) => {
     { id: "profile", label: "Profile", icon: FaUser },
     { id: "addresses", label: "Addresses", icon: FaMapMarkerAlt },
     { id: "orders", label: "My Orders", icon: FaShoppingBag },
+    {
+      id: "about",
+      label: "About",
+      path: "/About",
+    },
+    {
+      id: "contactus",
+      label: "Contactus",
+      path: "/Contactus",
+    },
+
+    {
+      id: "Terms and conditions",
+      label: "Terms and Conditions",
+      path: "/_blank ",
+    },
+    {
+      id: "Privacy policy",
+      label: "Privacy policy",
+      path: "/_blank",
+    },
+    {
+      id: "Return policy",
+      label: "Return policy",
+      path: "/_blank",
+    },
+    {
+      id: "logout",
+      label: "Logout",
+      icon: FaSignOutAlt,
+      onClick: handleLogout,
+    },
   ];
 
   const renderProfile = () => (
-    <Box
-      maxWidth="600px"
-      width="100%"
-      mx="auto"
-      p={6}
-      border="1px solid gray"
-      borderRadius="10px"
-      bg="white"
-      boxShadow="sm"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-    >
-      <VStack as="form" onSubmit={submitHandler} spacing={4} align="stretch">
+    <Box mx="auto" p={10} justifyContent="center" alignItems="center">
+      <VStack as="form" onSubmit={submitHandler} spacing={4}>
         <FormControl>
-          <FormLabel>Profile Photo</FormLabel>
+          <Box
+            position="relative"
+            boxSize="130px"
+            borderRadius="full"
+            overflow="hidden"
+            mx="auto"
+          >
+            <img
+              src={
+                typeof profilePicture === "string"
+                  ? profilePicture
+                  : profilePicture
+                  ? URL.createObjectURL(profilePicture)
+                  : "https://via.placeholder.com/150" // Default placeholder
+              }
+              alt="Profile"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
 
-          {/* ✅ Display saved profile picture or preview new upload */}
-          {profilePicture ? (
-            <Box boxSize="150px" overflow="hidden" borderRadius="full">
-              <img
-                src={
-                  typeof profilePicture === "string"
-                    ? profilePicture // ✅ Show saved profile picture from backend
-                    : URL.createObjectURL(profilePicture) // ✅ Show preview of selected image
-                }
-                alt="Profile"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </Box>
-          ) : (
+            {/* ✅ Upload Icon Overlay */}
             <Box
-              boxSize="150px"
+              position="absolute"
+              bottom={2}
+              right={2}
+              bg="blackAlpha.700"
+              p={2}
               borderRadius="full"
-              bg="gray.200"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
+              cursor="pointer"
+              onClick={() => document.getElementById("imageUpload").click()}
             >
-              <Text color="gray.500">No Image</Text>
+              <Icon as={FaCamera} color="white" boxSize={5} />
             </Box>
-          )}
 
-          <Input type="file" accept="image/*" onChange={handleImageChange} />
+            {/* ✅ Hidden File Input */}
+            <Input
+              id="imageUpload"
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handleImageChange}
+            />
+          </Box>
         </FormControl>
         <FormControl>
           <FormLabel>Email</FormLabel>
@@ -178,6 +226,7 @@ const ProfileScreen = ({ history }) => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </FormControl>
+
         <FormControl>
           <FormLabel>Current Password</FormLabel>
           <Input
@@ -197,7 +246,7 @@ const ProfileScreen = ({ history }) => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </FormControl>
-        <Button colorScheme="teal" type="submit">
+        <Button bg="black" color="white" type="submit" w="full">
           Update
         </Button>
       </VStack>
@@ -215,16 +264,7 @@ const ProfileScreen = ({ history }) => {
   ];
 
   const renderAddresses = () => (
-    <Box
-      maxWidth="600px"
-      width="100%"
-      mx="auto"
-      p={6}
-      border="1px solid gray"
-      borderRadius="10px"
-      bg="white"
-      boxShadow="sm"
-    >
+    <Box mx="auto" p={6}>
       <VStack spacing={4} align="stretch">
         {fieldOrder.map((field) => (
           <FormControl key={field}>
@@ -240,7 +280,7 @@ const ProfileScreen = ({ history }) => {
             />
           </FormControl>
         ))}
-        <Button colorScheme="teal" onClick={submitHandler}>
+        <Button bg="black" color="white" onClick={submitHandler}>
           Update Address
         </Button>
       </VStack>
@@ -259,36 +299,47 @@ const ProfileScreen = ({ history }) => {
         <Table>
           <Thead>
             <Tr>
-              <Th>ID</Th>
-              <Th>DATE</Th>
-              <Th>TOTAL</Th>
-              <Th>PAID</Th>
-              <Th>DELIVERED</Th>
-              <Th>DETAILS</Th>
+              <Th>Product</Th>
+              <Th>Name</Th>
+              <Th>Price</Th>
+              <Th>Details</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {orders.map((order) => (
-              <Tr key={order._id}>
-                <Td>{order._id}</Td>
-                <Td>{order.createdAt.substring(0, 10)}</Td>
-                <Td>${order.totalPrice}</Td>
-                <Td>{order.isPaid ? "Yes" : "No"}</Td>
-                <Td>{order.isDelivered ? "Yes" : "No"}</Td>
-                <Td>
-                  <Link to={`/order/${order._id}`}>
-                    <Button size="sm" colorScheme="blue">
-                      Details
-                    </Button>
-                  </Link>
-                </Td>
-              </Tr>
-            ))}
+            {orders.map((order) =>
+              order.orderItems.map((item) => (
+                <Tr key={item._id}>
+                  {/* Product Image */}
+                  <Td>
+                    <img
+                      src={item.product.images[0]}
+                      alt={item.name}
+                      width="50"
+                      height="50"
+                      style={{ borderRadius: "5px" }}
+                    />
+                  </Td>
+                  {/* Product Name */}
+                  <Td>{item.name}</Td>
+                  {/* Product Price */}
+                  <Td>${item.price.toFixed(2)}</Td>
+                  {/* Details Button */}
+                  <Td>
+                    <Link to={`/order/${order._id}`}>
+                      <Button size="sm" color="white" bg="black">
+                        Details
+                      </Button>
+                    </Link>
+                  </Td>
+                </Tr>
+              ))
+            )}
           </Tbody>
         </Table>
       )}
     </Box>
   );
+
   // 🟢 Content Switcher
   const renderContent = () => {
     switch (activeSection) {
@@ -303,67 +354,79 @@ const ProfileScreen = ({ history }) => {
     }
   };
   return (
-    <Box mt={20} width="100vw" bg="gray.100">
+    <Box mt={20} bg="white">
       <Helmet>
         <title>Profile</title>
       </Helmet>
 
       {/* 🟢 Sidebar & Content Layout */}
-      <Flex direction={{ base: "column", md: "row" }} gap={8}>
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        gap={8}
+        justify="center" // ✅ Centers content horizontally
+        align="start" // ✅ Aligns sidebar and content to the top
+        mx="auto"
+        maxW="1000px" // ✅ Adjusts max width for proper alignment
+        w="full"
+        p={5}
+      >
         {/* LEFT SIDE - MENU */}
         <Box
-          width={{ base: "100%", md: "250px" }}
           bg="white"
           p={4}
-          rounded="lg"
-          shadow="sm"
+          border="1px solid"
+          borderColor="gray.300"
+          borderRadius="md"
+          minW="250px"
+          h="fit-content"
         >
-          {/* Mobile Dropdown */}
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<FaBars />}
-              display={{ base: "block", md: "none" }}
-              width="100%"
-              mb={4}
-            >
-              Menu
-            </MenuButton>
-            <MenuList>
-              {menuOptions.map((menu) => (
-                <MenuItem
-                  key={menu.id}
-                  onClick={() => setActiveSection(menu.id)}
-                >
-                  <Icon as={menu.icon} mr={2} />
-                  {menu.label}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-
           {/* Desktop Sidebar */}
-          <List spacing={3} display={{ base: "none", md: "block" }}>
+          <List spacing={3}>
             {menuOptions.map((menu) => (
               <ListItem key={menu.id}>
-                <Button
-                  width="100%"
-                  leftIcon={<Icon as={menu.icon} />}
-                  colorScheme={activeSection === menu.id ? "teal" : "gray"}
-                  onClick={() => setActiveSection(menu.id)}
-                >
-                  {menu.label}
-                </Button>
+                <Link to={menu.path} style={{ textDecoration: "none" }}>
+                  <HStack
+                    p={3}
+                    borderRadius="md"
+                    _hover={{ bg: "gray.200" }}
+                    cursor="pointer"
+                    color={activeSection === menu.id ? "teal.500" : "gray.700"}
+                    onClick={() => setActiveSection(menu.id)}
+                  >
+                    {menu.icon && <Icon as={menu.icon} boxSize={5} />}
+                    <Text fontSize="lg" fontWeight="600">
+                      {menu.label}
+                    </Text>
+                  </HStack>
+                </Link>
               </ListItem>
             ))}
           </List>
         </Box>
 
         {/* RIGHT SIDE - CONTENT */}
-        <Box flex="1" p={4} bg="white" rounded="lg" shadow="sm" height="100vh">
-          {renderContent()}
+        <Box
+          p={6}
+          bg="white"
+          rounded="lg"
+          shadow="sm"
+          border="1px solid"
+          borderColor="gray.300"
+          flex="1" // ✅ Allows content to take remaining space
+          maxW="600px"
+          h="585px" // ✅ Fixed height for right-side box
+          overflow="hidden"
+        >
+          <Box
+            h="100%"
+            overflowY="auto" // ✅ Only inner content will scroll
+            pr={2} // ✅ Adds a little space for scrollbar
+          >
+            {renderContent()}
+          </Box>
         </Box>
       </Flex>
+      <Trust />
     </Box>
   );
 };

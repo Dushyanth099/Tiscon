@@ -5,7 +5,7 @@
   display: grid;
   grid-template-rows: 80% 20%;
   width: 270px;
-  height: 435px;
+  height: 465px;
   justify-self: center;
   background-position: center;
   background-color: white;
@@ -24,6 +24,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 15px;
 }
 
 /* Discount Badge */
@@ -46,7 +47,7 @@
   grid-template-columns: 60% 40%;
   grid-template-rows: 50% 50%;
   width: 100%;
-  margin-top: 20px;
+  
 }
 .bottomcard span {
   font-size: 16px;
@@ -82,7 +83,7 @@
 
 /* Price Section */
 .productpricecard {
-  margin-top: 5px;
+  margin-top: 16px;
 }
 
 .oldPrice {
@@ -102,4 +103,12 @@
 .iconFav {
   cursor: pointer;
   margin-top: 5px;
+}
+.productDescription {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
