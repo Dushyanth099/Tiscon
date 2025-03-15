@@ -142,7 +142,7 @@ const FilterPage = () => {
   );
 
   return (
-    <Flex direction={{ base: "column", md: "row" }} p={2}>
+    <Flex direction={{ base: "column", md: "row" }}>
       <Box
         bg="white"
         width={{ base: "100%", md: "300px" }}

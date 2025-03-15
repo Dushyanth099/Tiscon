@@ -86,8 +86,8 @@ const ProductsListPage = () => {
     dispatch(Listproductbyfiters(Object.fromEntries(searchParams.entries())));
   };
   return (
-    <Box bg="white" p={4}>
-      <Flex p={4} direction={{ base: "column", md: "row" }}>
+    <Box bg="white">
+      <Flex direction={{ base: "column", md: "row" }}>
         {/* Left Side - Filter Section */}
         <Box mt={20} width={{ base: "100%", md: "25%" }}>
           <FilterPage />
@@ -130,7 +130,6 @@ const ProductsListPage = () => {
                   </Box>
                 ))}
             </Flex>
-
             <Select
               value={sortBy}
               onChange={handleSortChange}

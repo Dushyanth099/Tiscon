@@ -83,7 +83,7 @@ const CardProduct = ({ product }) => {
 
           <Image
             className="imgProduct"
-            boxSize="350px"
+            boxSize="450px"
             objectFit="cover"
             src={product.images[0]}
           />
