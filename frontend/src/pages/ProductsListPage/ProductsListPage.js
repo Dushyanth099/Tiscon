@@ -101,32 +101,34 @@ const ProductsListPage = () => {
             flexWrap="wrap" // Ensures responsiveness if there are too many tags
           >
             <Flex wrap="wrap" mb={4} alignItems="center">
-              {selectedFilters.map((filter) => (
-                <Box
-                  key={filter.value}
-                  bg="gray.200"
-                  borderRadius="20px"
-                  px={3}
-                  py={1}
-                  mr={2}
-                  mb={2}
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Text fontSize="sm" mr={2}>
-                    {filter.value}
-                  </Text>
-                  <Button
-                    size="xs"
-                    bg="transparent"
-                    color="black"
-                    _hover={{ bg: "gray.300" }}
-                    onClick={() => handleRemoveFilter(filter.value)}
+              {selectedFilters
+                .filter((filter) => filter.name !== "Gender") // Exclude gender filters
+                .map((filter) => (
+                  <Box
+                    key={filter.value}
+                    bg="gray.200"
+                    borderRadius="20px"
+                    px={3}
+                    py={1}
+                    mr={2}
+                    mb={2}
+                    display="flex"
+                    alignItems="center"
                   >
-                    ✖
-                  </Button>
-                </Box>
-              ))}
+                    <Text fontSize="sm" mr={2}>
+                      {filter.value}
+                    </Text>
+                    <Button
+                      size="xs"
+                      bg="transparent"
+                      color="black"
+                      _hover={{ bg: "gray.300" }}
+                      onClick={() => handleRemoveFilter(filter.value)}
+                    >
+                      ✖
+                    </Button>
+                  </Box>
+                ))}
             </Flex>
 
             <Select
@@ -136,6 +138,7 @@ const ProductsListPage = () => {
               border="1px solid #ccc"
               borderRadius="4px"
               p={2}
+              bg="gray.100"
             >
               <option value="">Sort By: Newest</option>
               <option value="Rating">Highest Rated</option>

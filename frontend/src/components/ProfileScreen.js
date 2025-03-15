@@ -13,10 +13,6 @@ import {
   Thead,
   Tbody,
   Tr,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Icon,
   List,
   ListItem,
@@ -33,15 +29,13 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FaSignOutAlt } from "react-icons/fa";
-import {
-  FaUser,
-  FaMapMarkerAlt,
-  FaShoppingBag,
-  FaBars,
-  FaCamera,
-} from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
 
 import Trust from "../components/Trustdetails/Trust";
+import profileimg from "../assets/profile_profile.svg";
+import addressimg from "../assets/profile_address.svg";
+import ordersimg from "../assets/profile_orders.svg";
+import profiletag from "../assets/profiletag.png";
 
 const ProfileScreen = ({ history }) => {
   const [activeSection, setActiveSection] = useState("profile");
@@ -133,9 +127,9 @@ const ProfileScreen = ({ history }) => {
   };
   // 🟢 Sidebar Menu Options
   const menuOptions = [
-    { id: "profile", label: "Profile", icon: FaUser },
-    { id: "addresses", label: "Addresses", icon: FaMapMarkerAlt },
-    { id: "orders", label: "My Orders", icon: FaShoppingBag },
+    { id: "profile", label: "Profile", image: profileimg },
+    { id: "addresses", label: "Address", image: addressimg },
+    { id: "orders", label: "My Orders", image: ordersimg },
     {
       id: "about",
       label: "About",
@@ -171,12 +165,20 @@ const ProfileScreen = ({ history }) => {
   ];
 
   const renderProfile = () => (
-    <Box mx="auto" p={10} justifyContent="center" alignItems="center">
+    <Box
+      mx="auto"
+      p={6}
+      justifyContent="center"
+      alignItems="center"
+      display="flex"
+      flexDirection="column"
+      h="100%"
+    >
       <VStack as="form" onSubmit={submitHandler} spacing={4}>
         <FormControl>
           <Box
             position="relative"
-            boxSize="130px"
+            boxSize="120px"
             borderRadius="full"
             overflow="hidden"
             mx="auto"
@@ -298,12 +300,7 @@ const ProfileScreen = ({ history }) => {
       ) : (
         <Table>
           <Thead>
-            <Tr>
-              <Th>Product</Th>
-              <Th>Name</Th>
-              <Th>Price</Th>
-              <Th>Details</Th>
-            </Tr>
+            <Tr></Tr>
           </Thead>
           <Tbody>
             {orders.map((order) =>
@@ -377,9 +374,19 @@ const ProfileScreen = ({ history }) => {
           border="1px solid"
           borderColor="gray.300"
           borderRadius="md"
-          minW="250px"
-          h="fit-content"
+          minW="450px"
+          h="562px" // ✅ Fixed height for right-side box
+          overflowY="auto"
+          css={{
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+          }}
         >
+          <Box mb="3">
+            <img src={profiletag} alt="Profile" width="full" height="full" />
+          </Box>
           {/* Desktop Sidebar */}
           <List spacing={3}>
             {menuOptions.map((menu) => (
@@ -388,15 +395,21 @@ const ProfileScreen = ({ history }) => {
                   <HStack
                     p={3}
                     borderRadius="md"
-                    _hover={{ bg: "gray.200" }}
                     cursor="pointer"
-                    color={activeSection === menu.id ? "teal.500" : "gray.700"}
+                    color={activeSection === menu.id ? "white" : "black"}
+                    bg={activeSection === menu.id ? "black" : "gray.100"}
                     onClick={() => setActiveSection(menu.id)}
                   >
-                    {menu.icon && <Icon as={menu.icon} boxSize={5} />}
-                    <Text fontSize="lg" fontWeight="600">
-                      {menu.label}
-                    </Text>
+                    {menu.image && (
+                      <img
+                        src={menu.image}
+                        alt={menu.label}
+                        width="24"
+                        height="24"
+                        style={{ borderRadius: "5px" }}
+                      />
+                    )}
+                    <Text fontWeight="600">{menu.label}</Text>
                   </HStack>
                 </Link>
               </ListItem>
@@ -413,14 +426,20 @@ const ProfileScreen = ({ history }) => {
           border="1px solid"
           borderColor="gray.300"
           flex="1" // ✅ Allows content to take remaining space
-          maxW="600px"
-          h="585px" // ✅ Fixed height for right-side box
+          minW="600px"
+          h="562px" // ✅ Fixed height for right-side box
           overflow="hidden"
         >
           <Box
             h="100%"
             overflowY="auto" // ✅ Only inner content will scroll
             pr={2} // ✅ Adds a little space for scrollbar
+            css={{
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
           >
             {renderContent()}
           </Box>

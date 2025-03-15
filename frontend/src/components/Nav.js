@@ -29,7 +29,7 @@ import Brandlist from "./Brandlist/Brandlist";
 import BrandImg from "../../src/assets/brandimg.svg";
 import CategoryImg from "../../src/assets/categoryimg.svg";
 import "./Nav.css";
-
+import { getUserDetails } from "../actions/userActions";
 const Nav = () => {
   const cancelRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,6 +44,8 @@ const Nav = () => {
   const gender = searchParams.get("gender") || "Men";
   const [searchKeyword, setSearchKeyword] = useState("");
   const [signin, setSignin] = useState(null);
+  const userProfile = useSelector((state) => state.userDetails);
+  const { user } = userProfile;
   const onSearchSubmit = (e) => {
     e.preventDefault();
     if (searchKeyword.trim()) {
@@ -71,6 +73,11 @@ const Nav = () => {
     dispatch(logout());
     onClose();
   };
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(getUserDetails("profile"));
+    }
+  }, [dispatch, userInfo]);
 
   return (
     <nav className={`nav ${nav ? "active" : ""}`}>
@@ -144,25 +151,24 @@ const Nav = () => {
         {userInfo ? (
           <div className="ic_sett_dis">
             <Link to="/profile" className="user-profile">
-              {userInfo.profilePicture ? (
+              {user?.profilePicture ? (
                 <img
                   src={
-                    userInfo.profilePicture.startsWith("http")
-                      ? userInfo.profilePicture
-                      : `http://localhost:5000${userInfo.profilePicture}` // Update with your server URL
+                    user.profilePicture.startsWith("http")
+                      ? user.profilePicture
+                      : `http://localhost:5000${user.profilePicture}`
                   }
                   alt="Profile"
                   className="profile-img"
-                  onError={(e) => (e.target.style.display = "none")} // Hide image if broken
+                  onError={(e) => (e.target.style.display = "none")}
                 />
               ) : (
                 <CgProfile size="25" className="settingIcon" />
               )}
-              <span className="user-name">{userInfo.name}</span>{" "}
-              {/* Show User Name */}
+              <span className="user-name">{user?.name}</span>
             </Link>
             <IoLogOutOutline
-              size="28"
+              size="30"
               className="displayIcon"
               onClick={onOpen}
             />

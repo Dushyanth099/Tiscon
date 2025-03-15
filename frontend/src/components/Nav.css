@@ -218,8 +218,8 @@
 }
 
 .profile-img {
-  width: 40px; /* Adjust as needed */
-  height: 40px;
+  width: 35px; /* Adjust as needed */
+  height: 35px;
   border-radius: 50%;
   object-fit: cover; /* Prevents distortion */
   display: block; /* Ensures visibility */

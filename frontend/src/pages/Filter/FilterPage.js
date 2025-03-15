@@ -132,7 +132,7 @@ const FilterPage = () => {
             key={option}
             isChecked={filters[name].includes(option)}
             onChange={() => handleCheckboxChange(name, option)}
-            colorScheme="green"
+            colorScheme="cyan"
           >
             {option}
           </Checkbox>
@@ -146,36 +146,36 @@ const FilterPage = () => {
       <Box
         bg="white"
         width={{ base: "100%", md: "300px" }}
-        borderRight="1px solid black"
+        borderRight="1px solid "
+        borderColor="gray.200"
       >
         <Flex
           justifyContent="space-between"
           alignItems="center"
           p={3}
           bg="white"
-          borderTop="1px solid black"
-          borderLeft="1px solid black"
-          borderBottom="1px solid black"
+          border="1px solid "
+          borderColor="gray.200"
           mb={4}
         >
-          <Heading as="h3" size="md">
+          <Heading size="md" fontWeight="400">
             <Flex alignItems="center">
-              <Img src={Filterimg} alt="filterimg" boxSize="24px" mr={2} />
+              <Img src={Filterimg} alt="filterimg" boxSize="24px" />
               Filters
             </Flex>
           </Heading>
           <Text
             cursor="pointer"
             color="red.500"
-            fontWeight="bold"
-            mr={5}
+            fontWeight="600"
+            mr={3}
             onClick={handleClearFilters}
           >
             CLEAR ALL
           </Text>
         </Flex>
         <Stack spacing={3}>
-          {renderCheckboxList("Brand Name", "brandname", [
+          {renderCheckboxList("Brand", "brandname", [
             "Puma",
             "Nike",
             "TommyHilfigher",

@@ -28,8 +28,8 @@ router
   .get(getProductById)
   .delete(protect, admin, deleteProduct)
   .put(protect, admin, uploadMultipleImages, updateProduct);
+router.route("/getcart").get(protect, getCart);
 router.route("/:id/addtocart").post(protect, addToCart);
-router.route("/:id/getcart").get(protect, getCart);
 router.route("/:cartItemId/deletecart").delete(protect, deleteCartItem);
 router.route("/reviews/pending").get(protect, admin, getPendingReviews);
 router

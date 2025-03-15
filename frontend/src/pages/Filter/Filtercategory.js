@@ -15,12 +15,17 @@ const FilterCategory = ({ title, children, onApplyFilters }) => {
         alignItems="center"
         cursor="pointer"
         onClick={toggleDetails}
-        gap={5}
-        py={2}
-        borderBottom="1px solid black"
+        gap={2}
+        px={4}
+        borderBottom="1px solid "
+        borderColor="gray.200"
       >
-        {isExpanded ? <MinusIcon boxSize={3} /> : <AddIcon boxSize={3} />}
-        <Text fontWeight="600" fontSize="lg">
+        {isExpanded ? (
+          <MinusIcon boxSize={3} />
+        ) : (
+          <AddIcon boxSize={3} color="black" />
+        )}
+        <Text fontWeight="600" color="black">
           {title}
         </Text>
       </Flex>
@@ -28,7 +33,8 @@ const FilterCategory = ({ title, children, onApplyFilters }) => {
         <Box mt={2} p={2} border="1px solid" borderColor="gray.200">
           <Flex justifyContent="space-between" alignItems="center" mb={2}>
             <Button
-              colorScheme="green"
+              bg="black"
+              color="white"
               size="xs"
               ml="auto"
               onClick={onApplyFilters}

@@ -44,12 +44,12 @@ export const cartReducer = (
         ...state,
         paymentMethod: action.payload,
       };
-    case "SAVE_SHIPPING_COST":
+    case SAVE_SHIPPING_COST:
       return {
         ...state,
         shippingCost: action.payload,
       };
-    case "SAVE_SHIPPING_RATES":
+    case SAVE_SHIPPING_RATES:
       return {
         ...state,
         shippingRates: action.payload,

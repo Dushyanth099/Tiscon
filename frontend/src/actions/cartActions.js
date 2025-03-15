@@ -38,14 +38,17 @@ export const fetchCart = () => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     };
 
-    const { data } = await axios.get("/api/users/cart", config);
+    const { data } = await axios.get(`/api/products/getcart`, config);
 
     dispatch({
       type: CART_FETCH_ITEMS,
-      payload: data.cartItems,
+      payload: data,
     });
   } catch (error) {
-    console.error("Error fetching cart items:", error.message);
+    console.error(
+      "Error fetching cart items:",
+      error.response?.data?.message || error.message
+    );
   }
 };
 export const removeFromCart = (cartItemId) => async (dispatch, getState) => {

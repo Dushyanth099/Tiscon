@@ -23,6 +23,7 @@ import {
   Heading,
   HStack,
   Text,
+  Divider,
 } from "@chakra-ui/react";
 import HashLoader from "react-spinners/HashLoader";
 import { useParams } from "react-router-dom";
@@ -225,21 +226,32 @@ const Productpage = () => {
               </div>
               <div className="product-content">
                 <h2 className="product-title">{product.brandname} </h2>
-                <div className="product-price">
-                  <p style={{ fontWeight: "bold", fontSize: "20px" }}>
-                    MRP: ₹{product.price}
-                  </p>
-                  <p style={{ fontSize: "12px", color: "gray" }}>
+                <p style={{ fontSize: "18px" }}>{product.description}</p>
+                <Text fontSize="20px" fontWeight="bold" mb={1} mt={3}>
+                  ₹{product.price}{" "}
+                  <Text
+                    as="span"
+                    fontSize="20px"
+                    fontWeight="normal"
+                    color="black"
+                    textDecoration="line-through"
+                  >
+                    MRP: ₹{product.oldPrice}
+                  </Text>
+                  <Text fontSize="13px" color="gray.500" mb={3}>
                     (Inclusive of all taxes)
-                  </p>
-                  <Rating
-                    value={product.rating}
-                    text={`${product.numReviews} reviews`}
-                  />
-                  <p style={{ fontWeight: "bold", fontSize: "16px" }}>
-                    Color: {product.productdetails?.color || "Not Available"}
-                  </p>
-                </div>
+                  </Text>
+                </Text>
+                <Divider my={3} />
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    marginBottom: "5px",
+                  }}
+                >
+                  Color: {product.productdetails?.color || "Not Available"}
+                </p>
                 <div className="product-detail">
                   <div>
                     <Text fontSize="lg" fontWeight="bold">
@@ -251,22 +263,58 @@ const Productpage = () => {
                           key={size}
                           onClick={() => setSelectedSize(size)}
                           border="2px solid"
-                          borderColor={
-                            selectedSize === size ? "black" : "gray.300"
-                          }
+                          borderColor="black"
                           bg={selectedSize === size ? "black" : "white"}
                           color={selectedSize === size ? "white" : "black"}
                           _hover={{
                             bg: selectedSize === size ? "black" : "gray.100",
                           }}
-                          px={4}
-                          py={2}
+                          px={6} // Increase padding for width
+                          py={4} // Increase padding for height
+                          minW="60px" // Ensures buttons are wider
+                          minH="60px"
+                          fontSize="lg"
                         >
                           {size}
                         </Button>
                       ))}
                     </HStack>
+                    <HStack spacing={4} mt="5" mb="5">
+                      <Button
+                        onClick={addToCartHandler}
+                        type="button"
+                        disabled={product.countInStock === 0}
+                        border="2px solid"
+                        borderColor="black"
+                        bg="white"
+                        color="black"
+                        fontWeight="bold"
+                        px={8} // Increase padding for width
+                        py={5} // Increase padding for height
+                        minW="150px" // Ensures buttons are wider
+                        minH="60px"
+                        borderRadius="md"
+                        _hover={{ bg: "gray.100" }}
+                      >
+                        Buy Now
+                      </Button>
 
+                      <Button
+                        onClick={addToCartHandler}
+                        type="button"
+                        disabled={product.countInStock === 0}
+                        bg="black"
+                        color="white"
+                        px={8} // Increase padding for width
+                        py={5} // Increase padding for height
+                        minW="150px" // Ensures buttons are wider
+                        minH="60px"
+                        borderRadius="md"
+                        _hover={{ bg: "gray.800" }}
+                      >
+                        Add to Bag
+                      </Button>
+                    </HStack>
                     {product.countInStock === 0 && (
                       <Text
                         fontSize="lg"
@@ -286,42 +334,7 @@ const Productpage = () => {
                   </div>
                   <FeaturesSection />
                   <ProductSpecification product={product} />
-                  <div className="purchase-info">
-                    <Button
-                      onClick={addToCartHandler}
-                      type="button"
-                      className="btn-shop"
-                      disabled={product.countInStock === 0}
-                      style={{
-                        fontSize: "18px",
-                        padding: "12px 24px",
-                        width: "100%",
-                        borderRadius: "0",
-                      }}
-                    >
-                      <AiFillShop size="24" /> Add to Cart
-                    </Button>
-                  </div>
                 </div>{" "}
-                <div className="social-links">
-                  <p>Share On: </p>
-                  <Link className="social" to="#">
-                    <i>
-                      {" "}
-                      <IoLogoFacebook size="20" />
-                    </i>
-                  </Link>
-                  <Link className="social" to="#">
-                    <i>
-                      <AiFillTwitterCircle to="20" />
-                    </i>
-                  </Link>
-                  <Link className="social" to="#">
-                    <i>
-                      <AiFillInstagram size="20" />{" "}
-                    </i>
-                  </Link>
-                </div>
               </div>
             </div>
           </div>

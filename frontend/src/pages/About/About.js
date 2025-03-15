@@ -20,6 +20,7 @@ const About = () => {
         <title>About</title>
       </Helmet>
 
+      
       <div className="headingA">
         <div className="line" ref={Line}></div>
         <h1 className="title" ref={text}>
