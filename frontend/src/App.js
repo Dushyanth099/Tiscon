@@ -43,6 +43,7 @@ import IncomeByCity from "./components/IncomeBycity/Incomebycity";
 import TransactionTable from "./pages/Transactions/Transaction";
 import AdminReviewPage from "./pages/Admin/AdminReviewPage";
 import ScrollButtons from "./components/ScrollButtons";
+import FavoritesPage from "./pages/Favourites/FavoritesPage";
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.userLogin);
@@ -116,6 +117,7 @@ const App = () => {
                 <Nav />
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/Favorites" element={<FavoritesPage />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contactus" element={<Contactus />} />
                   <Route path="/product/:id" element={<Productpage />} />

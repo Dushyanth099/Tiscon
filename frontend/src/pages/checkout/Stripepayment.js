@@ -6,11 +6,8 @@ import {
   PaymentRequestButtonElement,
 } from "@stripe/react-stripe-js";
 import { Box, Text } from "@chakra-ui/react";
-import axios from "axios";
 
 const stripeApiKey = process.env.REACT_APP_STRIPE_PUBLIC_KEY;
-console.log("Stripe API Key:", stripeApiKey); // Debugging
-
 const stripePromise = loadStripe(stripeApiKey);
 
 const GooglePayButton = ({ totalPrice, onSuccess, setPaymentMethod }) => {
@@ -21,23 +18,25 @@ const GooglePayButton = ({ totalPrice, onSuccess, setPaymentMethod }) => {
   useEffect(() => {
     if (!stripe) return;
 
+    // ✅ Ensure totalPrice is a valid number and greater than zero
+    const validTotalPrice = Number(totalPrice);
+    if (isNaN(validTotalPrice) || validTotalPrice <= 0) {
+      console.error("Invalid totalPrice:", totalPrice);
+      return;
+    }
+
     const pr = stripe.paymentRequest({
       country: "US",
       currency: "usd",
-      total: { label: "Total", amount: totalPrice * 100 },
+      total: { label: "Total", amount: Math.round(validTotalPrice * 100) }, // Convert to cents
       requestPayerName: true,
       requestPayerEmail: true,
     });
 
     pr.canMakePayment().then((result) => {
-      console.log("Google Pay canMakePayment result:", result); // Debugging
       if (result) {
-        console.log("Google Pay is supported!");
         setPaymentRequest(pr);
         setCanShowPaymentRequest(true);
-      } else {
-        console.warn("Google Pay is not supported on this device.");
-        console.warn("Debug info: result is", JSON.stringify(result, null, 2));
       }
     });
   }, [stripe, totalPrice]);

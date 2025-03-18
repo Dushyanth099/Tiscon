@@ -2,28 +2,22 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import {
   Box,
-  Input,
-  Stack,
-  Select,
   Button,
-  Flex,
   VStack,
   HStack,
   Text,
   Divider,
   Grid,
-  useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { RiShoppingCart2Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import {
   saveAddressshipping,
   savepaymentmethod,
   fetchCart,
 } from "../../actions/cartActions";
-import Payment from "./Payment";
+import Payment from "./PaypalPayment";
 import { fetchShippingRates } from "../../actions/deliveryActions";
 import { saveShippingCost } from "../../actions/cartActions";
 import { saveShippingRates } from "../../actions/cartActions";
@@ -31,6 +25,7 @@ import StripePayment from "./Stripepayment";
 import { createShipment } from "../../actions/deliveryActions";
 import { CreateOrder } from "../../actions/orderActions";
 import { getUserDetails } from "../../actions/userActions";
+import PaymentModal from "./PaymentModal";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -75,7 +70,7 @@ const Checkout = () => {
   const userProfile = useSelector((state) => state.userDetails);
   const { user, loading: userLoading } = userProfile;
   const recipientAddress = user?.address;
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const handleShippingRateChange = (rate) => {
     setSelectedRate(rate);
 
@@ -131,7 +126,10 @@ const Checkout = () => {
   }, [rates]);
 
   const handleOrder = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
     dispatch(
       saveAddressshipping({
         doorNo,
@@ -145,7 +143,7 @@ const Checkout = () => {
       })
     );
 
-    dispatch(savepaymentmethod(paymentMethod));
+    const selectedPaymentMethod = cart.paymentMethod;
 
     try {
       // Prepare shipment details
@@ -176,10 +174,10 @@ const Checkout = () => {
         })),
         shippingAddress: recipientAddress,
         shippingRates,
-        paymentMethod: cart.paymentMethod,
+        paymentMethod,
         itemsPrice,
         shippingPrice: shippingCost,
-        taxPrice: taxPercentage,
+        taxPrice: taxAmount,
         totalPrice,
         shipmentDetails: [shipmentData],
       };
@@ -209,7 +207,7 @@ const Checkout = () => {
 
   return (
     <Box p={6} maxW="container.xl" mx="auto">
-      <Grid templateColumns={{ base: "1fr", md: "0fr 1fr" }} gap={8}>
+      <Grid templateColumns={{ base: "1fr" }} gap={8}>
         {/* Right Side - Order Summary */}
         <VStack
           align="start"
@@ -219,123 +217,121 @@ const Checkout = () => {
           borderRadius="lg"
           shadow="md"
         >
-          <Text fontSize="xl" fontWeight="bold">
-            Order Summary
-          </Text>
-          <Divider />
+          <Box
+            borderWidth="2px"
+            borderRadius="md"
+            p={4}
+            mb={5}
+            w="full"
+            bg="white"
+            borderColor="gray.100"
+            shadow="md"
+          >
+            <Text fontSize="m" fontWeight="bold" mb={2}>
+              DELIVERY OPTION
+            </Text>
+            <Divider />
+            {rates && rates.length > 0 ? (
+              rates.map((rate, index) => {
+                const serviceName =
+                  rate.serviceDescription?.description || "Unknown Service";
+                const netCharge =
+                  rate.ratedShipmentDetails[0]?.totalNetCharge || "N/A";
 
-          {cart.cartItems.map((item, index) => (
-            <HStack key={index} justify="space-between" w="full">
+                return (
+                  <Box
+                    key={index}
+                    borderWidth="2px"
+                    borderRadius="md"
+                    p={4}
+                    mt="3"
+                    mb={3}
+                    w="full"
+                    bg={
+                      selectedRate?.serviceType === rate.serviceType
+                        ? "red.50"
+                        : "gray.50"
+                    }
+                    borderColor={
+                      selectedRate?.serviceType === rate.serviceType
+                        ? "red.200"
+                        : "gray.100"
+                    }
+                  >
+                    <HStack spacing={4}>
+                      <input
+                        type="radio"
+                        name="shippingRate"
+                        value={rate.serviceType}
+                        onChange={() => handleShippingRateChange(rate)}
+                      />
+                      <VStack align="start" spacing={1}>
+                        <Text fontWeight="bold" fontSize="md">
+                          {serviceName}
+                        </Text>
+                        <Text color="gray.600">
+                          RS. <strong>{netCharge.toFixed(2)}</strong>
+                        </Text>
+                        <Text fontSize="sm" color="gray.500">
+                          Estimated Delivery: 2-3 days
+                        </Text>
+                      </VStack>
+                    </HStack>
+                  </Box>
+                );
+              })
+            ) : (
               <Text>
-                {item.qty} x{" "}
-                <Link
-                  to={`/product/${item.product._id}`}
-                  style={{ color: "blue", textDecoration: "underline" }}
-                >
-                  {" "}
-                  {item.product.brandname}
-                </Link>
+                No shipping rates available. Please check your address details.
               </Text>
-              <Text fontWeight="bold">Rs. {item.product.price * item.qty}</Text>
+            )}
+          </Box>
+          <Box
+            borderWidth="2px"
+            borderRadius="lg"
+            p={4}
+            shadow="lg"
+            w="full"
+            bg="white"
+            borderColor="gray.200"
+          >
+            <Text fontSize="l" fontWeight="bold" p="2">
+              BILL DETAILS
+            </Text>
+
+            <Divider />
+
+            <HStack justify="space-between" w="full" p="3">
+              <Text>Subtotal:</Text>
+              <Text color={"grey"}>Rs. {subtotal.toFixed(2)}</Text>
             </HStack>
-          ))}
-
-          <Divider />
-          <HStack justify="space-between" w="full">
-            <Text>Subtotal:</Text>
-            <Text fontWeight="bold">Rs. {subtotal.toFixed(2)}</Text>
-          </HStack>
-          <HStack justify="space-between" w="full">
-            <Text>Shipping:</Text>
-            <Text fontWeight="bold">Rs. {shippingCost.toFixed(2)}</Text>
-          </HStack>
-          <HStack justify="space-between" w="full">
-            <Text>Taxes (5%):</Text>
-            <Text fontWeight="bold">Rs. {taxAmount.toFixed(2)}</Text>
-          </HStack>
-          <HStack justify="space-between" w="full">
-            <Text fontSize="xl" fontWeight="bold">
-              Total:
-            </Text>
-            <Text fontSize="xl" fontWeight="bold">
-              Rs. {totalPrice.toFixed(2)}
-            </Text>
-          </HStack>
-
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p>Error: {error}</p>
-          ) : rates && rates.length > 0 ? (
-            rates.map((rate, index) => {
-              const serviceName =
-                rate.serviceDescription?.description || "Unknown Service";
-              const netCharge =
-                rate.ratedShipmentDetails[0]?.totalNetCharge || "N/A";
-
-              return (
-                <HStack key={index}>
-                  <input
-                    type="radio"
-                    name="shippingRate"
-                    value={rate.serviceType}
-                    onChange={() => handleShippingRateChange(rate)}
-                  />
-                  <Text>
-                    {serviceName} - RS.{netCharge.toFixed(2)} (Est. Delivery:{" "}
-                    {rate.estimatedDeliveryDate})
-                  </Text>
-                </HStack>
-              );
-            })
-          ) : (
-            <p>
-              No shipping rates available. Please check your address details.
-            </p>
-          )}
-
-          <Text fontSize="2xl" fontWeight="bold">
-            Payment Method
-          </Text>
-          <Divider />
-
-          <HStack spacing={4} w="full">
-            <Button
-              onClick={() => setPaymentMethod("Online Payment")}
-              variant={Payment === "Online Payment" ? "solid" : "outline"}
-              colorScheme="yellow"
-              flex="1"
-            >
-              Online Payment
-            </Button>
-            <Button
-              onClick={() => setPaymentMethod("COD")}
-              variant={Payment === "COD" ? "solid" : "outline"}
-              colorScheme="green"
-              flex="1"
-            >
-              Cash on Delivery
-            </Button>
-          </HStack>
-          {paymentMethod === "Online Payment" && (
-            <Payment
-              totalPrice={totalPrice}
-              onSuccess={() => navigate("/placeorder")}
-              setPaymentMethod={setPaymentMethod}
-            />
-          )}
-          {paymentMethod === "Online Payment" && (
-            <StripePayment
-              totalPrice={totalPrice}
-              onSuccess={() => navigate("/placeorder")}
-              setPaymentMethod={setPaymentMethod}
-            />
-          )}
-          <Button color="black" size="lg" w="full" onClick={handleOrder}>
-            Place Order
+            <HStack justify="space-between" w="full" p="3">
+              <Text>Shipping:</Text>
+              <Text color={"grey"}>Rs. {shippingCost.toFixed(2)}</Text>
+            </HStack>
+            <HStack justify="space-between" w="full" p="3">
+              <Text>Taxes (5%):</Text>
+              <Text color={"grey"}>Rs. {taxAmount.toFixed(2)}</Text>
+            </HStack>
+            <HStack justify="space-between" w="full" p="3">
+              <Text fontSize="lg" fontWeight="bold">
+                Final Total:
+              </Text>
+              <Text fontSize="lg" fontWeight="bold">
+                Rs. {totalPrice.toFixed(2)}
+              </Text>
+            </HStack>
+          </Box>
+          <Button bg="black" color="white" size="lg" w="full" onClick={onOpen}>
+            Pay ₹{totalPrice}
           </Button>
         </VStack>
       </Grid>
+      <PaymentModal
+        isOpen={isOpen}
+        onClose={onClose}
+        handleOrder={handleOrder}
+      />
     </Box>
   );
 };

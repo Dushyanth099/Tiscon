@@ -10,6 +10,7 @@ import { IoLogoFacebook } from "react-icons/io";
 import { AiFillTwitterCircle, AiFillInstagram } from "react-icons/ai";
 import { addToCart } from "../../actions/cartActions";
 import { AiFillShop } from "react-icons/ai";
+import ShareButton from "./ShareButton";
 import { MdDoNotDisturb } from "react-icons/md";
 import {
   Image,
@@ -19,6 +20,7 @@ import {
   FormLabel,
   Textarea,
   toast,
+  Flex,
   useToast,
   Heading,
   HStack,
@@ -40,6 +42,7 @@ import FeaturesSection from "../../components/Trustdetails/FeatureItem";
 import Trust from "../../components/Trustdetails/Trust";
 import { listMyOrders } from "../../actions/orderActions";
 import ProductSpecification from "./ProductSpecification";
+import FavoriteButton from "../../pages/Favourites/Favorites";
 
 const Productpage = () => {
   const { id } = useParams();
@@ -224,9 +227,19 @@ const Productpage = () => {
                   />
                 )}
               </div>
+       
+
               <div className="product-content">
-                <h2 className="product-title">{product.brandname} </h2>
-                <p style={{ fontSize: "18px" }}>{product.description}</p>
+                <Flex justifyContent="space-between" alignItems="center">
+                  <h2 className="product-title">{product.brandname}</h2>
+                  <Flex gap={1} mt="2">
+                    <FavoriteButton productId={product._id} />
+                    <ShareButton url={window.location.href} />
+                  </Flex>
+                </Flex>
+                <p style={{ fontSize: "20px", fontWeight: "bold" }}>
+                  {product.description}
+                </p>
                 <Text fontSize="20px" fontWeight="bold" mb={1} mt={3}>
                   ₹{product.price}{" "}
                   <Text

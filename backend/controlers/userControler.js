@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import User from "../models/userModel.js";
+import Product from "../models/productModel.js";
 
 // @desc Auth user & get token
 // @route POST /api/users/login
@@ -105,7 +106,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    
+    user.lastName = req.body.lastName || user.lastName;
+    user.gender = req.body.gender || user.gender;
+    user.dateOfBirth = req.body.dateOfBirth || user.dateOfBirth;
     // ✅ Parse address if it exists and is a string
     if (req.body.address) {
       try {
@@ -129,6 +132,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       profilePicture: updatedUser.profilePicture,
       isAdmin: updatedUser.isAdmin,
       address: updatedUser.address,
+      lastName: updatedUser.lastName,
+      gender: updatedUser.gender,
+      dateOfBirth: updatedUser.dateOfBirth,
       token: generateToken(updatedUser._id),
     });
   } catch (error) {
@@ -201,7 +207,57 @@ const deleteUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 });
+// @desc Add or Remove from Favorites
+// @route POST /api/products/favorites/:id
+// @access Private
+const toggleFavorite = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const product = await Product.findById(req.params.id);
+  const user = await User.findById(userId).populate("favorites");
 
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  const isFavorite = user.favorites.some(
+    (item) => item._id.toString() === product._id.toString()
+  );
+
+  if (isFavorite) {
+    user.favorites = user.favorites.filter(
+      (item) => item._id.toString() !== product._id.toString()
+    );
+    await user.save();
+    res
+      .status(200)
+      .json({ message: "Removed from favorites", favorites: user.favorites });
+  } else {
+    user.favorites.push(product);
+    await user.save();
+    res
+      .status(200)
+      .json({ message: "Added to favorites", favorites: user.favorites });
+  }
+});
+
+// @desc Get user favorites
+// @route GET /api/products/favorites
+// @access Private
+const getFavorites = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  // Check if the user exists and populate favorites
+  const user = await User.findById(userId)
+    .select("favorites")
+    .populate("favorites");
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.status(200).json(user.favorites);
+});
 export {
   authUser,
   getUserProfile,
@@ -211,4 +267,6 @@ export {
   deleteUser,
   getUserByID,
   updateUser,
+  toggleFavorite,
+  getFavorites,
 };

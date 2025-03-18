@@ -16,7 +16,7 @@ const OrderTracking = ({ order }) => {
       
       bg={"white"}
     >
-      <Text fontSize="2xl" fontWeight="bold" mb={3}>
+      <Text fontSize="lg" fontWeight="bold" mb={3}>
         Tracking Details
       </Text>
       <Stack spacing={3}>

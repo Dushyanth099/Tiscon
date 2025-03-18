@@ -106,9 +106,9 @@ const Order = () => {
               boxShadow="lg"
               align="stretch"
             >
-              <Text fontSize="xl" fontWeight="bold" color="gray.600">
+              <Text fontSize="lg" fontWeight="bold" color="black">
                 Order ID:{" "}
-                <Text as="span" color="blue.500">
+                <Text as="span" color="blueviolet">
                   {order._id}
                 </Text>
               </Text>
@@ -130,7 +130,7 @@ const Order = () => {
                   Your order is being processed and will be delivered soon.
                 </AlertDescription>
               </Alert>
-              <Text fontSize="2xl" fontWeight="bold">
+              <Text fontSize="lg" fontWeight="bold">
                 Shipping Information
               </Text>
               <Divider />
@@ -155,7 +155,7 @@ const Order = () => {
                 )}
               </Text>
 
-              <Text fontSize="2xl" fontWeight="bold" mt={4}>
+              <Text fontSize="lg" fontWeight="bold" mt={4}>
                 Payment Method
               </Text>
               <Divider />
@@ -170,7 +170,7 @@ const Order = () => {
                 )}
               </Text>
 
-              <Text fontSize="2xl" fontWeight="bold" mt={4}>
+              <Text fontSize="lg" fontWeight="bold" mt={4}>
                 Order Items
               </Text>
               {order.orderItems.map((item) => (
@@ -217,7 +217,7 @@ const Order = () => {
               ))}
 
               {/* invoice */}
-              <Text fontSize="2xl" fontWeight="bold">
+              <Text fontSize="lg" fontWeight="bold">
                 Invoice
               </Text>
 
@@ -233,7 +233,7 @@ const Order = () => {
                 View Invoice
               </Button>
 
-              <Text fontSize="2xl" fontWeight="bold">
+              <Text fontSize="lg" fontWeight="bold">
                 Order Summary
               </Text>
               <Divider />

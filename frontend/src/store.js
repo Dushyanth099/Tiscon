@@ -37,6 +37,7 @@ import {
   userListReducer,
   userDeleteReducer,
   userUpdateReducer,
+  favoritesReducer,
 } from "./reducers/userReducers";
 
 import {
@@ -97,6 +98,7 @@ const reducer = combineReducers({
   stripepayment: StripepaymentReducer,
   reviewList: reviewListReducer,
   reviewApprove: reviewApproveReducer,
+  favorites: favoritesReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

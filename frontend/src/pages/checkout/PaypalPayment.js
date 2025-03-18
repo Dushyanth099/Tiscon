@@ -3,7 +3,7 @@ import axios from "axios";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { Box, Spinner, Text } from "@chakra-ui/react";
 
-const Payment = ({ totalPrice, onSuccess, setPaymentMethod }) => {
+const PaypalPayment = ({ totalPrice, onSuccess, setPaymentMethod }) => {
   const [clientId, setClientId] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -63,4 +63,4 @@ const Payment = ({ totalPrice, onSuccess, setPaymentMethod }) => {
   );
 };
 
-export default Payment;
+export default PaypalPayment;

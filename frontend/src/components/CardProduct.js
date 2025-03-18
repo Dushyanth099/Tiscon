@@ -7,6 +7,7 @@ import { addToCart } from "../actions/cartActions";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineHeart, HiHeart } from "react-icons/hi";
+import { toggleFavorite } from "../actions/userActions";
 import "./CardProduct.css";
 
 const CardProduct = ({ product }) => {
@@ -16,10 +17,11 @@ const CardProduct = ({ product }) => {
   const [Incart, setIncart] = useState(false);
   const dispatch = useDispatch();
   const Cart = useSelector((state) => state.cart);
+  const { favoriteItems } = useSelector((state) => state.favorites);
   const { cartItems } = Cart;
   const userLogin = useSelector((state) => state.userLogin);
   const userInfo = userLogin?.userInfo;
-
+  const isFavorite = favoriteItems?.some((item) => item._id === product._id);
   useEffect(() => {
     const isincart = cartItems.find((x) => x.product === product._id);
     if (isincart) {
@@ -52,6 +54,7 @@ const CardProduct = ({ product }) => {
     });
     setIncart(true);
     dispatch(addToCart(product._id, 1));
+    dispatch(toggleFavorite(product._id));
   };
 
   return (
@@ -64,20 +67,9 @@ const CardProduct = ({ product }) => {
         <div className="imgDiv" style={{ position: "relative" }}>
           {/* Discount Badge on Top-Left */}
           {product.discount > 0 && (
-            <div
-              className="discountBadge"
-              style={{
-                position: "absolute",
-                backgroundColor: "black",
-                color: "white",
-                padding: "5px 10px",
-                fontSize: "14px",
-                fontWeight: "bold",
-                borderRadius: "5px",
-                zIndex: "10",
-              }}
-            >
-              {product.discount}% OFF
+            <div className="discountBadge">
+              <span>{product.discount}%</span>
+              <span>OFF</span>
             </div>
           )}
 
@@ -93,6 +85,17 @@ const CardProduct = ({ product }) => {
             <span>{product.brandname}</span>
             <p className="productDescription">{product.description}</p>
           </Link>
+          {/* if error use this */}
+          {/* Favorite Button (Adds to Cart & Wishlist) */}
+          {/* {isFavorite ? (
+            <HiHeart className="iconFav" size="26" fill="red" />
+          ) : (
+            <HiOutlineHeart
+              className="iconFav"
+              size="26"
+              onClick={handleAddToCartAndWishlist}
+            />
+          )} */}
 
           {/* Shopping Cart Icon */}
           {Incart ? (

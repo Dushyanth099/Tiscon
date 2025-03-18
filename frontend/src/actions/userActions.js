@@ -24,9 +24,15 @@ import {
   USER_UPDATE_REQUEST,
   USER_UPDATE_SUCCESS,
   USER_UPDATE_FAIL,
+  TOGGLE_FAVORITE_REQUEST,
+  TOGGLE_FAVORITE_SUCCESS,
+  TOGGLE_FAVORITE_FAIL,
+  FAVORITES_REQUEST,
+  FAVORITES_SUCCESS,
+  FAVORITES_FAIL,
 } from "../constants/userConstants";
 import { ORDER_LIST_MY_RESET } from "../constants/orderConstants";
-const login = (email, password) => async (dispatch) => {
+export const login = (email, password) => async (dispatch) => {
   try {
     dispatch({
       type: USER_LOGIN_REQUEST,
@@ -272,4 +278,63 @@ export const updateUser = (user) => async (dispatch, getState) => {
   }
 };
 
+export const fetchFavorites = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: FAVORITES_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+    if (!userInfo) {
+      throw new Error("User not authenticated");
+    }
+    console.log("Fetching favorites with token:", userInfo.token); // Debugging
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get("/api/users/getfavorites", config);
+
+    dispatch({ type: FAVORITES_SUCCESS, payload: data });
+  } catch (error) {
+    console.error(
+      "Error fetching favorites:",
+      error.response?.data || error.message
+    ); // Debugging
+    dispatch({
+      type: FAVORITES_FAIL,
+      payload: error.response?.data?.message || "Failed to load favorites",
+    });
+  }
+};
+
+// Toggle (Add/Remove) favorite
+export const toggleFavorite = (productId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: TOGGLE_FAVORITE_REQUEST });
+
+    const { userLogin } = getState();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userLogin.userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `/api/users/favorites/${productId}`,
+      {},
+      config
+    );
+
+    dispatch({ type: TOGGLE_FAVORITE_SUCCESS, payload: data.favorites });
+  } catch (error) {
+    dispatch({
+      type: TOGGLE_FAVORITE_FAIL,
+      payload: error.response?.data?.message || "Failed to toggle favorite",
+    });
+  }
+};
 export default login;

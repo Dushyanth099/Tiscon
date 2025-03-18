@@ -53,7 +53,7 @@ const getOrderById = asyncHandler(async (req, res) => {
     .populate({
       path: "orderItems.product",
       select: "name images", // Include the fields you need
-    });;
+    });
   if (order) {
     res.json(order);
   } else {
@@ -104,8 +104,8 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
 const GetMyOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({ user: req.user._id }).populate({
     path: "orderItems.product", // Reference to the Product model
-    select: "images ", // Select only the fields you need
-  });;
+    select: "images brandname rating ", // Select only the fields you need
+  });
   res.json(orders);
 });
 

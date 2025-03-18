@@ -26,6 +26,9 @@ const userSchema = mongoose.Schema(
       default: false,
     },
     profilePicture: { type: String, default: "/uploads/default.png" },
+    lastName: { type: String, default: "" },
+    dateOfBirth: { type: Date, default: null },
+    gender: { type: String, enum: ["Male", "Female", "Other"], default: "" },
     address: {
       doorNo: { type: Number, default: null },
       street: { type: String, default: "" },
@@ -54,6 +57,12 @@ const userSchema = mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Order",
+      },
+    ],
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
       },
     ],
   },

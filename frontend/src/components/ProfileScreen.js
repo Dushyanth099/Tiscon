@@ -41,10 +41,12 @@ const ProfileScreen = ({ history }) => {
   const [activeSection, setActiveSection] = useState("profile");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
   const [address, setAddress] = useState({});
   const [profilePicture, setProfilePicture] = useState(null); // ✅ Updated to handle image
+  const [lastName, setLastName] = useState("");
+  const [gender, setGender] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+
   const toast = useToast();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -76,6 +78,9 @@ const ProfileScreen = ({ history }) => {
         setEmail(user.email);
         setAddress(user.address || {});
         setProfilePicture(user.profilePicture || null);
+        setGender(user.gender || "");
+        setDateOfBirth(user.dateOfBirth ? user.dateOfBirth.split("T")[0] : "");
+        setLastName(user.lastName || "");
       }
     }
   }, [dispatch, navigate, userInfo, user]);
@@ -91,29 +96,15 @@ const ProfileScreen = ({ history }) => {
   // ✅ Convert form fields to `FormData`
   const submitHandler = (e) => {
     e.preventDefault();
-
-    if (currentPassword !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
-      return;
-    }
-
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("email", email);
-    formData.append("currentPassword", currentPassword);
-    formData.append("confirmPassword", confirmPassword);
     formData.append("address", JSON.stringify(address)); // ✅ Convert object to string
     if (profilePicture) {
       formData.append("profilePicture", profilePicture); // ✅ Append file
     }
-
+    formData.append("lastName", lastName);
+    formData.append("gender", gender);
+    formData.append("dateOfBirth", dateOfBirth);
     dispatch(updateUserProfile(formData));
 
     toast({
@@ -167,18 +158,17 @@ const ProfileScreen = ({ history }) => {
   const renderProfile = () => (
     <Box
       mx="auto"
-      p={6}
+      p={0}
       justifyContent="center"
       alignItems="center"
       display="flex"
       flexDirection="column"
-      h="100%"
     >
       <VStack as="form" onSubmit={submitHandler} spacing={4}>
         <FormControl>
           <Box
             position="relative"
-            boxSize="120px"
+            boxSize="100px"
             borderRadius="full"
             overflow="hidden"
             mx="auto"
@@ -219,6 +209,26 @@ const ProfileScreen = ({ history }) => {
             />
           </Box>
         </FormControl>
+
+        <FormControl>
+          <FormLabel>First Name</FormLabel>
+          <Input
+            type="text"
+            placeholder="Enter your First name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Last Name</FormLabel>
+          <Input
+            type="text"
+            placeholder="Enter your last name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        </FormControl>
         <FormControl>
           <FormLabel>Email</FormLabel>
           <Input
@@ -228,26 +238,34 @@ const ProfileScreen = ({ history }) => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </FormControl>
+        <FormControl>
+          <FormLabel>Date of Birth</FormLabel>
+          <Input
+            type="date"
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
+          />
+        </FormControl>
 
         <FormControl>
-          <FormLabel>Current Password</FormLabel>
-          <Input
-            type="password"
-            placeholder="Enter current password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            required
-          />
+          <FormLabel>Gender</FormLabel>
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+            }}
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
         </FormControl>
-        <FormControl>
-          <FormLabel>Confirm New Password</FormLabel>
-          <Input
-            type="password"
-            placeholder="Confirm new password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </FormControl>
+
         <Button bg="black" color="white" type="submit" w="full">
           Update
         </Button>
@@ -283,7 +301,7 @@ const ProfileScreen = ({ history }) => {
           </FormControl>
         ))}
         <Button bg="black" color="white" onClick={submitHandler}>
-          Update Address
+          Update
         </Button>
       </VStack>
     </Box>
@@ -305,30 +323,53 @@ const ProfileScreen = ({ history }) => {
           <Tbody>
             {orders.map((order) =>
               order.orderItems.map((item) => (
-                <Tr key={item._id}>
-                  {/* Product Image */}
-                  <Td>
-                    <img
-                      src={item.product.images[0]}
-                      alt={item.name}
-                      width="50"
-                      height="50"
-                      style={{ borderRadius: "5px" }}
-                    />
-                  </Td>
-                  {/* Product Name */}
-                  <Td>{item.name}</Td>
-                  {/* Product Price */}
-                  <Td>${item.price.toFixed(2)}</Td>
-                  {/* Details Button */}
-                  <Td>
+                <Box
+                  key={item._id}
+                  p={4}
+                  border="1px solid"
+                  borderColor="gray.200"
+                  borderRadius="md"
+                  mb={4}
+                >
+                  <HStack
+                    justifyContent="space-between"
+                    spacing={4}
+                    alignItems="center"
+                  >
+                    {/* Order Details */}
+                    <Text fontSize="sm" color="gray.600">
+                      {order.orderItems.length} Item
+                      {order.orderItems.length > 1 ? "s" : ""} • ₹
+                      {order.totalPrice.toFixed(2)} •{" "}
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </Text>
+
+                    {/* Product Image with Clickable Link */}
                     <Link to={`/order/${order._id}`}>
-                      <Button size="sm" color="white" bg="black">
-                        Details
-                      </Button>
+                      <Box textAlign="center">
+                        <Box
+                          boxSize="60px"
+                       
+                          overflow="hidden"
+                          border="1px solid gray"
+                          cursor="pointer"
+                        >
+                          <img
+                            src={item.product.images[0]}
+                            alt={item.name}
+                            width="60"
+                            height="60"
+                            style={{ objectFit: "cover" }}
+                          />
+                        </Box>
+                        {/* Brand Name Below Image */}
+                        <Text fontWeight="bold" fontSize="sm" mt={2}>
+                          {item.product.brandname}
+                        </Text>
+                      </Box>
                     </Link>
-                  </Td>
-                </Tr>
+                  </HStack>
+                </Box>
               ))
             )}
           </Tbody>

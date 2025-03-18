@@ -31,13 +31,37 @@
 .discountBadge {
   position: absolute;
   top: 0px;
-  left: 0px;
+  left: 14px;
   background-color: black;
   color: white;
-  padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 3px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+  z-index: 10;
+
+  /* Create the wavy bottom edge */
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% 80%,
+    90% 100%,
+    80% 80%,
+    70% 100%,
+    60% 80%,
+    50% 100%,
+    40% 80%,
+    30% 100%,
+    20% 80%,
+    10% 100%,
+    0% 80%
+  );
 }
 
 /* Bottom Card Content */

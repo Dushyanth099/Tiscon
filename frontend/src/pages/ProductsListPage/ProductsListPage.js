@@ -8,6 +8,7 @@ import HashLoader from "react-spinners/HashLoader";
 import { Flex, Box, Text, Select, Button } from "@chakra-ui/react";
 import "./ProductsListPage.css";
 import { useNavigate } from "react-router-dom";
+import Trust from "../../components/Trustdetails/Trust";
 
 const ProductsListPage = () => {
   const location = useLocation();
@@ -171,6 +172,7 @@ const ProductsListPage = () => {
           )}
         </Box>
       </Flex>
+      <Trust />
     </Box>
   );
 };

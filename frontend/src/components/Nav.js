@@ -18,12 +18,14 @@ import {
 import { RiShoppingCart2Line } from "react-icons/ri";
 import { MdHome } from "react-icons/md";
 import { BiSearch } from "react-icons/bi";
+import { FaHeart } from "react-icons/fa";
 import { BsArrowRightShort } from "react-icons/bs";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { IoLogOutOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { logout } from "../actions/userActions";
 import Logo from "../assets/ecommerce-logo.png";
+import navheart from "../assets/navheart.svg";
 import Categorylist from "./Categorylist/Categorylist";
 import Brandlist from "./Brandlist/Brandlist";
 import BrandImg from "../../src/assets/brandimg.svg";
@@ -132,6 +134,24 @@ const Nav = () => {
           <div className="dropdown-menu">
             <Brandlist />
           </div>
+        </li>
+        <li>
+          <NavLink
+            to="/Favorites"
+            activeClassName="activlink"
+            className="nav-item"
+          >
+            <div className="nav-content">
+              <img
+                src={navheart}
+                alt="Wishlist"
+                width="26"
+                height="26"
+                className="nav-icon"
+              />
+              <span>Wishlist</span>
+            </div>
+          </NavLink>
         </li>
         {/* Added Bag option in the list */}
         <li>
