@@ -17,6 +17,9 @@ import {
 } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../actions/userActions";
+import Logo from "../../assets/ecommerce-logo.png";
+import "./Adminstyling.css";
+import { NavLink } from "react-router-dom";
 
 const AdminNavbar = () => {
   const cancelRef = useRef();
@@ -30,26 +33,24 @@ const AdminNavbar = () => {
   return (
     <Box
       as="nav"
-      bg="teal.500"
+      bg="white"
       px={4}
       py={3}
-      color="white"
+      color="black"
       position="fixed"
       top={0}
       width="100%"
       zIndex={1000}
+      border="1px solid #E2E8F0"
+      boxShadow="sm"
     >
       <Flex align="center" justifyContent="space-between">
         {/* Navbar Logo */}
         <Box fontWeight="bold" fontSize="lg">
-          <Link
-            as={RouterLink}
-            to="/admin/dashboard"
-            _hover={{ textDecoration: "none" }}
-            color="white"
-          >
-            Admin Dashboard
-          </Link>
+          <NavLink to="/admin/dashboard" className="logo">
+            <img src={Logo} alt="logo" />
+            <span className="logo-text">E-Commerce</span>
+          </NavLink>
         </Box>
 
         {/* Navbar Links */}
@@ -58,7 +59,7 @@ const AdminNavbar = () => {
             as={RouterLink}
             to="/profile"
             _hover={{ textDecoration: "none" }}
-            color="white"
+            color="black"
           >
             Profile
           </Link>
@@ -84,7 +85,7 @@ const AdminNavbar = () => {
                   textAlign="center"
                   p={4}
                 >
-                  🚀 Logout Confirmation
+                Logout Confirmation
                 </AlertDialogHeader>
 
                 <AlertDialogBody textAlign="center" fontSize="md" p={5}>

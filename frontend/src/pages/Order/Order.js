@@ -91,7 +91,7 @@ const Order = () => {
       ) : error ? (
         <Text color="red.500">{error}</Text>
       ) : (
-        <Box mt={20}>
+        <Box maxW="container.md" mx="auto" p={4}>
           <Stack
             direction={{ base: "column", md: "row" }}
             spacing={6}
@@ -240,15 +240,15 @@ const Order = () => {
 
               <HStack justify="space-between" w="full">
                 <Text>Items:</Text>
-                <Text fontWeight="bold">Rs. {order.itemsPrice}</Text>
+                <Text color={"grey"}>Rs. {order.itemsPrice}</Text>
               </HStack>
               <HStack justify="space-between" w="full">
                 <Text>Shipping:</Text>
-                <Text fontWeight="bold">Rs. {order.shippingPrice}</Text>
+                <Text color={"grey"}>Rs. {order.shippingPrice}</Text>
               </HStack>
               <HStack justify="space-between" w="full">
                 <Text>Tax:</Text>
-                <Text fontWeight="bold">Rs. {order.taxPrice}</Text>
+                <Text color={"grey"}>Rs. {order.taxPrice}</Text>
               </HStack>
               <HStack justify="space-between" w="full">
                 <Text fontSize="xl" fontWeight="bold">

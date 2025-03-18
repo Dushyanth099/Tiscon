@@ -239,8 +239,10 @@ const Editproduct = () => {
 
   return (
     <Box
-      mt={10}
-      p={6}
+      maxW="container.md"
+      mx="auto"
+      p={4}
+      mt="20"
       boxShadow="md"
       borderRadius="md"
       className="create-product-container"

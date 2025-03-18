@@ -5,15 +5,13 @@ import {
   GridItem,
   Button,
   VStack,
-  MenuList,
-  Menu,
-  MenuItem,
-  MenuButton,
+  Collapse,
   IconButton,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   ChevronDownIcon,
+  ChevronUpIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
 } from "@chakra-ui/icons";
@@ -22,6 +20,9 @@ import AdminNavbar from "./AdminNavbar";
 const AdminLayout = ({ children }) => {
   const [activeTab, setActiveTab] = useState("users");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [isBannersOpen, setIsBannersOpen] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
 
   return (
     <>
@@ -30,7 +31,7 @@ const AdminLayout = ({ children }) => {
       <Box display="flex">
         {/* Sidebar */}
         <Box
-          bg="gray.900"
+          bg="#073b74"
           p={4}
           color="white"
           width={isSidebarOpen ? "280px" : "60px"}
@@ -40,7 +41,7 @@ const AdminLayout = ({ children }) => {
           transition="width 0.3s ease-in-out"
           overflow="hidden"
         >
-          <VStack spacing={4} align="stretch">
+          <VStack spacing={4} align="stretch" fontSize="md">
             {/* Toggle Sidebar Button */}
             <IconButton
               icon={
@@ -59,69 +60,150 @@ const AdminLayout = ({ children }) => {
             {isSidebarOpen && (
               <>
                 <Button
+                  onClick={() => setActiveTab("home")}
+                  as={RouterLink}
+                  to="/adminDashboard"
+                  bg="transparent"
+                  justifyContent="flex-start"
+                  color="white"
+                  variant="ghost"
+                  fontSize="md"
+                >
+                  🏠 Home
+                </Button>
+                <Button
                   onClick={() => setActiveTab("users")}
                   as={RouterLink}
                   to="/admin/userlist"
-                  bg="white"
-                  color="black"
+                  bg="transparent"
+                  color="white"
+                  justifyContent="flex-start"
                   colorScheme={activeTab === "users" ? "teal" : "gray"}
                   variant="ghost"
+                  fontSize="md"
                 >
                   🧑‍💼 Users
                 </Button>
                 {/* Orders Dropdown */}
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    rightIcon={<ChevronDownIcon />}
-                    bg="white"
-                    color="black"
-                    variant="ghost"
-                  >
-                    📦Orders
-                  </MenuButton>
-                  <MenuList bg="white" borderColor="gray.300" color="black">
-                    <MenuItem as={RouterLink} to="/admin/orderlist">
+
+                <Button
+                  onClick={() => setIsOrdersOpen(!isOrdersOpen)}
+                  bg="transparent"
+                  color="white"
+                  justifyContent="space-between"
+                  rightIcon={
+                    isOrdersOpen ? <ChevronUpIcon /> : <ChevronDownIcon />
+                  }
+                  variant="ghost"
+                  fontSize="md"
+                >
+                  📦Orders
+                </Button>
+                <Collapse in={isOrdersOpen} animateOpacity>
+                  <VStack pl={4} align="stretch" spacing={2} fontSize="md">
+                    <Button
+                      as={RouterLink}
+                      to="/admin/orderlist"
+                      bg="transparent"
+                      color="white"
+                      justifyContent="flex-start"
+                      variant="ghost"
+                      leftIcon="•"
+                      fontSize="md"
+                    >
                       Orders Page
-                    </MenuItem>
-                    <MenuItem as={RouterLink} to="/admin/assignorders">
+                    </Button>
+                    <Button
+                      as={RouterLink}
+                      to="/admin/assignorders"
+                      bg="transparent"
+                      color="white"
+                      justifyContent="flex-start"
+                      variant="ghost"
+                      leftIcon="•"
+                      fontSize="md"
+                    >
                       Assign Orders
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                    </Button>
+                  </VStack>
+                </Collapse>
                 {/* Products Dropdown */}
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    rightIcon={<ChevronDownIcon />}
-                    bg="white"
-                    color="black"
-                    variant="ghost"
-                  >
-                    🏷️ Products
-                  </MenuButton>
-                  <MenuList bg="white" borderColor="gray.300" color="black">
-                    <MenuItem as={RouterLink} to="/admin/productlist">
+                <Button
+                  onClick={() => setIsProductsOpen(!isProductsOpen)}
+                  bg="transparent"
+                  color="white"
+                  justifyContent="space-between"
+                  rightIcon={
+                    isProductsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />
+                  }
+                  variant="ghost"
+                >
+                  🏷️ Products
+                </Button>
+                <Collapse in={isProductsOpen} animateOpacity>
+                  <VStack pl={4} align="stretch" spacing={2} fontSize="md">
+                    <Button
+                      as={RouterLink}
+                      to="/admin/productlist"
+                      variant="ghost"
+                      color="white"
+                      justifyContent="flex-start"
+                      _hover={{ bg: "gray.700" }}
+                      leftIcon="•"
+                      fontSize="md"
+                    >
                       Product List
-                    </MenuItem>
-                    <MenuItem as={RouterLink} to="/admin/product/create">
-                      Add Product
-                    </MenuItem>
-                    <MenuItem as={RouterLink} to="/admin/bulkupload">
+                    </Button>
+
+                    <Button
+                      as={RouterLink}
+                      to="/admin/product/create"
+                      variant="ghost"
+                      color="white"
+                      justifyContent="flex-start"
+                      _hover={{ bg: "gray.700" }}
+                      leftIcon="•"
+                      fontSize="md"
+                    >
+                      Create Product
+                    </Button>
+
+                    <Button
+                      as={RouterLink}
+                      to="/admin/bulkupload"
+                      variant="ghost"
+                      color="white"
+                      justifyContent="flex-start"
+                      _hover={{ bg: "gray.700" }}
+                      leftIcon="•"
+                      fontSize="md"
+                    >
                       Bulk Upload
-                    </MenuItem>
-                    <MenuItem as={RouterLink} to="/productsoverview">
+                    </Button>
+                    <Button
+                      as={RouterLink}
+                      to="/productsoverview"
+                      variant="ghost"
+                      color="white"
+                      justifyContent="flex-start"
+                      _hover={{ bg: "gray.700" }}
+                      leftIcon="•"
+                      fontSize="md"
+                    >
                       Product Overview
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                    </Button>
+                  </VStack>
+                </Collapse>
+
                 <Button
                   onClick={() => setActiveTab("incomestats")}
                   as={RouterLink}
                   to="/admin/incomebycity"
-                  bg="white"
-                  color="black"
+                  bg="transparent"
+                  color="white"
+                  justifyContent="flex-start"
                   variant="ghost"
+                  fontSize="md"
                 >
                   📈 Statistics
                 </Button>
@@ -129,39 +211,65 @@ const AdminLayout = ({ children }) => {
                   onClick={() => setActiveTab("home")}
                   as={RouterLink}
                   to="/"
-                  bg="white"
-                  color="black"
+                  bg="transparent"
+                  justifyContent="flex-start"
+                  color="white"
                   variant="ghost"
+                  fontSize="md"
                 >
                   🛒 Shop Page
                 </Button>
                 {/* Banners Dropdown */}
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    bg="white"
-                    color="black"
-                    rightIcon={<ChevronDownIcon />}
-                    variant="ghost"
-                  >
-                    📊 Banners
-                  </MenuButton>
-                  <MenuList bg="white" borderColor="gray.300" color="black">
-                    <MenuItem as={RouterLink} to="/adminbanner">
+                <Button
+                  onClick={() => setIsBannersOpen(!isBannersOpen)}
+                  bg="transparent"
+                  color="white"
+                  justifyContent="space-between"
+                  rightIcon={
+                    isBannersOpen ? <ChevronUpIcon /> : <ChevronDownIcon />
+                  }
+                  variant="ghost"
+                >
+                  📊 Banners
+                </Button>
+                <Collapse in={isBannersOpen} animateOpacity>
+                  <VStack pl={4} align="stretch" spacing={2} fontSize="md">
+                    <Button
+                      as={RouterLink}
+                      to="/adminbanner"
+                      variant="ghost"
+                      color="white"
+                      justifyContent="flex-start"
+                      _hover={{ bg: "gray.700" }}
+                      leftIcon="•"
+                      fontSize="md"
+                    >
                       Image Banner
-                    </MenuItem>
-                    <MenuItem as={RouterLink} to="/adminvideobanner">
+                    </Button>
+                    <Button
+                      as={RouterLink}
+                      to="/adminvideobanner"
+                      variant="ghost"
+                      color="white"
+                      justifyContent="flex-start"
+                      _hover={{ bg: "gray.700" }}
+                      leftIcon="•"
+                      fontSize="md"
+                    >
                       Video Banner
-                    </MenuItem>
-                  </MenuList>
-                </Menu>{" "}
+                    </Button>
+                  </VStack>
+                </Collapse>
+
                 <Button
                   onClick={() => setActiveTab("review")}
                   as={RouterLink}
                   to="/adminreview"
-                  bg="white"
-                  color="black"
+                  bg="transparent"
+                  justifyContent="flex-start"
+                  color="white"
                   variant="ghost"
+                  fontSize="md"
                 >
                   🌟 Reviews
                 </Button>
@@ -169,9 +277,11 @@ const AdminLayout = ({ children }) => {
                   onClick={() => setActiveTab("transactions")}
                   as={RouterLink}
                   to="/transactions"
-                  bg="white"
-                  color="black"
+                  bg="transparent"
+                  justifyContent="flex-start"
+                  color="white"
                   variant="ghost"
+                  fontSize="md"
                 >
                   💸 Transactions
                 </Button>
@@ -179,9 +289,11 @@ const AdminLayout = ({ children }) => {
                   onClick={() => setActiveTab("settings")}
                   as={RouterLink}
                   to="/profile"
-                  bg="white"
-                  color="black"
+                  bg="transparent"
+                  color="white"
+                  justifyContent="flex-start"
                   variant="ghost"
+                  fontSize="md"
                 >
                   🔧 Settings
                 </Button>

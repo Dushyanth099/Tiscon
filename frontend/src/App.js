@@ -44,6 +44,7 @@ import TransactionTable from "./pages/Transactions/Transaction";
 import AdminReviewPage from "./pages/Admin/AdminReviewPage";
 import ScrollButtons from "./components/ScrollButtons";
 import FavoritesPage from "./pages/Favourites/FavoritesPage";
+import AdminDashboard from "./pages/Admin/AdminDashboard"
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.userLogin);
@@ -106,6 +107,8 @@ const App = () => {
                   <Route path="/productsoverview" element={<Overview />} />
                   <Route path="/transactions" element={<TransactionTable />} />
                   <Route path="/adminreview" element={<AdminReviewPage />} />
+                  <Route path="/adminDashboard" element={<AdminDashboard />} />
+                  
                   <Route
                     path="*"
                     element={<Navigate to="/admin/orderlist" />}
