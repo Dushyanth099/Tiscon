@@ -1,6 +1,21 @@
 import { React, useState, useEffect } from "react";
-import { HiOutlineShoppingCart, HiShoppingCart } from "react-icons/hi";
-import { Image, useToast } from "@chakra-ui/react";
+import {
+  HiOutlineShoppingCart,
+  HiShoppingCart,
+  HiOutlineEye,
+  HiChevronLeft,
+  HiChevronRight,
+} from "react-icons/hi";
+import {
+  Image,
+  useToast,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  IconButton,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
 import { addToCart } from "../actions/cartActions";
@@ -22,6 +37,9 @@ const CardProduct = ({ product }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const userInfo = userLogin?.userInfo;
   const isFavorite = favoriteItems?.some((item) => item._id === product._id);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   useEffect(() => {
     const isincart = cartItems.find((x) => x.product === product._id);
     if (isincart) {
@@ -56,38 +74,58 @@ const CardProduct = ({ product }) => {
     dispatch(addToCart(product._id, 1));
     dispatch(toggleFavorite(product._id));
   };
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev > 0 ? prev - 1 : product.images.length - 1
+    );
+  };
 
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev < product.images.length - 1 ? prev + 1 : 0
+    );
+  };
   return (
-    <Link to={`/product/${product._id}`}>
-      <div
-        className="cardProduct"
-        onMouseOver={() => setShowbtn(true)}
-        onMouseLeave={() => setShowbtn(false)}
-      >
-        <div className="imgDiv" style={{ position: "relative" }}>
-          {/* Discount Badge on Top-Left */}
-          {product.discount > 0 && (
-            <div className="discountBadge">
-              <span>{product.discount}%</span>
-              <span>OFF</span>
-            </div>
-          )}
+    <>
+      <Link to={`/product/${product._id}`}>
+        <div
+          className="cardProduct"
+          onMouseOver={() => setShowbtn(true)}
+          onMouseLeave={() => setShowbtn(false)}
+        >
+          <div className="imgDiv" style={{ position: "relative" }}>
+            <HiOutlineEye
+              className="viewImageIcon"
+              size={28}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onOpen();
+              }}
+            />
+            {/* Discount Badge on Top-Left */}
+            {product.discount > 0 && (
+              <div className="discountBadge">
+                <span>{product.discount}%</span>
+                <span>OFF</span>
+              </div>
+            )}
 
-          <Image
-            className="imgProduct"
-            boxSize="450px"
-            objectFit="cover"
-            src={product.images[0]}
-          />
-        </div>
-        <div className="bottomcard">
-          <Link to={`/product/${product._id}`} exact>
-            <span>{product.brandname}</span>
-            <p className="productDescription">{product.description}</p>
-          </Link>
-          {/* if error use this */}
-          {/* Favorite Button (Adds to Cart & Wishlist) */}
-          {/* {isFavorite ? (
+            <Image
+              className="imgProduct"
+              boxSize="450px"
+              objectFit="cover"
+              src={product.images[0]}
+            />
+          </div>
+          <div className="bottomcard">
+            <Link to={`/product/${product._id}`} exact>
+              <span>{product.brandname}</span>
+              <p className="productDescription">{product.description}</p>
+            </Link>
+            {/* if error use this */}
+            {/* Favorite Button (Adds to Cart & Wishlist) */}
+            {/* {isFavorite ? (
             <HiHeart className="iconFav" size="26" fill="red" />
           ) : (
             <HiOutlineHeart
@@ -97,50 +135,83 @@ const CardProduct = ({ product }) => {
             />
           )} */}
 
-          {/* Shopping Cart Icon */}
-          {Incart ? (
-            <HiHeart className="iconFav " size="26" fill="red" />
-          ) : (
-            <HiOutlineHeart className="iconFav" size="26" onClick={addcart} />
-          )}
+            {/* Shopping Cart Icon */}
+            {Incart ? (
+              <HiHeart className="iconFav " size="26" fill="red" />
+            ) : (
+              <HiOutlineHeart className="iconFav" size="26" onClick={addcart} />
+            )}
 
-          {/* Price Section with Discount & Old Price */}
-          <div className="productpricecard">
-            {product.oldPrice && product.oldPrice > product.price && (
+            {/* Price Section with Discount & Old Price */}
+            <div className="productpricecard">
+              {product.oldPrice && product.oldPrice > product.price && (
+                <span
+                  className="oldPrice"
+                  style={{
+                    textDecoration: "line-through",
+                    color: "#999",
+                    marginRight: "5px",
+                    fontSize: "14px",
+                  }}
+                >
+                  Rs. {product.oldPrice}
+                </span>
+              )}
               <span
-                className="oldPrice"
+                className="newPrice"
                 style={{
-                  textDecoration: "line-through",
-                  color: "#999",
-                  marginRight: "5px",
-                  fontSize: "14px",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  color: "#000",
                 }}
               >
-                Rs. {product.oldPrice}
+                Rs. {product.price}
               </span>
-            )}
-            <span
-              className="newPrice"
-              style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                color: "#000",
-              }}
-            >
-              Rs. {product.price}
-            </span>
-          </div>
+            </div>
 
-          {/* Rating Component */}
-          {/* <div className="Rating">
+            {/* Rating Component */}
+            {/* <div className="Rating">
             <Rating
               value={product.rating}
               text={`${product.numReviews} reviews`}
             />
           </div> */}
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      {/* Image Preview Modal */}
+      <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+        <ModalOverlay />
+        <ModalContent background="black" borderRadius="md">
+          <ModalBody p={0} position="relative">
+            <IconButton
+              position="absolute"
+              left="10px"
+              top="50%"
+              transform="translateY(-50%)"
+              colorScheme="whiteAlpha"
+              onClick={handlePrevImage}
+              icon={<HiChevronLeft />}
+            />
+            <Image
+              src={product.images[currentImageIndex]}
+              objectFit="contain"
+              w="100%"
+              maxH="90vh"
+            />
+            <IconButton
+              position="absolute"
+              right="10px"
+              top="50%"
+              transform="translateY(-50%)"
+              colorScheme="whiteAlpha"
+              onClick={handleNextImage}
+              icon={<HiChevronRight />}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 
