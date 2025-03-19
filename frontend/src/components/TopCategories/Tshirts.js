@@ -1,10 +1,10 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Box, SimpleGrid, Image, Text, IconButton } from "@chakra-ui/react";
 import "./Tshirts.css";
 import MenTshirtbanner from "../../assets/Tshirtsmenbanner.png";
 import WomenenTshirtbanner from "../../assets/Tshirtswomenbanner.png";
-import CardProduct from "../CardProduct";
 
 const Tshirts = () => {
   const location = useLocation();
@@ -46,17 +46,94 @@ const Tshirts = () => {
           className="banner-img"
         />
       </div>
-
       {/* 📌 Product List */}
-      <div className="product-grid">
+
+      <SimpleGrid columns={{ base: 2, md: 3, lg: 5 }} spacing={10} p={4}>
         {tshirts.length > 0 ? (
-          tshirts.map((product) => (
-            <CardProduct key={product._id} product={product} /> // ✅ Using CardProduct
-          ))
+          tshirts.map((product) => {
+            return (
+              <Box
+                key={product._id}
+                borderRadius="xl"
+                overflow="hidden"
+                color="black"
+                width="270px"
+                height="490px"
+                position="relative"
+              >
+                {/* Product Image */}
+                <Link to={`/product/${product._id}`}>
+                  <Box height="380px" width="100%" overflow="hidden">
+                    {/* Discount Badge on Top-Left */}
+                    {product.discount > 0 && (
+                      <div className="discountBadge">
+                        <span>{product.discount}%</span>
+                        <span>OFF</span>
+                      </div>
+                    )}
+                    <Image
+                      src={product.images[0]}
+                      alt={product.description}
+                      objectFit="cover"
+                      width="100%"
+                      height="100%"
+                      borderRadius="xl"
+                    />
+                  </Box>
+                </Link>
+
+                {/* Product Details */}
+                <Box p={4} color="white">
+                  <Link to={`/product/${product._id}`}>
+                    <Text
+                      fontSize="lg"
+                      fontWeight="80px"
+                      color="gray.400"
+                      textTransform="uppercase"
+                      mb={2}
+                    >
+                      {product.brandname}
+                    </Text>
+                    <Text
+                      fontSize="lg"
+                      fontWeight="medium"
+                      color="white"
+                      mb={2}
+                    >
+                      {product.description}
+                    </Text>
+                  </Link>
+
+                  {/* Price Section */}
+                  <Box display="flex" alignItems="center" mt={2}>
+                    {product.oldPrice && product.oldPrice > product.price && (
+                      <Text
+                        as="span"
+                        fontSize="sm"
+                        color="gray.500"
+                        textDecoration="line-through"
+                        mr={2}
+                      >
+                        Rs. {product.oldPrice}
+                      </Text>
+                    )}
+                    <Text
+                      as="span"
+                      fontSize="lg"
+                      fontWeight="medium"
+                      color="white"
+                    >
+                      Rs. {product.price}
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
+            );
+          })
         ) : (
           <p className="no-products">No Shirts available.</p>
         )}
-      </div>
+      </SimpleGrid>
     </div>
   );
 };
