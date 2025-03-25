@@ -228,7 +228,7 @@ const Order = () => {
                 mr="auto"
                 fontWeight="600"
                 p={2}
-                onClick={() => window.open(invoice?.shippingLabelUrl)}
+                onClick={() => navigate(`/admin/order/${orderId}/invoice`)}
               >
                 View Invoice
               </Button>

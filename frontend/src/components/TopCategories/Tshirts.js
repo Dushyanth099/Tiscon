@@ -3,8 +3,8 @@ import { useLocation, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Box, SimpleGrid, Image, Text, IconButton } from "@chakra-ui/react";
 import "./Tshirts.css";
-import MenTshirtbanner from "../../assets/Tshirtsmenbanner.png";
-import WomenenTshirtbanner from "../../assets/Tshirtswomenbanner.png";
+import MenTshirtbanner from "../../assets/boystshirt.png";
+import WomenenTshirtbanner from "../../assets/girlstshirt.webp";
 
 const Tshirts = () => {
   const location = useLocation();
@@ -88,7 +88,7 @@ const Tshirts = () => {
                     <Text
                       fontSize="lg"
                       fontWeight="80px"
-                      color="gray.400"
+                      color="black"
                       textTransform="uppercase"
                       mb={2}
                     >
@@ -97,7 +97,7 @@ const Tshirts = () => {
                     <Text
                       fontSize="lg"
                       fontWeight="medium"
-                      color="white"
+                      color="black"
                       mb={2}
                     >
                       {product.description}
@@ -121,7 +121,7 @@ const Tshirts = () => {
                       as="span"
                       fontSize="lg"
                       fontWeight="medium"
-                      color="white"
+                      color="black"
                     >
                       Rs. {product.price}
                     </Text>

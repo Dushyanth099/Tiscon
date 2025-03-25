@@ -2,8 +2,8 @@ import React from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Box, SimpleGrid, Image, Text, IconButton } from "@chakra-ui/react";
-import Sweatpantsmen from "../../assets/Sweatpantsbannermen.png";
-import Sweatpantswomen from "../../assets/Sweatpantsbannerwomen.png";
+import Sweatpantsmen from "../../assets/setsboys.jpg";
+import Sweatpantswomen from "../../assets/setsgirls.webp";
 import "./Tshirts.css";
 const SweatPants = () => {
   const location = useLocation();
@@ -28,7 +28,7 @@ const SweatPants = () => {
   const sweatpants = products
     .filter(
       (product) =>
-        product.productdetails?.subcategory === "SweatPants" &&
+        product.productdetails?.subcategory === "Sets" &&
         product.productdetails?.gender === gender
     )
     .slice(0, 5);
@@ -38,7 +38,7 @@ const SweatPants = () => {
       <div className="banner">
         <img
           src={banners[gender].img}
-          alt={`${gender} SweatPants`}
+          alt={`${gender} Sets`}
           className="banner-img"
         />
       </div>
@@ -84,7 +84,7 @@ const SweatPants = () => {
                     <Text
                       fontSize="lg"
                       fontWeight="80px"
-                      color="gray.400"
+                      color="black"
                       textTransform="uppercase"
                       mb={2}
                     >
@@ -93,7 +93,7 @@ const SweatPants = () => {
                     <Text
                       fontSize="lg"
                       fontWeight="medium"
-                      color="white"
+                      color="black"
                       mb={2}
                     >
                       {product.description}
@@ -117,7 +117,7 @@ const SweatPants = () => {
                       as="span"
                       fontSize="lg"
                       fontWeight="medium"
-                      color="white"
+                      color="black"
                     >
                       Rs. {product.price}
                     </Text>

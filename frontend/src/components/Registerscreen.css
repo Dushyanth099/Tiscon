@@ -5,7 +5,7 @@
   align-items: center;
   width: 100vw;
   height: 100vh;
-  background: url("../assets/loginimg.png") no-repeat center center;
+  background: url("../assets/loginimg.png") no-repeat center center black;
   background-size: cover;
   background-attachment: fixed;
   position: relative;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Grid,
@@ -7,22 +7,93 @@ import {
   VStack,
   Collapse,
   IconButton,
+  Text,
+  Spinner,
+  Flex,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
 } from "@chakra-ui/icons";
+import { MdPendingActions, MdLocalShipping, MdCancel } from "react-icons/md";
+import { AiOutlineDeliveredProcedure, AiOutlineRollback } from "react-icons/ai";
+import { FaClipboardList, FaUsers, FaBoxOpen, FaListAlt } from "react-icons/fa";
 import AdminNavbar from "./AdminNavbar";
+import { getOrderStatusCounts } from "../../actions/orderActions";
+import { GiCardboardBox } from "react-icons/gi";
+import { ImCross } from "react-icons/im";
 
 const AdminLayout = ({ children }) => {
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("users");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isBannersOpen, setIsBannersOpen] = useState(false);
   const [isOrdersOpen, setIsOrdersOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(getOrderStatusCounts());
+  }, [dispatch]);
+  const orderStatusCounts = useSelector((state) => state.orderStatuses) || {};
+  const { loading: loadingOrderStatuses, orderStatuses = {} } =
+    orderStatusCounts;
+
+  // Order Status Categories
+  const orderStatusList = [
+    {
+      label: "AllOrders",
+      key: "allorders",
+      icon: FaListAlt,
+      color: "purple.500",
+    },
+    {
+      label: "Pending",
+      key: "pending",
+      icon: MdPendingActions,
+      color: "blue.500",
+    },
+    {
+      label: "Confirmed",
+      key: "confirmed",
+      icon: FaClipboardList,
+      color: "green.500",
+    },
+    {
+      label: "Packaging",
+      key: "packaging",
+      icon: GiCardboardBox,
+      color: "orange.500",
+    },
+    {
+      label: "Out for delivery",
+      key: "outForDelivery",
+      icon: MdLocalShipping,
+      color: "green.500",
+    },
+    {
+      label: "Delivered",
+      key: "delivered",
+      icon: AiOutlineDeliveredProcedure,
+      color: "blue.500",
+    },
+    { label: "Canceled", key: "canceled", icon: MdCancel, color: "red.500" },
+    {
+      label: "Returned",
+      key: "returned",
+      icon: AiOutlineRollback,
+      color: "blue.500",
+    },
+    {
+      label: "Failed to deliver",
+      key: "failed",
+      icon: ImCross,
+      color: "red.500",
+    },
+  ];
 
   return (
     <>
@@ -111,7 +182,7 @@ const AdminLayout = ({ children }) => {
                       leftIcon="•"
                       fontSize="md"
                     >
-                      Orders Page
+                      Order Stats
                     </Button>
                     <Button
                       as={RouterLink}
@@ -125,6 +196,43 @@ const AdminLayout = ({ children }) => {
                     >
                       Assign Orders
                     </Button>
+                    {loadingOrderStatuses ? (
+                      <Spinner size="lg" />
+                    ) : (
+                      orderStatusList.map((status) => (
+                        <Button
+                          key={status.label}
+                          as={RouterLink}
+                          to={`/orders/${status.key}`}
+                          bg="transparent"
+                          color="white"
+                          justifyContent="flex-start"
+                          variant="ghost"
+                          fontSize="md"
+                        >
+                          <Flex alignItems="center">
+                            <status.icon
+                              style={{ marginRight: 8, color: status.color }}
+                            />
+                            {status.label}
+                          </Flex>
+                          <Box
+                            ml="auto"
+                            bg={status.color}
+                            color="white"
+                            fontSize="sm"
+                            fontWeight="bold"
+                            px={2}
+                            py={1}
+                            borderRadius="full" // Ensures a rounded background
+                            minW="30px"
+                            textAlign="center"
+                          >
+                            {orderStatuses[status.key] || 0}
+                          </Box>
+                        </Button>
+                      ))
+                    )}
                   </VStack>
                 </Collapse>
                 {/* Products Dropdown */}
@@ -207,18 +315,7 @@ const AdminLayout = ({ children }) => {
                 >
                   📈 Statistics
                 </Button>
-                <Button
-                  onClick={() => setActiveTab("home")}
-                  as={RouterLink}
-                  to="/"
-                  bg="transparent"
-                  justifyContent="flex-start"
-                  color="white"
-                  variant="ghost"
-                  fontSize="md"
-                >
-                  🛒 Shop Page
-                </Button>
+
                 {/* Banners Dropdown */}
                 <Button
                   onClick={() => setIsBannersOpen(!isBannersOpen)}

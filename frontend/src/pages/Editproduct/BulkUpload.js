@@ -116,7 +116,7 @@ const BulkUploadPage = () => {
           className="titlepanel"
           style={{ color: "black", textAlign: "center", marginBottom: "20px" }}
         >
-          Bulk Upload Products
+          Bulk Upload
         </h1>
 
         {loading ? (

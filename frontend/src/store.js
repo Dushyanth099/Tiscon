@@ -21,10 +21,19 @@ import {
   OrderListMyreducer,
   OrderListreducer,
   OrderPayreducer,
+  deliveryOrdersReducer,
+  orderAcceptReducer,
+  orderRejectReducer,
+  orderCompleteReducer,
+  orderReturnReducer,
+  orderAssignReducer,
+  undeliveredOrderListReducer,
   invoiceReducer,
   incomeReducer,
+  orderStatusUpdateReducer,
   transactionListReducer,
   StripepaymentReducer,
+  orderStatusReducer,
 } from "./reducers/orderReducers";
 
 import { shipmentReducer, shippingReducer } from "./reducers/deliveryReducers";
@@ -82,6 +91,16 @@ const reducer = combineReducers({
   sales: salesReducer,
   revenue: revenueReducer,
   orders: ordersReducer,
+  undeliveredOrderList: undeliveredOrderListReducer,
+  deliveryOrders: deliveryOrdersReducer,
+  orderAccept: orderAcceptReducer,
+  orderReject: orderRejectReducer,
+  orderComplete: orderCompleteReducer,
+  orderReturn: orderReturnReducer,
+  orderAssign: orderAssignReducer,
+  sales: salesReducer,
+  revenue: revenueReducer,
+  orders: ordersReducer,
   invoiceDetails: invoiceReducer,
   bannerAdd: bannerAddReducer,
   bannerList: bannerListReducer,
@@ -99,6 +118,8 @@ const reducer = combineReducers({
   reviewList: reviewListReducer,
   reviewApprove: reviewApproveReducer,
   favorites: favoritesReducer,
+  orderStatusUpdate: orderStatusUpdateReducer,
+  orderStatuses: orderStatusReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

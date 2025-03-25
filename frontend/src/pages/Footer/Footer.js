@@ -3,7 +3,7 @@ import { FiFacebook } from "react-icons/fi";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { IoLogoYoutube } from "react-icons/io";
 import { Input, Stack } from "@chakra-ui/react";
-import logo from "../../assets/ecommerce-logo.png";
+import logo from "../../assets/kids logo.png";
 import "./footercss.css";
 import { Link } from "react-router-dom";
 const Footer = () => {
@@ -32,10 +32,10 @@ const Footer = () => {
           <h1>Quick Links</h1>
           <ul>
             <li>
-              <Link to="/?gender=Men">Men</Link>
+              <Link to="/?gender=Men">Boys</Link>
             </li>
             <li>
-              <Link to="/?gender=Women">Women</Link>
+              <Link to="/?gender=Women">Girls</Link>
             </li>
           </ul>
         </div>

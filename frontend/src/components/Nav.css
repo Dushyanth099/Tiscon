@@ -1,5 +1,5 @@
 .nav {
-  background-color: black;
+  background-color: rgb(237, 84, 164);
   color: white;
   width: 100%;
   position: fixed;
@@ -10,6 +10,7 @@
   justify-content: space-between;
   z-index: 1000;
 }
+
 .nav.active {
   background: black;
   box-shadow: 0 5px 5px -2px rgba(0, 0, 0, 0.4);
@@ -77,11 +78,11 @@
   font-size: 1.5rem;
   font-weight: bold;
   font-family: cursive;
-  color: #f64749;
+  color: white !important;
   white-space: nowrap;
 }
 .search-button {
-  background-color: black !important;
+  background-color: rgb(237, 84, 164) !important ;
   color: white !important;
 }
 .search-input-group {
@@ -90,7 +91,8 @@
   width: 100%;
 }
 .search-icon {
-  color: white;
+  color: rgb(237, 84, 164);
+  background-color: black;
 }
 .search-input {
   background-color: #1a202c;
@@ -152,7 +154,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: black;
+  background: pink;
   width: auto;
   display: flex;
   padding: 15px;
@@ -168,7 +170,8 @@
 /* COLUMN LAYOUT */
 .category-contain {
   display: flex;
-  gap: 20px;
+  flex-direction: row;
+  gap: 10px;
   width: 100%;
 }
 .category-column {
@@ -177,7 +180,7 @@
 }
 .category-column h4 {
   color: #00ff00; /* Green highlight */
-  font-size: 16px;
+  font-size: 20px;
   margin-bottom: 10px;
 }
 .category-column ul {
@@ -190,11 +193,11 @@
 .category-column li a {
   text-decoration: none;
   color: white;
-  font-size: 14px;
+  font-size: 18px;
   transition: color 0.3s ease;
 }
 .category-column li a:hover {
-  color: #00ff00;
+  color: purple;
 }
 
 .nav-img {

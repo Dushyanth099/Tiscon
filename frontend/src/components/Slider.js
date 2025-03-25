@@ -71,8 +71,6 @@ const Slider = () => {
             background: `url(${banner.image}) no-repeat center top/cover`,
           }}
         >
-          <h1 className="titleslider">{banner.title}</h1>
-          <h3 className="subtitleslider">{banner.subtitle}</h3>
           <div className="content">
             <Link to="/products/">
               <ShopNowBtn />

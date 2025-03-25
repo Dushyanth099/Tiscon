@@ -16,7 +16,6 @@ const addorderitems = asyncHandler(async (req, res) => {
     shippingPrice,
     totalPrice,
     shippingRates,
-    shipmentDetails,
   } = req.body;
   if (orderItems && orderItems.length === 0) {
     res.status(400);
@@ -33,7 +32,6 @@ const addorderitems = asyncHandler(async (req, res) => {
       shippingPrice,
       totalPrice,
       shippingRates,
-      shipmentDetails,
     });
     const createdOrder = await order.save();
     // Update user orderHistory
@@ -113,28 +111,168 @@ const GetMyOrders = asyncHandler(async (req, res) => {
 // @route GET /api/admin/orders
 // @access Private/admin
 const GetOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({}).populate("user", "id name").populate({
+  const { status } = req.query; // Get status filter from query params
+
+  let filter = {};
+  if (status && status !== "all") {
+    filter.status = status; // Apply filter only if status is provided
+  }
+
+  const orders = await Order.find(filter).populate("user", "id name").populate({
     path: "orderItems.product",
     select: "brandname images",
   });
+
   res.json(orders);
 });
 
+//@desc Get orders for delivery person
+//@route GET/Api/orders/delivery
+// access Private Delivery
+const getOrdersForDeliveryPerson = asyncHandler(async (req, res) => {
+  const orders = await Order.find({
+    deliveryPerson: req.user._id,
+    isPacked: true,
+  }).populate("user", "name email");
+  res.json(orders);
+});
+
+//@desc Accept order
+// @route PUT/api/orders/delivery/accept/:id
+// access Private Delivery
+const acceptOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (order && order.isPacked && !order.isAcceptedByDelivery) {
+    order.isAcceptedByDelivery = true;
+    await order.save();
+    res.json({ message: "Order accepted" });
+  } else {
+    res.status(400);
+    throw new Error("Order cannot be accepted");
+  }
+});
+
+// @desc Reject order
+//@route PUT/api/orders/delivery/reject/:id
+// access Private Delivery
+const rejectOrder = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (order && order.isPacked && !order.isAcceptedByDelivery) {
+    order.deliveryPerson = null; // Remove delivery person assignment
+    await order.save();
+    res.json({ message: "Order rejected" });
+  } else {
+    res.status(400);
+    throw new Error("Order cannot be rejected");
+  }
+});
+
+// @desc Mark order as completed
+// @route PUT/api/orders/delivery/complete/:id
+// access Private Delivery
+const markOrderAsCompleted = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (order && order.isAcceptedByDelivery && !order.isDelivered) {
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+    if (order.paymentMethod === "COD") {
+      order.isPaid = true;
+      order.paidAt = Date.now();
+    }
+
+    await order.save();
+    res.json({ message: "Order marked as completed" });
+  } else {
+    res.status(400);
+    throw new Error("Order cannot be marked as completed");
+  }
+});
+
+// @desc Mark order as returned
+// @route PUT/api/orders/delivery/return/:id
+// access Private Delivery
+const markOrderAsReturned = asyncHandler(async (req, res) => {
+  const { returnReason } = req.body;
+  const order = await Order.findById(req.params.id);
+  if (order && order.isDelivered) {
+    order.isReturned = true;
+    order.returnReason = returnReason;
+    await order.save();
+    res.json({ message: "Order marked as returned" });
+  } else {
+    res.status(400);
+    throw new Error("Order cannot be marked as returned");
+  }
+});
+
+// @desc get undelivered orders in admin
+// @route GET/api/orders/undelivered
+// access Private Admin
+
+const getUndeliveredOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ isDelivered: false }) // Fetch only non-delivered orders
+    .populate("user", "name email profilePicture")
+    .populate("deliveryPerson", "name profilePicture")
+    .populate("orderItems.product", "name images");
+
+  res.json(orders);
+});
+
+// @desc Assign order to delivery person
+// @route PUT/api/orders/:id/assign
+// access Private Admin
+const assignOrderToDeliveryPerson = asyncHandler(async (req, res) => {
+  const { deliveryPersonId } = req.body;
+  const order = await Order.findById(req.params.id)
+    .populate("user", "name email profilePicture")
+    .populate("deliveryPerson", "name profilePicture")
+    .populate("orderItems.product", "name image");
+  if (order) {
+    order.deliveryPerson = deliveryPersonId;
+    order.isPacked = true;
+    await order.save();
+    res.json({ message: "Order assigned to delivery person" });
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
 // @desc    Generate Invoice
 // @route   GET /api/orders/:id/invoice
 // @access  Private/Admin
 const generateInvoice = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id);
-  if (!order) {
+  const order = await Order.findById(req.params.id).populate(
+    "user",
+    "name email"
+  );
+
+  if (order) {
+    const invoice = {
+      orderId: order._id,
+      user: {
+        name: order.user?.name || "N/A",
+        email: order.user?.email || "N/A",
+      },
+      orderItems: order.orderItems,
+      shippingAddress: order.shippingAddress,
+      paymentMethod: order.paymentMethod,
+      taxPrice: order.taxPrice,
+      shippingPrice: order.shippingPrice,
+      totalPrice: order.totalPrice,
+      isPaid: order.isPaid,
+      paidAt: order.paidAt,
+      isDelivered: order.isDelivered,
+      deliveredAt: order.deliveredAt,
+      createdAt: order.createdAt,
+    };
+    order.invoiceDetails = invoice;
+    await order.save();
+    res.json(invoice);
+  } else {
     res.status(404);
     throw new Error("Order not found");
   }
-  // ✅ Extract only the shipping label URL
-  const shippingLabelUrl =
-    order.shipmentDetails?.[0]?.shippingLabelUrl || "N/A";
-  res.json({ shippingLabelUrl });
 });
-
 // @desc  getlocations
 // @route   GET /api/incomebycity
 // @access  Private/Admin
@@ -222,6 +360,58 @@ const StripePayment = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    update Trackingststatus
+// @route   put /api/orders/:id/updatestatus
+// @access  private/admin
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    // Update the correct field based on status
+    if (status === "Packed") order.isPacked = true;
+    if (status === "Shipped") order.isAcceptedByDelivery = true;
+    if (status === "Delivered") order.isDelivered = true;
+    if (status === "Returned") order.isReturned = true;
+
+    await order.save();
+    res.json({ message: "Order status updated", order });
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
+});
+// @desc   Get order statuses count
+// @route  GET /api/orders/status-count
+// @access Admin
+const getOrderStatusCounts = asyncHandler(async (req, res) => {
+  const orderStatuses = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        pending: { $sum: { $cond: [{ $eq: ["$isPaid", false] }, 1, 0] } },
+        confirmed: { $sum: { $cond: [{ $eq: ["$isPaid", true] }, 1, 0] } },
+        packaging: { $sum: { $cond: [{ $eq: ["$isPacked", true] }, 1, 0] } },
+        outForDelivery: {
+          $sum: { $cond: [{ $eq: ["$isAcceptedByDelivery", true] }, 1, 0] },
+        },
+        delivered: { $sum: { $cond: [{ $eq: ["$isDelivered", true] }, 1, 0] } },
+        canceled: {
+          $sum: {
+            $cond: [{ $eq: ["$returnReason", "Canceled by user"] }, 1, 0],
+          },
+        },
+        returned: { $sum: { $cond: [{ $eq: ["$isReturned", true] }, 1, 0] } },
+        failed: {
+          $sum: { $cond: [{ $eq: ["$returnReason", "Failed"] }, 1, 0] },
+        },
+      },
+    },
+  ]);
+
+  res.json(orderStatuses.length ? orderStatuses[0] : {});
+});
+
 export {
   addorderitems,
   getOrderById,
@@ -229,8 +419,17 @@ export {
   GetMyOrders,
   GetOrders,
   updateOrderToDelivered,
+  getUndeliveredOrders,
+  getOrdersForDeliveryPerson,
+  acceptOrder,
+  rejectOrder,
+  markOrderAsCompleted,
+  markOrderAsReturned,
+  assignOrderToDeliveryPerson,
   generateInvoice,
   incomebycity,
   getTransactions,
   StripePayment,
+  updateOrderStatus,
+  getOrderStatusCounts,
 };

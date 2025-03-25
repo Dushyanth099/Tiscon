@@ -50,9 +50,6 @@ const Users = () => {
   };
   return (
     <div className="Users">
-      <Helmet>
-        <title>Users</title>
-      </Helmet>
       <h1 className="titlepanel"> Users</h1>
       {loading ? (
         <div className="loading">
@@ -61,9 +58,9 @@ const Users = () => {
       ) : error ? (
         <h1>error</h1>
       ) : (
-        <Box overflowX="auto">
+        <Box overflowX="auto" maxW="1000px" mx="auto" p={4}>
           <UsersPieChart />
-          <h1 className="titlepanel"> Details</h1>
+
           <Table className="tableusers" variant="striped">
             <Thead>
               <Tr>

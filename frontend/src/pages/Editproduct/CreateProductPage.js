@@ -86,7 +86,7 @@ const CreateProductPage = () => {
       "Footwear",
       "Accessories",
     ],
-    subcategory: ["Shirts", "Jeans", "Pants", "Shorts", "SweatPants"],
+    subcategory: ["Shirts", "Jeans", "Pants", "Shorts", "SweatPants", "Sets"],
     type: ["Casual", "Formal", "Sports"],
     ageRange: ["Kids", "Teen", "Adult"],
     color: ["Red", "Blue", "Black", "White"],

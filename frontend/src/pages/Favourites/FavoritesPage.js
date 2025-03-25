@@ -50,7 +50,7 @@ const FavoritesPage = () => {
 
   return (
     <>
-      <Box mt={20} p={6} bg="black" color="white">
+      <Box mt={20} p={6} bg="white" color="black">
         <Text fontSize="2xl" fontWeight="bold" mb={5} textAlign="center">
           Your Favorites ❤️
         </Text>
@@ -103,7 +103,7 @@ const FavoritesPage = () => {
                   </Link>
 
                   {/* Product Details */}
-                  <Box p={4} bg="black" color="white">
+                  <Box p={4} bg="white" color="black">
                     <Link to={`/product/${product._id}`}>
                       <Text fontWeight="500" fontSize="lg" mb={2}>
                         {product.brandname}
@@ -130,7 +130,7 @@ const FavoritesPage = () => {
                         as="span"
                         fontSize="lg"
                         fontWeight="500"
-                        color="white"
+                        color="black"
                       >
                         Rs. {product.price}
                       </Text>

@@ -28,8 +28,35 @@ import {
   STRIPE_PAYMENT_REQUEST,
   STRIPE_PAYMENT_SUCCESS,
   STRIPE_PAYMENT_FAIL,
+  ORDER_STATUS_UPDATE_REQUEST,
+  ORDER_STATUS_UPDATE_SUCCESS,
+  ORDER_STATUS_UPDATE_FAIL,
+  ORDER_STATUS_REQUEST,
+  ORDER_STATUS_SUCCESS,
+  ORDER_STATUS_FAIL,
 } from "../constants/orderConstants";
 import {
+  ORDER_UNDELIVERED_LIST_REQUEST,
+  ORDER_UNDELIVERED_LIST_SUCCESS,
+  ORDER_UNDELIVERED_LIST_FAIL,
+  ORDER_DELIVERY_LIST_REQUEST,
+  ORDER_DELIVERY_LIST_SUCCESS,
+  ORDER_DELIVERY_LIST_FAIL,
+  ORDER_ACCEPT_REQUEST,
+  ORDER_ACCEPT_SUCCESS,
+  ORDER_ACCEPT_FAIL,
+  ORDER_REJECT_REQUEST,
+  ORDER_REJECT_SUCCESS,
+  ORDER_REJECT_FAIL,
+  ORDER_COMPLETE_REQUEST,
+  ORDER_COMPLETE_SUCCESS,
+  ORDER_COMPLETE_FAIL,
+  ORDER_RETURN_REQUEST,
+  ORDER_RETURN_SUCCESS,
+  ORDER_RETURN_FAIL,
+  ORDER_ASSIGN_REQUEST,
+  ORDER_ASSIGN_SUCCESS,
+  ORDER_ASSIGN_FAIL,
   INCOME_BY_CITY_REQUEST,
   INCOME_BY_CITY_SUCCESS,
   INCOME_BY_CITY_FAIL,
@@ -170,6 +197,96 @@ export const OrderListreducer = (state = { orders: [] }, action) => {
   }
 };
 
+// delivery
+export const deliveryOrdersReducer = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case ORDER_DELIVERY_LIST_REQUEST:
+      return { loading: true, orders: [] };
+    case ORDER_DELIVERY_LIST_SUCCESS:
+      return { loading: false, orders: action.payload };
+    case ORDER_DELIVERY_LIST_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const orderAcceptReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_ACCEPT_REQUEST:
+      return { loading: true };
+    case ORDER_ACCEPT_SUCCESS:
+      return { loading: false, success: true };
+    case ORDER_ACCEPT_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const orderRejectReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_REJECT_REQUEST:
+      return { loading: true };
+    case ORDER_REJECT_SUCCESS:
+      return { loading: false, success: true };
+    case ORDER_REJECT_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const orderCompleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_COMPLETE_REQUEST:
+      return { loading: true };
+    case ORDER_COMPLETE_SUCCESS:
+      return { loading: false, success: true };
+    case ORDER_COMPLETE_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const orderReturnReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_RETURN_REQUEST:
+      return { loading: true };
+    case ORDER_RETURN_SUCCESS:
+      return { loading: false, success: true };
+    case ORDER_RETURN_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const orderAssignReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_ASSIGN_REQUEST:
+      return { loading: true };
+    case ORDER_ASSIGN_SUCCESS:
+      return { loading: false, success: true };
+    case ORDER_ASSIGN_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+export const undeliveredOrderListReducer = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case ORDER_UNDELIVERED_LIST_REQUEST:
+      return { loading: true, orders: [] };
+    case ORDER_UNDELIVERED_LIST_SUCCESS:
+      return { loading: false, orders: action.payload };
+    case ORDER_UNDELIVERED_LIST_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 export const invoiceReducer = (state = { invoice: {} }, action) => {
   switch (action.type) {
     case INVOICE_REQUEST:
@@ -228,6 +345,33 @@ export const StripepaymentReducer = (
     case STRIPE_PAYMENT_FAIL:
       return { loading: false, error: action.payload };
 
+    default:
+      return state;
+  }
+};
+export const orderStatusUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_STATUS_UPDATE_REQUEST:
+      return { loading: true };
+
+    case ORDER_STATUS_UPDATE_SUCCESS:
+      return { loading: false, success: true, order: action.payload };
+
+    case ORDER_STATUS_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+export const orderStatusReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_STATUS_REQUEST:
+      return { loading: true };
+    case ORDER_STATUS_SUCCESS:
+      return { loading: false, orderStatuses: action.payload };
+    case ORDER_STATUS_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

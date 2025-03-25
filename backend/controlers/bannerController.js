@@ -17,7 +17,7 @@ const addBanner = asyncHandler(async (req, res) => {
   if (!product) {
     return res.status(404).json({ message: "Product not found." });
   }
-  if (product.banners.length >= 3) {
+  if (product.banners.length >= 4) {
     return res
       .status(400)
       .json({ message: "Maximum of 3 banners allowed per product." });

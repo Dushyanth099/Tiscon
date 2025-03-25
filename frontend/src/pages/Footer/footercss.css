@@ -4,9 +4,9 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
-  background-color: black;
+  background-color: white;
   padding: 20px 40px; /* Reduced padding */
-  color: white;
+  color: black;
   height: 300px; /* Set fixed height */
 }
 

@@ -28,9 +28,10 @@ import Products from "./pages/products/products";
 import Editproduct from "./pages/Editproduct/Editproduct";
 import Orders from "./pages/Orders/Orders";
 import AssignOrderScreen from "./pages/Delivery/AssignOrderScreen";
-import Dashboard from "./pages/Dashboard/Dashboard";
 import { useSelector } from "react-redux";
 import InvoiceScreen from "./pages/InvoiceScreen/InvoiceScreen";
+import DeliveryHomepage from "./pages/Delivery/DeliveryHomepage";
+import OrdersScreen from "./pages/Admin/OrdersScreen";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminBannerScreen from "./pages/AdminBanner/AdminBannerScreen";
 import CreateProductPage from "./pages/Editproduct/CreateProductPage";
@@ -44,7 +45,10 @@ import TransactionTable from "./pages/Transactions/Transaction";
 import AdminReviewPage from "./pages/Admin/AdminReviewPage";
 import ScrollButtons from "./components/ScrollButtons";
 import FavoritesPage from "./pages/Favourites/FavoritesPage";
-import AdminDashboard from "./pages/Admin/AdminDashboard"
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import OrderStatusScreen from "./pages/Admin/OrderStatus";
+import DeliveryLayout from "./pages/Delivery/DeliveryLayout";
+import DeliveryOrders from "./pages/Delivery/DeliveryOrders";
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.userLogin);
@@ -54,18 +58,36 @@ const App = () => {
       <ChakraProvider>
         <Router>
           <ScrollIntoView>
-            {userInfo && userInfo.isAdmin ? (
+            {userInfo && userInfo.isDelivery ? (
+              <DeliveryLayout>
+                <Routes>
+                  <Route
+                    path="/deliveryhomepage"
+                    element={<DeliveryHomepage />}
+                  />
+                  <Route path="/deliveryorders" element={<DeliveryOrders />} />
+                  <Route path="/profile" element={<ProfileScreen />} />{" "}
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </DeliveryLayout>
+            ) : userInfo && userInfo.isAdmin ? (
               <AdminLayout>
                 <Routes>
+                  <Route path="/admin" element={<AdminDashboard />} />
                   <Route path="/" element={<Home />} />
                   <Route path="/profile" element={<ProfileScreen />} />
-                  <Route path="/admin/dashboard" element={<Dashboard />} />
                   <Route path="/admin/userlist" element={<Users />} />
                   <Route path="/admin/productlist" element={<Products />} />
                   <Route path="/product/:id" element={<Productpage />} />
                   <Route path="/admin/orderlist" element={<Orders />} />
+                  <Route path="/orders" element={<OrdersScreen />} />
+                  <Route path="/orders/:status" element={<OrdersScreen />} />
                   <Route path="/order/:id" element={<Order />} />
                   <Route path="/admin/user/:id/edit" element={<Edituser />} />
+                  <Route
+                    path="/:orderId/orderscreenstatus"
+                    element={<OrderStatusScreen />}
+                  />
                   <Route
                     path="/admin/incomebycity"
                     element={<IncomeByCity />}
@@ -108,11 +130,7 @@ const App = () => {
                   <Route path="/transactions" element={<TransactionTable />} />
                   <Route path="/adminreview" element={<AdminReviewPage />} />
                   <Route path="/adminDashboard" element={<AdminDashboard />} />
-                  
-                  <Route
-                    path="*"
-                    element={<Navigate to="/admin/orderlist" />}
-                  />
+                  <Route path="*" element={<NotFoundPage />} />
                 </Routes>{" "}
               </AdminLayout>
             ) : (
@@ -132,6 +150,11 @@ const App = () => {
                   <Route path="/placeorder" element={<Placeorder />} />
                   <Route path="/order/:id" element={<Order />} />
                   <Route path="/search/:keyword" element={<Home />} />
+                  <Route
+                    path="/admin/order/:id/invoice"
+                    element={<InvoiceScreen />}
+                    exact
+                  />
                   <Route path="/products/" element={<ProductsListPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>

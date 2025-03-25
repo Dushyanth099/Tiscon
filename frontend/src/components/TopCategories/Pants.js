@@ -3,8 +3,8 @@ import "./Pants.css";
 import { Box, SimpleGrid, Image, Text, IconButton } from "@chakra-ui/react";
 import { useLocation, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Menpantbanner from "../../assets/Denimsmenbanner.png";
-import Womenenpantbanner from "../../assets/Denimswomenbanner.png";
+import Menpantbanner from "../../assets/boyspant.jpg";
+import Womenenpantbanner from "../../assets/girlspants.webp";
 
 const Pants = () => {
   const location = useLocation();

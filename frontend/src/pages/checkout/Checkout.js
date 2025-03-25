@@ -146,24 +146,6 @@ const Checkout = () => {
     const selectedPaymentMethod = cart.paymentMethod;
 
     try {
-      // Prepare shipment details
-      const shipmentDetails = {
-        recipientName: userInfo.name,
-        street: recipientAddress.street,
-        nearestLandmark: recipientAddress.nearestLandmark,
-        city: recipientAddress.city,
-        postalCode: recipientAddress.pin,
-        countryCode: recipientAddress.country || "IN",
-        phoneNumber: recipientAddress?.phoneNumber,
-        productId: cart.cartItems[0].product._id,
-        totalPrice,
-      };
-      console.log("🚀 Sending Shipment Details:", shipmentDetails);
-      // Create shipment with FedEx
-      const shipmentResponse = await dispatch(createShipment(shipmentDetails));
-      console.log("📦 Shipment Response:", shipmentResponse);
-      const shipmentData = shipmentResponse.data;
-
       const orderData = {
         user: userInfo._id,
         orderItems: cart.cartItems.map((item) => ({
@@ -179,7 +161,6 @@ const Checkout = () => {
         shippingPrice: shippingCost,
         taxPrice: taxAmount,
         totalPrice,
-        shipmentDetails: [shipmentData],
       };
 
       console.log("Final Order Payload:", orderData);

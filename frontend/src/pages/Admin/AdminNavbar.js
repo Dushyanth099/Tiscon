@@ -47,7 +47,7 @@ const AdminNavbar = () => {
       <Flex align="center" justifyContent="space-between">
         {/* Navbar Logo */}
         <Box fontWeight="bold" fontSize="lg">
-          <NavLink to="/admin/dashboard" className="logo">
+          <NavLink to="/adminDashboard" className="logo">
             <img src={Logo} alt="logo" />
             <span className="logo-text">E-Commerce</span>
           </NavLink>
@@ -85,7 +85,7 @@ const AdminNavbar = () => {
                   textAlign="center"
                   p={4}
                 >
-                Logout Confirmation
+                  Logout Confirmation
                 </AlertDialogHeader>
 
                 <AlertDialogBody textAlign="center" fontSize="md" p={5}>

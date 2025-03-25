@@ -1,102 +1,195 @@
-import React, { useEffect, useState } from "react";
-import { listOrders } from "../../actions/orderActions";
-import { useDispatch, useSelector } from "react-redux";
-import HashLoader from "react-spinners/HashLoader";
-import { Helmet } from "react-helmet";
-import "./orders.css";
+import React, { useEffect } from "react";
 import {
-  Heading,
-  Button,
-  Image,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Stack,
   Box,
-  Input,
+  Heading,
+  Grid,
+  GridItem,
+  Stack,
+  Select,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  Spinner,
+  Image,
+  Alert,
+  Button,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { AiOutlineEdit } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
-import Dashboard from "../Dashboard/Dashboard";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getSalesData,
+  getRevenueData,
+  getDashboardOrders,
+  getTotalOrders,
+} from "../../actions/dashboardActions";
+import { FaBox, FaDollarSign, FaChartLine } from "react-icons/fa";
 
 const Orders = () => {
-  const [selectedDate, setSelectedDate] = useState("");
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const orderList = useSelector((state) => state.orderList);
-  const { loading, error, orders } = orderList;
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
 
+  // Redux states
+  const salesDataState = useSelector((state) => state.sales);
+  const { loading: loadingSales, sales, error: errorSales } = salesDataState;
+
+  const revenueDataState = useSelector((state) => state.revenue);
+  const {
+    loading: loadingRevenue,
+    revenue,
+    error: errorRevenue,
+  } = revenueDataState;
+  const totalOrdersState = useSelector((state) => state.totalOrders);
+  const {
+    loading: loadingTotalOrders,
+    totalOrders,
+    error: errortotalOrders,
+  } = totalOrdersState;
+  const ordersDataState = useSelector((state) => state.orders);
+  const {
+    loading: loadingOrders,
+    orders,
+    error: errorOrders,
+  } = ordersDataState;
+
+  const [filter, setFilter] = React.useState("Day"); // Default filter
+
+  // Calculate totals
+  const totalOrdersCount = totalOrders || 0;
+  const totalSales = sales?.reduce((acc, item) => acc + item.value, 0) || 0;
+  const totalRevenue = revenue?.reduce((acc, item) => acc + item.value, 0) || 0;
+
+  // Fetch dashboard data
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listOrders());
-    } else {
-      navigate("/login");
-    }
-  }, [dispatch, navigate, userInfo?.isAdmin]);
-  const handleInvoiceClick = (orderId) => {
-    navigate(`/admin/order/${orderId}/invoice`);
-  };
+    dispatch(getSalesData(filter));
+    dispatch(getRevenueData(filter));
+    dispatch(getTotalOrders(filter));
+    dispatch(getDashboardOrders());
+  }, [dispatch, filter]);
 
-  const getOrderStatus = (order) => {
-    if (order.isReturned) {
-      return { label: "Returned", color: "red" };
-    } else if (order.isDelivered) {
-      return { label: "Delivered", color: "green" };
-    } else if (order.isAcceptedByDelivery) {
-      return { label: "Shipped", color: "blue" };
-    } else if (order.isPacked) {
-      return { label: "Packed", color: "orange" };
-    } else {
-      return { label: "Ordered", color: "gray" };
-    }
-  };
-  // Handle Date Change
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
-  };
+  // Format chart data
+  const formatChartData = (data) =>
+    data?.map((item) => ({
+      name: item.label,
+      value: item.value,
+    }));
+  console.log("orders", orders);
+  // Function to determine the status of the order
 
-  // Filter orders based on selected date
-  const filteredOrders = selectedDate
-    ? orders.filter(
-        (order) => order.createdAt.substring(0, 10) === selectedDate
-      )
-    : orders;
   return (
-    <div className="Users">
-      <h1 className="titlepanel"> Orders</h1>
-      {loading ? (
-        <div className="loading">
-          <HashLoader color={"#1e1e2c"} loading={loading} size={40} />
-        </div>
-      ) : error ? (
-        <h1>error</h1>
+    <Box p={14}>
+      {/* Key Metrics */}
+      <Grid templateColumns="repeat(3, 1fr)" gap={6} mb={10}>
+        <GridItem>
+          <Stat p={5} bg="blue.50" borderRadius="md" shadow="sm">
+            <StatLabel textAlign={"center"}> 📦 Total Orders</StatLabel>
+            <StatNumber textAlign={"center"}> {totalOrdersCount}</StatNumber>
+            <StatHelpText textAlign={"center"}>Across all time</StatHelpText>
+          </Stat>
+        </GridItem>
+        <GridItem>
+          <Stat p={5} bg="blue.50" borderRadius="md" shadow="sm">
+            <StatLabel textAlign={"center"}> 📊 Total Sales</StatLabel>
+            <StatNumber textAlign={"center"}>{totalSales} Nos</StatNumber>
+            <StatHelpText textAlign={"center"}>Across all time</StatHelpText>
+          </Stat>
+        </GridItem>
+        <GridItem>
+          <Stat p={5} bg="blue.50" borderRadius="md" shadow="sm">
+            <StatLabel textAlign={"center"}> 💰 Total Revenue</StatLabel>
+            <StatNumber textAlign={"center"}>
+              Rs. {totalRevenue.toFixed(2)}
+            </StatNumber>
+            <StatHelpText textAlign={"center"}>Across all time</StatHelpText>
+          </Stat>
+        </GridItem>
+      </Grid>
+
+      {/* Filter Dropdown */}
+      <Box mb={8}>
+        <Select
+          placeholder="UptoDate"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          mb={5}
+          maxW="300px"
+        >
+          <option value="Day">Day</option>
+          <option value="Week">Week</option>
+          <option value="Month">Month</option>
+          <option value="Year">Year</option>
+        </Select>
+      </Box>
+
+      {/* Charts and Tables */}
+      {loadingSales || loadingRevenue || loadingOrders || loadingTotalOrders ? (
+        <Box textAlign="center" mt={10}>
+          <Spinner size="xl" />
+        </Box>
+      ) : errorSales || errorRevenue || errorOrders || errortotalOrders ? (
+        <Alert status="error" mt={4}>
+          {errorSales || errorRevenue || errorOrders || errortotalOrders}
+        </Alert>
       ) : (
-        <>
-          <Dashboard />
-          <div className="title-container">
-            <Heading as="h3" size="md" mb={3} textAlign={"center"}>
-              All Orders
+        <Box>
+          {/* Charts Section */}
+          <Grid templateColumns="repeat(2, 1fr)" gap={10} mb={10}>
+            <GridItem>
+              <Heading as="h3" size="md" mb={3} textAlign={"center"}>
+                Sales Data
+              </Heading>
+              <LineChart
+                width={500}
+                height={300}
+                data={formatChartData(sales)}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#8884d8" />
+              </LineChart>
+            </GridItem>
+            <GridItem>
+              <Heading as="h3" size="md" mb={3} textAlign={"center"}>
+                Revenue Data
+              </Heading>
+              <LineChart
+                width={500}
+                height={300}
+                data={formatChartData(revenue)}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="value" stroke="#82ca9d" />
+              </LineChart>
+            </GridItem>
+          </Grid>
+
+          {/* Latest Orders Table */}
+          <Box>
+            <Heading as="h3" size="md" mb={5} textAlign={"center"}>
+              Latest Orders
             </Heading>
-          </div>
-          <Box mb={4} display="flex" alignItems="center" gap={4}>
-            <Input
-              type="date"
-              value={selectedDate}
-              onChange={handleDateChange}
-              width="200px"
-              placeholder="Select Date"
-              bg="white"
-            />
-          </Box>
-          <Box overflowX="auto">
-            <Table className="tableusers" variant="striped" mb={18}>
+            <Table className="tableusers" variant="striped">
               <Thead>
                 <Tr>
                   <Th textAlign="center">ID</Th>
@@ -105,119 +198,87 @@ const Orders = () => {
                   <Th textAlign="center">TOTAL</Th>
                   <Th textAlign="center">PAID</Th>
                   <Th textAlign="center">Status</Th>
-                  <Th textAlign="center">Tracking No</Th>
-                  {/* <Th textAlign="center">Deliverd</Th> */}
                   <Th textAlign="center">ProductImage</Th>
                   <Th textAlign="center">Order Details</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredOrders.length > 0 ? (
-                  filteredOrders.map((order) => {
-                    const status = getOrderStatus(order);
-                    const shipment = order.shipmentDetails?.[0] || {};
-                    return (
-                      <Tr key={order._id}>
-                        <Td>{order._id}</Td>
-                        <Td>{order.user && order.user.name}</Td>
-                        <Td>{order.createdAt.substring(0, 10)}</Td>
-                        <Td>{order.totalPrice}</Td>
-
-                        <Td>
-                          {order.isPaid ? (
-                            <div className="paid">
-                              {order.paidAt?.substring(0, 10)}
-                            </div>
-                          ) : (
-                            <div className="notpaid">NO</div>
-                          )}
-                        </Td>
-
-                        {/* <Td>
-                        {order.isDelivered ? (
+                {orders?.map((order) => {
+                  const status = order.status;
+                  return (
+                    <Tr key={order._id}>
+                      <Td>{order._id}</Td>
+                      <Td>{order.customerName}</Td>
+                      <Td>
+                        {order.createdAt
+                          ? order.createdAt.substring(0, 10)
+                          : "N/A"}
+                      </Td>
+                      <Td>${order.total}</Td>
+                      <Td>
+                        {order.isPaid ? (
                           <div className="paid">
-                            {order.deliveredAt.substring(0, 10)}
+                            {order.paidAt.substring(0, 10)}
                           </div>
                         ) : (
                           <div className="notpaid">NO</div>
                         )}
-                      </Td> */}
-                        {/* Order Status Button */}
-                        <Td textAlign="center">
-                          <Button
-                            size="sm"
-                            colorScheme={status.color}
-                            borderRadius="20px"
-                            fontWeight="bold"
-                            textTransform="uppercase"
-                            px={4}
-                            py={1}
+                      </Td>
+                      <Td textAlign="center">
+                        <Button
+                          size="sm"
+                          colorScheme={status.color}
+                          borderRadius="20px"
+                          fontWeight="bold"
+                          textTransform="uppercase"
+                          px={4}
+                          py={1}
+                        >
+                          {status.label}
+                        </Button>
+                      </Td>
+                      <Td>
+                        {order.orderItems.map((item) => (
+                          <Stack
+                            key={item.productId}
+                            spacing={2}
+                            align="center"
                           >
-                            {status.label}
-                          </Button>
-                        </Td>
-                        <Td>{shipment.trackingNumber || "N/A"}</Td>
-                        {/* Display Product Images */}
-                        <Td>
-                          {order.orderItems.map((item) => (
-                            <Stack key={item._id} spacing={2} align="center">
-                              {/* Display the first image from the images array */}
-                              {item.product &&
-                                item.product.images &&
-                                item.product.images.length > 0 && (
-                                  <Image
-                                    src={item.product.images[0]}
-                                    alt={item.product.brandname}
-                                    boxSize="80px"
-                                    objectFit="cover"
-                                    borderRadius="5px"
-                                  />
-                                )}
-                              {/* Product Link */}
-                              <Link to={`/product/${item.product._id}`}>
-                                <Button colorScheme="blue" size="xs">
-                                  View Product
-                                </Button>
-                              </Link>
-                            </Stack>
-                          ))}
-                        </Td>
-                        <Td>
-                          <Stack>
-                            <Link to={`/order/${order._id}`}>
-                              <Button
-                                leftIcon={<AiOutlineEdit size="16" />}
-                                colorScheme="blue"
-                                size="xs"
-                              >
-                                Details
+                            {/* Display the first image from the images array */}
+                            {item.productImage.length > 0 && (
+                              <Image
+                                src={item.productImage[0]} // Access the first image
+                                alt={item.productName}
+                                boxSize="80px"
+                                objectFit="cover"
+                                borderRadius="5px"
+                              />
+                            )}
+                            {/* Product Link */}
+                            <Link to={`/product/${item.productId}`}>
+                              <Button colorScheme="blue" size="xs">
+                                View Product
                               </Button>
                             </Link>
-                            <Button
-                              colorScheme="teal"
-                              size="xs"
-                              onClick={() => handleInvoiceClick(order._id)}
-                            >
-                              Invoice
-                            </Button>
                           </Stack>
-                        </Td>
-                      </Tr>
-                    );
-                  })
-                ) : (
-                  <Tr>
-                    <Td colSpan="8" textAlign="center">
-                      No orders found for the selected date.
-                    </Td>
-                  </Tr>
-                )}
+                        ))}
+                      </Td>
+                      <Td>
+                        <Link to={`/order/${order._id}`}>
+                          <Button colorScheme="teal" size="sm">
+                            Details
+                          </Button>
+                        </Link>
+                      </Td>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           </Box>
-        </>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

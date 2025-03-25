@@ -8,7 +8,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useSelector } from "react-redux";
-import { Box, Text, Flex } from "@chakra-ui/react";
+import { Box, Text, Stack, Icon, Flex, SimpleGrid } from "@chakra-ui/react";
+import {
+  FaUsers,
+  FaShoppingCart,
+  FaTimesCircle,
+  FaCrown,
+  FaTruck,
+} from "react-icons/fa";
 
 const UsersPieChart = () => {
   const userList = useSelector((state) => state.userList);
@@ -37,15 +44,19 @@ const UsersPieChart = () => {
 
   return (
     <Box width="100%" p={6}>
-      <Text fontSize="2xl" fontWeight="bold" textAlign="center" mb={4}>
-        Users Overview
-      </Text>
-      <Flex justify="space-between" align="center">
-        {/* Pie Chart Container */}
-        <Box flex="2">
-          <ResponsiveContainer width="100%" height={450}>
+      {/* Pie Chart Container */}
+      <Flex justify="center" align="center" w="100%">
+        <Box
+          p={4}
+          bg="white"
+          shadow="md"
+          borderRadius="md"
+          maxW="800px"
+          w="100%"
+        >
+          <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={data} cx="50%" cy="50%" outerRadius={180}>
+              <Pie data={data} cx="50%" cy="50%" outerRadius={120}>
                 {data.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
@@ -58,26 +69,61 @@ const UsersPieChart = () => {
             </PieChart>
           </ResponsiveContainer>
         </Box>
-
-        {/* User Data on Right Side */}
-        <Box flex="1" textAlign="left" ml={10}>
-          <Text fontSize="lg" fontWeight="semibold" color="gray.600">
-            📊 <strong>Total Users:</strong> {totalUsers}
-          </Text>
-          <Text fontSize="lg" fontWeight="semibold" color="gray.600">
-            ✅ <strong>Users with Orders:</strong> {usersWithOrders}
-          </Text>
-          <Text fontSize="lg" fontWeight="semibold" color="gray.600">
-            ❌ <strong>Users without Orders:</strong> {usersWithoutOrders}
-          </Text>
-          <Text fontSize="lg" fontWeight="semibold" color="gray.600">
-            👑 <strong>Admin Users:</strong> {adminUsers}
-          </Text>
-          <Text fontSize="lg" fontWeight="semibold" color="gray.600">
-            🚚 <strong>Delivery Agents:</strong> {deliveryAgents}
-          </Text>
-        </Box>
       </Flex>
+      {/* User Data on Right Side */}
+      <Box mt="5">
+        <SimpleGrid columns={{ base: 2, md: 3 }} spacing={4}>
+          {[
+            {
+              label: "Total Users",
+              value: totalUsers,
+              icon: FaUsers,
+              color: "blue.500",
+            },
+            {
+              label: "Users with Orders",
+              value: usersWithOrders,
+              icon: FaShoppingCart,
+              color: "green.500",
+            },
+            {
+              label: "Users without Orders",
+              value: usersWithoutOrders,
+              icon: FaTimesCircle,
+              color: "red.500",
+            },
+            {
+              label: "Admin Users",
+              value: adminUsers,
+              icon: FaCrown,
+              color: "purple.500",
+            },
+            {
+              label: "Delivery Agents",
+              value: deliveryAgents,
+              icon: FaTruck,
+              color: "orange.500",
+            },
+          ].map((item, index) => (
+            <Box
+              key={index}
+              p={3}
+              shadow="md"
+              borderRadius="md"
+              bg="white"
+              maxW="300px" 
+              w="100%"
+            >
+              <Flex align="center" justify="center">
+                <Icon as={item.icon} color={item.color} mr={3} boxSize={6} />
+                <Text fontSize="lg" fontWeight="bold" color="gray.700">
+                  {item.label}: {item.value}
+                </Text>
+              </Flex>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </Box>
     </Box>
   );
 };

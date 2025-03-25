@@ -3,11 +3,12 @@
   padding: 20px;
   color: white;
   text-align: center;
+  margin-top: 20px;
 }
 
 .quick-picks h2 {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .quick-picks-grid {
@@ -29,7 +30,7 @@
 
 .quick-pick-image {
   width: 150px;
-  height: auto;
+  height: 140px;
   border-radius: 10px;
   overflow: visible;
 }
@@ -43,7 +44,7 @@
 
 .quick-pick-name {
   font-size: 16px;
-  color: white;
+  color: black;
   margin-top: 10px;
   font-weight: bold;
 }

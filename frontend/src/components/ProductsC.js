@@ -38,19 +38,15 @@ const ProductsC = ({ match }) => {
 
   return (
     <>
-      <div className="cards-container">
-        <Cardscg title="Women" imageSrc={womenImg} cardStyle="women-card" />
-        <Cardscg title="Men" imageSrc={menImg} cardStyle="men-card" />
-      </div>
       <VideoBanner />
 
       {gender && <QuickPicks category={gender} />}
       <Slider />
       {gender && <OffersPage category={gender} />}
-      {gender && <Bestselling category={gender} />}
-      {gender && <Trendingbrand category={gender} />}
+      {/* {gender && <Bestselling category={gender} />}
+      {gender && <Trendingbrand category={gender} />} */}
       {gender && <Tshirts category={gender} subcategory={"Shirts"} />}
-      {gender && <Pants category={gender} subcategory={"Jeans"} />}
+      {/* {gender && <Pants category={gender} subcategory={"Jeans"} />} */}
       {gender && <SweatPants category={gender} subcategory={"SweatPants"} />}
       <Trust />
       <DiscountTag />

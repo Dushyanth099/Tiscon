@@ -8,46 +8,6 @@ const shippingRateSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-const shipmentSchema = mongoose.Schema(
-  {
-    trackingNumber: { type: String, required: true },
-    shippingLabelUrl: { type: String },
-    shipmentStatus: { type: String, default: "Pending" },
-    senderDetails: {
-      contact: {
-        personName: { type: String, required: true },
-        phoneNumber: { type: String, required: true },
-      },
-      address: {
-        streetLines: [{ type: String }],
-        city: { type: String, required: true },
-        stateOrProvinceCode: { type: String, required: true },
-        postalCode: { type: Number, required: true },
-        countryCode: { type: String, required: true },
-      },
-    },
-    recipientDetails: {
-      contact: {
-        personName: { type: String, required: true },
-        phoneNumber: { type: String, required: true },
-      },
-      address: {
-        streetLines: [{ type: String }],
-        city: { type: String, required: true },
-        stateOrProvinceCode: { type: String, required: true },
-        postalCode: { type: Number, required: true },
-        countryCode: { type: String, required: true },
-      },
-    },
-    packageDetails: {
-      weight: {
-        value: { type: Number, required: true },
-        units: { type: String, default: "KG" },
-      },
-    },
-  },
-  { timestamps: true }
-);
 const orderSchema = mongoose.Schema(
   {
     user: {
@@ -55,7 +15,10 @@ const orderSchema = mongoose.Schema(
       required: true,
       ref: "User",
     },
-
+    deliveryPerson: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Relation to delivery person
+    },
     orderItems: [
       {
         name: { type: String, required: true },
@@ -89,7 +52,7 @@ const orderSchema = mongoose.Schema(
       update_time: { type: String },
       email_adress: { type: String },
     },
-
+    shippingRates: { type: [shippingRateSchema], default: [] },
     taxPrice: {
       type: Number,
       required: true,
@@ -119,12 +82,26 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    isPacked: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    isAcceptedByDelivery: {
+      type: Boolean,
+      default: false,
+    },
+    isReturned: {
+      type: Boolean,
+      default: false,
+    },
+    returnReason: {
+      type: String,
+    },
     invoiceDetails: {
       type: Object,
       default: null,
     },
-    shippingRates: { type: [shippingRateSchema], default: [] },
-    shipmentDetails: { type: [shipmentSchema], default: [] },
   },
   {
     timestamps: true,

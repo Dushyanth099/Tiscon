@@ -24,7 +24,7 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import { IoLogOutOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { logout } from "../actions/userActions";
-import Logo from "../assets/ecommerce-logo.png";
+import Logo from "../assets/kids logo.png";
 import navheart from "../assets/navheart.svg";
 import Categorylist from "./Categorylist/Categorylist";
 import Brandlist from "./Brandlist/Brandlist";
@@ -85,7 +85,7 @@ const Nav = () => {
     <nav className={`nav ${nav ? "active" : ""}`}>
       <NavLink to="/" className="logo">
         <img src={Logo} alt="logo" />
-        <span className="logo-text">E-Commerce</span>
+        <span className="logo-text">Kids Wear</span>
       </NavLink>
 
       <div className="search-container">
@@ -126,15 +126,6 @@ const Nav = () => {
           <Categorylist />
         </li>
 
-        <li className="dropdown nav-item">
-          <div className="nav-content">
-            <img src={BrandImg} alt="Brands" className="nav-img" />
-            <span className="dropdown-toggle">Brands</span>
-          </div>
-          <div className="dropdown-menu">
-            <Brandlist />
-          </div>
-        </li>
         <li>
           <NavLink
             to="/Favorites"
