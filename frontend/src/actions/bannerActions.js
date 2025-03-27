@@ -23,11 +23,13 @@ import {
   USER_VIDEO_BANNER_LIST_FAIL,
 } from "../constants/bannerConstants";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 // Fetch banners
 export const listBanners = () => async (dispatch) => {
   try {
     dispatch({ type: BANNER_LIST_REQUEST });
-    const { data } = await axios.get("/api/banners/banners");
+    const { data } = await axios.get(`${API_URL}/api/banners/banners`);
     dispatch({ type: BANNER_LIST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
@@ -57,7 +59,7 @@ export const addBanner = (bannerData) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.post(
-      "/api/banners/banner",
+      `${API_URL}/api/banners/banner`,
       bannerData,
       config
     );
@@ -90,7 +92,7 @@ export const deleteBanner = (id) => async (dispatch, getState) => {
       },
     };
 
-    await axios.delete(`/api/banners/banners/${id}`, config);
+    await axios.delete(`${API_URL}/api/banners/banners/${id}`, config);
 
     dispatch({ type: BANNER_DELETE_SUCCESS });
   } catch (error) {
@@ -118,7 +120,7 @@ export const uploadVideoBanner = (formData) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.post(
-      "/api/banners/addvideobanner",
+      `${API_URL}/api/banners/addvideobanner`,
       formData,
       config
     );
@@ -149,7 +151,7 @@ export const listVideoBanners =
         },
       };
       const { data } = await axios.get(
-        `/api/banners/getvideobanner?productId=${productId}`,
+        `${API_URL}/api/banners/getvideobanner?productId=${productId}`,
         config
       );
       dispatch({ type: VIDEO_BANNER_LIST_SUCCESS, payload: data });
@@ -175,7 +177,7 @@ export const deleteVideoBanner =
         },
       };
       await axios.delete(
-        `/api/banners/deletevideobanner/${productId}/${videoId}`,
+        `${API_URL}/api/banners/deletevideobanner/${productId}/${videoId}`,
         config
       );
       dispatch({ type: VIDEO_BANNER_DELETE_SUCCESS, payload: videoId });
@@ -200,7 +202,7 @@ export const listUserVideoBanners = () => async (dispatch) => {
       },
     };
     const { data } = await axios.get(
-      "/api/banners/getuservideobanners",
+      `${API_URL}/api/banners/getuservideobanners`,
       config
     );
 

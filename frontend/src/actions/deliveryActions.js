@@ -9,6 +9,7 @@ import {
   CREATE_SHIPMENT_FAIL,
 } from "../constants/deliveryConstants";
 
+const API_URL = process.env.REACT_APP_API_URL 
 export const fetchShippingRates =
   (userAddress, productId) => async (dispatch, getState) => {
     try {
@@ -25,7 +26,7 @@ export const fetchShippingRates =
         },
       };
       const { data } = await axios.post(
-        "/api/delivery/shipmentrates",
+        `${API_URL}/api/delivery/shipmentrates`,
         { userAddress, productId },
         config
       );
@@ -67,7 +68,7 @@ export const createShipment =
       };
 
       const { data } = await axios.post(
-        `/api/delivery/createShipment`,
+        `${API_URL}/api/delivery/createShipment`,
         shipmentDetails, // Sending only shipment data
         config
       );
