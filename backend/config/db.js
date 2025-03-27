@@ -9,10 +9,10 @@ const connectDB = async () => {
   try {
     const MONGO_URI = process.env.MONGO_URI;
 
-    console.log(
-      "MONGO_URI:",
-      process.env.MONGO_URI 
-    ); // Debugging line
+    // console.log(
+    //   "MONGO_URI:",
+    //   process.env.MONGO_URI 
+    // ); // Debugging line
     const conn = await mongoose.connect(MONGO_URI);
     console.log("MongoDB Connected");
   } catch (error) {
