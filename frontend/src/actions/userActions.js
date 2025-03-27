@@ -44,6 +44,7 @@ export const login = (email, password) => async (dispatch) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.post(
@@ -86,6 +87,7 @@ export const register = (name, email, password) => async (dispatch) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.post(
@@ -130,6 +132,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userInfo.token}`,
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.get(`${API_URL}/api/users/${id}`, config);
@@ -163,6 +166,7 @@ export const updateUserProfile = (formData) => async (dispatch, getState) => {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${userInfo.token}`,
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.put(
@@ -199,6 +203,7 @@ export const ListUsers = () => async (dispatch, getState) => {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.get(`${API_URL}/api/users`, config);
@@ -231,6 +236,7 @@ export const DeleteUser = (id) => async (dispatch, getState) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userInfo.token}`,
       },
+      withCredentials: true,
     };
 
     await axios.delete(`${API_URL}/api/users/${id}`, config);
@@ -263,6 +269,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userInfo.token}`,
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.put(
@@ -304,6 +311,7 @@ export const fetchFavorites = () => async (dispatch, getState) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userInfo.token}`,
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.get(
@@ -334,6 +342,7 @@ export const toggleFavorite = (productId) => async (dispatch, getState) => {
       headers: {
         Authorization: `Bearer ${userLogin.userInfo.token}`,
       },
+      withCredentials: true,
     };
 
     const { data } = await axios.post(

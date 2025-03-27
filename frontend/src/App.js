@@ -9,7 +9,7 @@ import Footer from "./pages/Footer/Footer";
 import LoginScreen from "./pages/Login/LoginScreen";
 import React from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Route,
   Routes,
   Navigate,
