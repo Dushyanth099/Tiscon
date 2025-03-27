@@ -44,9 +44,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
 //   );
 // } else {
-//   app.get("/", (req, res) => {
-//     res.send("API is Runn....");
-//   });
+app.get("/", (req, res) => {
+  res.send("API is Runn....");
+});
 // }
 
 app.use(notFound);
