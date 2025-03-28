@@ -14,6 +14,7 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import cors from "cors";
 
 connectDB();
+const app = express();
 app.use(
   cors({
     origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
@@ -24,8 +25,6 @@ app.use(
 app.options("*", cors());
 app.use(notFound);
 app.use(errorHandler);
-
-const app = express();
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
