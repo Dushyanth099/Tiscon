@@ -1,7 +1,5 @@
 {
   "name": "frontend",
-  "homepage": "https://paletteproacademy.com",
-  "proxy": "http://127.0.0.1:5000",
   "version": "1.0.0",
   "description": "MERN Ecommerce Website",
   "main": "src/index.js",

@@ -55,7 +55,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "*", // Adjust for your frontend's URL
+    origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
