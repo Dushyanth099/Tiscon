@@ -18,6 +18,15 @@ const app = express();
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
+app.use(express.json());
+
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/banners", bannerRoutes);
+app.use("/api/delivery", deliveryRoutes);
+
 app.use(
   cors({
     origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
@@ -32,15 +41,6 @@ app.use(errorHandler);
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
-app.use(express.json());
-
-app.use("/api/products", productRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/banners", bannerRoutes);
-app.use("/api/delivery", deliveryRoutes);
 
 app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
