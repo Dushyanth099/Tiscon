@@ -14,6 +14,16 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import cors from "cors";
 
 connectDB();
+app.use(
+  cors({
+    origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.options("*", cors());
+app.use(notFound);
+app.use(errorHandler);
 
 const app = express();
 
@@ -52,18 +62,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //   res.sendFile(path.join(__dirname, "frontend/build", "index.html"));
 // });
 // }
-
-app.use(
-  cors({
-    origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-app.options("*", cors());
-app.use(notFound);
-app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(
