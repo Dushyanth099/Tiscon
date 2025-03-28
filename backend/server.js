@@ -15,11 +15,22 @@ import cors from "cors";
 
 connectDB();
 const app = express();
+app.use(
+  cors({
+    origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.use(express.json());
+
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
-app.use(express.json());
-
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
@@ -27,20 +38,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/delivery", deliveryRoutes);
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://tiscon.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
 app.options("*", cors());
-app.use(notFound);
-app.use(errorHandler);
-
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
-}
 
 app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
@@ -60,7 +58,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //   res.sendFile(path.join(__dirname, "frontend/build", "index.html"));
 // });
 // }
-
+app.use(notFound);
+app.use(errorHandler);
 const PORT = process.env.PORT;
 app.listen(
   PORT,
