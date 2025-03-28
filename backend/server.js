@@ -23,6 +23,10 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
@@ -48,9 +52,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //   res.sendFile(path.join(__dirname, "frontend/build", "index.html"));
 // });
 // }
-app.options("*", cors());
-app.use(notFound);
-app.use(errorHandler);
+
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN || "*", // Adjust for your frontend's URL
@@ -59,9 +61,9 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.get("/", (req, res) => {
-  res.send("Backend is running!");
-});
+app.options("*", cors());
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(
