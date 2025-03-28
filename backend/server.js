@@ -59,6 +59,10 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+
 const PORT = process.env.PORT;
 app.listen(
   PORT,
