@@ -15,6 +15,9 @@ import cors from "cors";
 
 connectDB();
 const app = express();
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
 app.use(
   cors({
     origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
@@ -31,10 +34,6 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Backend is running!");
-});
 
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
