@@ -61,7 +61,7 @@ import {
   STRIPE_PAYMENT_FAIL,
 } from "../constants/orderConstants";
 
-const API_URL = process.env.REACT_APP_API_URL 
+// const API_URL = process.env.REACT_APP_API_URL
 export const CreateOrder = (order) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -79,7 +79,7 @@ export const CreateOrder = (order) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post(`${API_URL}/api/orders`, order, config);
+    const { data } = await axios.post("/api/orders", order, config);
     dispatch({
       type: ORDER_CREATE_SUCCESS,
       payload: data,
@@ -111,7 +111,7 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`${API_URL}/api/orders/${id}`, config);
+    const { data } = await axios.get(`/api/orders/${id}`, config);
     dispatch({
       type: ORDER_DETAILS_SUCCESS,
       payload: data,
@@ -145,7 +145,7 @@ export const payOrder =
       };
 
       const { data } = await axios.put(
-        `${API_URL}/api/orders/${orderId}/pay`,
+        `/api/orders/${orderId}/pay`,
         paymentResult,
         config
       );
@@ -181,7 +181,7 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(
-      `${API_URL}/api/orders/${order._id}/deliver`,
+      `/api/orders/${order._id}/deliver`,
       {},
       config
     );
@@ -216,7 +216,7 @@ export const listMyOrders = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`${API_URL}/api/orders/myorders`, config);
+    const { data } = await axios.get("/api/orders/myorders", config);
     dispatch({
       type: ORDER_LIST_MY_SUCCESS,
       payload: data,
@@ -248,7 +248,7 @@ export const listOrders = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`${API_URL}/api/orders/`, config);
+    const { data } = await axios.get("/api/orders/", config);
     dispatch({
       type: ORDER_LIST_SUCCESS,
       payload: data,
@@ -279,7 +279,7 @@ export const listOrdersForDelivery = () => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     };
 
-    const { data } = await axios.get(`${API_URL}/api/orders/delivery`, config);
+    const { data } = await axios.get("/api/orders/delivery", config);
 
     dispatch({ type: ORDER_DELIVERY_LIST_SUCCESS, payload: data });
   } catch (error) {
@@ -304,7 +304,7 @@ export const acceptOrder = (orderId) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(
-      `${API_URL}/api/orders/delivery/accept/${orderId}`,
+      `/api/orders/delivery/accept/${orderId}`,
       {},
       config
     );
@@ -332,7 +332,7 @@ export const rejectOrder = (orderId) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(
-      `${API_URL}/api/orders/delivery/reject/${orderId}`,
+      `/api/orders/delivery/reject/${orderId}`,
       {},
       config
     );
@@ -360,7 +360,7 @@ export const completeOrder = (orderId) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(
-      `${API_URL}/api/orders/delivery/complete/${orderId}`,
+      `/api/orders/delivery/complete/${orderId}`,
       {},
       config
     );
@@ -388,7 +388,7 @@ export const returnOrder = (orderId, reason) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(
-      `${API_URL}/api/orders/delivery/return/${orderId}`,
+      `/api/orders/delivery/return/${orderId}`,
       { returnReason: reason },
       config
     );
@@ -415,10 +415,7 @@ export const listUndeliveredOrders = () => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.get(
-      `${API_URL}/api/orders/undelivered`,
-      config
-    ); // Fetch only undelivered orders
+    const { data } = await axios.get("/api/orders/undelivered", config); // Fetch only undelivered orders
 
     dispatch({
       type: ORDER_UNDELIVERED_LIST_SUCCESS,
@@ -453,7 +450,7 @@ export const assignOrder =
       };
 
       const { data } = await axios.put(
-        `${API_URL}/api/orders/admin/orders/assign/${orderId}`,
+        `/api/orders/admin/orders/assign/${orderId}`,
         { deliveryPersonId },
         config
       );
@@ -481,7 +478,7 @@ export const getInvoice = (id) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(
-      `${API_URL}/api/orders/admin/order/${id}/invoice`,
+      `/api/orders/admin/order/${id}/invoice`,
       config
     );
 
@@ -512,7 +509,7 @@ export const getIncomeByCity = () => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.get(
-      `${API_URL}/api/orders/admin/incomebycity?timestamp=${new Date().getTime()}`,
+      `/api/orders/admin/incomebycity?timestamp=${new Date().getTime()}`,
       config
     );
     console.log(data);
@@ -544,7 +541,7 @@ export const listTransactions = (filters) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`${API_URL}/api/orders/transactions`, {
+    const { data } = await axios.get("/api/orders/transactions", {
       params: filters,
       ...config,
     });
@@ -578,7 +575,7 @@ export const processStripePayment = (amount) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.post(
-      `${API_URL}/api/orders/stripePayment`,
+      "/api/orders/stripePayment",
       { amount },
       config
     );
@@ -611,7 +608,7 @@ export const updateOrderStatus =
       };
 
       const { data } = await axios.put(
-        `${API_URL}/api/orders/${orderId}/updateorderstatus`,
+        `/api/orders/${orderId}/updateorderstatus`,
         { status },
         config
       );
@@ -627,7 +624,7 @@ export const updateOrderStatus =
       });
     }
   };
-  
+
 export const getOrderStatusCounts = () => async (dispatch, getState) => {
   try {
     dispatch({ type: ORDER_STATUS_REQUEST });
@@ -639,7 +636,7 @@ export const getOrderStatusCounts = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get( `${API_URL}/api/orders/status-count`, config);
+    const { data } = await axios.get("/api/orders/status-count", config);
 
     dispatch({ type: ORDER_STATUS_SUCCESS, payload: data });
   } catch (error) {

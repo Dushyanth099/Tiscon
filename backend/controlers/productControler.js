@@ -219,6 +219,7 @@ const createProduct = asyncHandler(async (req, res) => {
   const {
     brandname,
     price,
+
     description,
     productdetails,
     countInStock,
@@ -232,7 +233,7 @@ const createProduct = asyncHandler(async (req, res) => {
     res.status(400).json({ message: "No images uploaded" });
     return;
   }
-  const images = req.files.map((file) => `/uploads/${file.filename}`);
+  const images = req.files.map((file) => file.path);
   const parsedProductDetails =
     typeof productdetails === "string"
       ? JSON.parse(productdetails)
@@ -392,7 +393,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       product.discount = discount;
 
       if (req.files?.length > 0) {
-        product.images = req.files.map((file) => `/uploads/${file.filename}`);
+        product.images = req.files.map((file) => file.path);
       }
       const updatedProduct = await product.save();
       console.log("Updated product:", updatedProduct);

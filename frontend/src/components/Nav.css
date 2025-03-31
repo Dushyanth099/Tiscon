@@ -1,5 +1,5 @@
 .nav {
-  background-color: rgb(237, 84, 164);
+  background-color: rgb(255, 97, 18);
   color: white;
   width: 100%;
   position: fixed;
@@ -82,7 +82,7 @@
   white-space: nowrap;
 }
 .search-button {
-  background-color: rgb(237, 84, 164) !important ;
+  background-color: orangered !important ;
   color: white !important;
 }
 .search-input-group {
@@ -154,7 +154,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: pink;
+  background: rgb(254, 0, 0);
   width: auto;
   display: flex;
   padding: 15px;
@@ -179,7 +179,7 @@
   padding: 10px;
 }
 .category-column h4 {
-  color: #00ff00; /* Green highlight */
+  color: #000000; /* Green highlight */
   font-size: 20px;
   margin-bottom: 10px;
 }
@@ -197,7 +197,7 @@
   transition: color 0.3s ease;
 }
 .category-column li a:hover {
-  color: purple;
+  color: black;
 }
 
 .nav-img {

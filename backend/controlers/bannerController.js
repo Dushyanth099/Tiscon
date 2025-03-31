@@ -23,7 +23,7 @@ const addBanner = asyncHandler(async (req, res) => {
       .json({ message: "Maximum of 3 banners allowed per product." });
   }
   const banner = {
-    image: `/uploads/${req.file.filename}`,
+    image: req.file.path,
     title,
     subtitle,
     productId,
@@ -100,7 +100,7 @@ const addvideobanner = asyncHandler(async (req, res) => {
   }
   // Create video banner object
   const videoBanner = {
-    videoUrl: `/uploads/${req.file.filename}`,
+    videoUrl: req.file.path,
   };
 
   // Add the video banner to the product's VideoBanner array

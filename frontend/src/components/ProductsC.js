@@ -39,10 +39,10 @@ const ProductsC = ({ match }) => {
   return (
     <>
       <VideoBanner />
-
       {gender && <QuickPicks category={gender} />}
       <Slider />
       {gender && <OffersPage category={gender} />}
+      <Cardscg />
       {/* {gender && <Bestselling category={gender} />}
       {gender && <Trendingbrand category={gender} />} */}
       {gender && <Tshirts category={gender} subcategory={"Shirts"} />}

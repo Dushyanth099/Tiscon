@@ -4,7 +4,7 @@
   justify-content: center;
   gap: 20px;
   padding: 20px;
-  background-color: #000;
+  
   flex-wrap: wrap; /* Ensures responsiveness */
 }
 
@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 220px; /* Wider cards for better visual impact */
+  width: 100%; /* Wider cards for better visual impact */
   height: 50px;
   border-radius: 12px;
   overflow: visible;

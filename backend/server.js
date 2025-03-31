@@ -17,12 +17,12 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: ["https://tiscon.vercel.app"], // Adjust for your frontend's URL
+    origin: [" https://tiscon.vercel.app"], // Adjust for your frontend's URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
+// https://tiscon.vercel.app
 app.use(express.json());
 
 if (process.env.NODE_ENV === "development") {

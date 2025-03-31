@@ -175,11 +175,10 @@ const ProfileScreen = ({ history }) => {
           >
             <img
               src={
-                typeof profilePicture === "string"
-                  ? profilePicture
-                  : profilePicture
+                user?.profilePicture ||
+                (profilePicture instanceof File
                   ? URL.createObjectURL(profilePicture)
-                  : "https://via.placeholder.com/150" // Default placeholder
+                  : "https://via.placeholder.com/150")
               }
               alt="Profile"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -349,7 +348,6 @@ const ProfileScreen = ({ history }) => {
                       <Box textAlign="center">
                         <Box
                           boxSize="60px"
-                       
                           overflow="hidden"
                           border="1px solid gray"
                           cursor="pointer"

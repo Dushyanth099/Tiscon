@@ -88,7 +88,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   try {
     console.log("Incoming profile update request:", req.body);
-
+    console.log("Incoming file:", req.file);
     const user = await User.findById(req.user._id);
     if (!user) {
       console.error("User not found");
@@ -97,11 +97,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 
     // Log file information
-    console.log("Uploaded file:", req.file);
     console.log("Received address:", req.body.address);
     // Handle file upload correctly
     if (req.file) {
-      user.profilePicture = `/uploads/${req.file.filename}`;
+      console.log("Uploaded file:", req.file.path);
+      user.profilePicture = req.file.path;
     }
 
     user.name = req.body.name || user.name;
