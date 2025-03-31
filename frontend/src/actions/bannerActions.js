@@ -60,7 +60,7 @@ export const addBanner = (bannerData) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.post(
-      `${API_URL}api/banners/banner`,
+      `${API_URL}/api/banners/banner`,
       bannerData,
       config
     );
