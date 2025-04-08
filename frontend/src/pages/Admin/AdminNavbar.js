@@ -20,8 +20,13 @@ import { logout } from "../../actions/userActions";
 import Logo from "../../assets/ecommerce-logo.png";
 import "./Adminstyling.css";
 import { NavLink } from "react-router-dom";
+import { CgProfile } from "react-icons/cg";
+import { useSelector } from "react-redux";
 
 const AdminNavbar = () => {
+  const userProfile = useSelector((state) => state.userDetails);
+  const { user } = userProfile;
+
   const cancelRef = useRef();
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -55,15 +60,28 @@ const AdminNavbar = () => {
 
         {/* Navbar Links */}
         <HStack spacing={6} ms={9}>
-          <Link
-            as={RouterLink}
-            to="/profile"
-            _hover={{ textDecoration: "none" }}
-            color="black"
-          >
-            Profile
-          </Link>
-          <Button onClick={onOpen}>Logout</Button>
+          <div className="ic_sett_dis">
+            <RouterLink to="/profile" className="user-profile">
+              {user?.profilePicture ? (
+                <img
+                  src={
+                    user.profilePicture.startsWith("http")
+                      ? user.profilePicture
+                      : `http://localhost:5000${user.profilePicture}`
+                  }
+                  alt="Profile"
+                  className="profile-img"
+                  onError={(e) => (e.target.style.display = "none")}
+                />
+              ) : (
+                <CgProfile size="25" className="settingIcon" />
+              )}
+              <span style={{ color: "black" }}>{user?.name}</span>
+            </RouterLink>
+          </div>
+          <Button bg="violet" onClick={onOpen}>
+            Logout
+          </Button>
           <AlertDialog
             isOpen={isOpen}
             leastDestructiveRef={cancelRef}

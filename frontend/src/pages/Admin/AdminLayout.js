@@ -383,6 +383,18 @@ const AdminLayout = ({ children }) => {
                   💸 Transactions
                 </Button>
                 <Button
+                  onClick={() => setActiveTab("Billing")}
+                  as={RouterLink}
+                  to="/billinginvoice"
+                  bg="transparent"
+                  justifyContent="flex-start"
+                  color="white"
+                  variant="ghost"
+                  fontSize="md"
+                >
+                  🧾 Billing
+                </Button>
+                <Button
                   onClick={() => setActiveTab("settings")}
                   as={RouterLink}
                   to="/profile"

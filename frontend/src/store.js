@@ -66,6 +66,11 @@ import {
   userVideoBannerListReducer,
 } from "./reducers/bannerReducers";
 
+import {
+  billingInvoiceCreateReducer,
+  billingInvoiceDetailsReducer,
+} from "./reducers/billingInvoiceReducers";
+
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
@@ -120,6 +125,8 @@ const reducer = combineReducers({
   favorites: favoritesReducer,
   orderStatusUpdate: orderStatusUpdateReducer,
   orderStatuses: orderStatusReducer,
+  billingInvoiceCreate: billingInvoiceCreateReducer,
+  billingInvoiceDetails: billingInvoiceDetailsReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

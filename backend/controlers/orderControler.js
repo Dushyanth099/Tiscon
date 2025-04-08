@@ -1,6 +1,9 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import Order from "../models/orderModel.js";
+import BillingInvoice from "../models/billingInvoiceModel.js";
+import sendEmail from "../utils/sendEmail.js";
+
 // @desc Create new order
 // @route POST /api/orders
 // @access Private
@@ -34,6 +37,17 @@ const addorderitems = asyncHandler(async (req, res) => {
       shippingRates,
     });
     const createdOrder = await order.save();
+    try {
+      const user = req.user; // Assuming you've attached user in middleware
+      await sendEmail({
+        email: user.email,
+        status: "Created",
+        orderId: createdOrder._id,
+      });
+      console.log("✅ Order status email sent");
+    } catch (error) {
+      console.error("❌ Error sending order email:", error.message);
+    }
     // Update user orderHistory
     await User.findByIdAndUpdate(req.user._id, {
       $push: { orderHistory: createdOrder._id },
@@ -145,6 +159,16 @@ const acceptOrder = asyncHandler(async (req, res) => {
   if (order && order.isPacked && !order.isAcceptedByDelivery) {
     order.isAcceptedByDelivery = true;
     await order.save();
+    try {
+      await sendEmail({
+        email: order.user.email,
+        status: "Shipped",
+        orderId: order._id,
+      });
+      console.log("✅ Shipment email sent");
+    } catch (error) {
+      console.error("❌ Error sending shipment email:", error.message);
+    }
     res.json({ message: "Order accepted" });
   } else {
     res.status(400);
@@ -181,6 +205,17 @@ const markOrderAsCompleted = asyncHandler(async (req, res) => {
     }
 
     await order.save();
+    try {
+      await sendEmail({
+        email: order.user.email,
+        status: "Delivered",
+        orderId: order._id,
+      });
+      console.log("✅ Delivery email sent");
+    } catch (error) {
+      console.error("❌ Error sending delivery email:", error.message);
+    }
+
     res.json({ message: "Order marked as completed" });
   } else {
     res.status(400);
@@ -412,6 +447,63 @@ const getOrderStatusCounts = asyncHandler(async (req, res) => {
   res.json(orderStatuses.length ? orderStatuses[0] : {});
 });
 
+// @desc create billing invoice to an order
+// @route   POST /api/orders/billinginvoice
+// @access  Private/Admin
+const createBillingInvoice = asyncHandler(async (req, res) => {
+  console.log("Incoming Billing Invoice Request Body:", req.body); // 🐞 log to debug
+
+  const { logo, from, to, invoiceNumber, date, items, notes, signature } =
+    req.body;
+  // Calculate totals based on items
+  const subtotal = items.reduce((sum, item) => sum + item.rate * item.qty, 0);
+  const cgstTotal = items.reduce(
+    (sum, item) => sum + ((item.cgst || 0) / 100) * item.rate * item.qty,
+    0
+  );
+  const sgstTotal = items.reduce(
+    (sum, item) => sum + ((item.sgst || 0) / 100) * item.rate * item.qty,
+    0
+  );
+  const total = subtotal + cgstTotal + sgstTotal;
+  const invoice = new BillingInvoice({
+    logo,
+    from,
+    to,
+    invoiceNumber,
+    date,
+    items,
+    subtotal,
+    cgstTotal,
+    sgstTotal,
+    total,
+    notes,
+    signature,
+  });
+
+  const createdInvoice = await invoice.save();
+
+  res.status(201).json({
+    message: "Billing invoice created successfully",
+    invoice: createdInvoice,
+  });
+});
+
+// @desc    GET billing invoice to an order
+// @route   GET /api/:invoiceNumber
+// @access  Private/Admin
+const getBillingInvoiceByNumber = asyncHandler(async (req, res) => {
+  const invoice = await BillingInvoice.findOne({
+    invoiceNumber: req.params.invoiceNumber,
+  });
+
+  if (!invoice) {
+    res.status(404);
+    throw new Error("Invoice not found");
+  }
+
+  res.json(invoice);
+});
 export {
   addorderitems,
   getOrderById,
@@ -432,4 +524,6 @@ export {
   StripePayment,
   updateOrderStatus,
   getOrderStatusCounts,
+  createBillingInvoice,
+  getBillingInvoiceByNumber,
 };

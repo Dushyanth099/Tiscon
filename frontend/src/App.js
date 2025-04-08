@@ -49,6 +49,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import OrderStatusScreen from "./pages/Admin/OrderStatus";
 import DeliveryLayout from "./pages/Delivery/DeliveryLayout";
 import DeliveryOrders from "./pages/Delivery/DeliveryOrders";
+import BillingInvoice from "./pages/Admin/BillingInvoice";
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.userLogin);
@@ -126,6 +127,7 @@ const App = () => {
                     path="/products/:category"
                     element={<ProductsListPage />}
                   />
+                  <Route path="/billinginvoice" element={<BillingInvoice />} />
                   <Route path="/productsoverview" element={<Overview />} />
                   <Route path="/transactions" element={<TransactionTable />} />
                   <Route path="/adminreview" element={<AdminReviewPage />} />
@@ -156,6 +158,7 @@ const App = () => {
                     exact
                   />
                   <Route path="/products/" element={<ProductsListPage />} />
+
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
                 <ScrollButtons />

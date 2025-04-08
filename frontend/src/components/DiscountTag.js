@@ -50,7 +50,7 @@ const DiscountTag = () => {
       {isOpen && (
         <Box
           position="fixed"
-          top="60%"
+          top="58%"
           right="40px"
           transform="translateY(-50%)"
           boxShadow="xl"

@@ -27,12 +27,12 @@ const AdminReviewPage = () => {
     dispatch(listPendingReviews()); // ✅ Refresh pending reviews
   };
   return (
-    <Box mt={20}>
+    <Box mt={20} p={10} borderWidth={1} borderRadius="lg" boxShadow="lg">
       <h1 className="titlepanel"> Reviews </h1>
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <Table>
+        <Table variant="striped" bg="pink" color="black" size="md">
           <Thead>
             <Tr>
               <Th>ReviewId</Th>

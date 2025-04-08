@@ -20,6 +20,8 @@ import {
   getUndeliveredOrders,
   updateOrderStatus,
   getOrderStatusCounts,
+  createBillingInvoice,
+  getBillingInvoiceByNumber,
 } from "../controlers/orderControler.js";
 import { protect, admin, isDelivery } from "../middleware/authMiddleware.js";
 
@@ -44,6 +46,8 @@ router
 router.route("/admin/order/:id/invoice").get(protect, generateInvoice);
 router.route("/admin/incomebycity").get(protect, admin, incomebycity);
 router.route("/transactions").get(protect, admin, getTransactions);
+router.route("/billinginvoice").post(protect, admin, createBillingInvoice);
+router.route("/:invoiceNumber").get(protect, admin, getBillingInvoiceByNumber);
 
 // user routes
 router.route("/").post(protect, addorderitems).get(protect, admin, GetOrders);

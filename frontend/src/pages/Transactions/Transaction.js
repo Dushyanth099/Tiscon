@@ -52,7 +52,7 @@ const TransactionTable = () => {
   });
 
   return (
-    <Box p={6} minH="100vh">
+    <Box p={6} minH="100vh" m={10}>
       <h1 className="titlepanel">💰 Transaction</h1>
       {/* Loading & Error Handling */}
       {loading ? (

@@ -162,7 +162,12 @@ const Orders = () => {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="violet"
+                  strokeWidth={8}
+                />
               </LineChart>
             </GridItem>
             <GridItem>
@@ -179,7 +184,12 @@ const Orders = () => {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#82ca9d" />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="yellow"
+                  strokeWidth={8}
+                />
               </LineChart>
             </GridItem>
           </Grid>
