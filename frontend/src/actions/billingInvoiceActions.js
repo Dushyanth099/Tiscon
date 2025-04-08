@@ -7,7 +7,7 @@ import {
   BILLING_INVOICE_FETCH_SUCCESS,
   BILLING_INVOICE_FETCH_FAIL,
 } from "../constants/billingInvoiceConstants";
-
+const API_URL = process.env.REACT_APP_API_URL;
 export const createBillingInvoice =
   (invoiceData) => async (dispatch, getState) => {
     try {
@@ -25,7 +25,7 @@ export const createBillingInvoice =
       };
 
       const { data } = await axios.post(
-        "/api/orders/billinginvoice",
+        `${API_URL}/api/orders/billinginvoice`,
         invoiceData,
         config
       );
@@ -59,7 +59,7 @@ export const fetchBillingInvoice =
         },
       };
 
-      const { data } = await axios.get(`/api/orders/${invoiceNumber}`, config);
+      const { data } = await axios.get(`${API_URL}/api/orders/${invoiceNumber}`, config);
 
       dispatch({ type: BILLING_INVOICE_FETCH_SUCCESS, payload: data });
     } catch (error) {
