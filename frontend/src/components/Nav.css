@@ -154,7 +154,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: rgb(254, 0, 0);
+  background: rgb(255, 97, 18);
   width: auto;
   display: flex;
   padding: 15px;
@@ -227,4 +227,23 @@
   object-fit: cover; /* Prevents distortion */
   display: block; /* Ensures visibility */
   background-color: #ccc; /* Fallback */
+}
+/* Add this to Nav.css */
+@media screen and (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+
+  .search-container {
+    display: none;
+  }
+
+  .rightComp {
+    display: none;
+  }
+
+  .nav {
+    padding: 0 15px;
+    justify-content: space-between;
+  }
 }

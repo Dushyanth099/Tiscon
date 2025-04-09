@@ -32,6 +32,18 @@ import BrandImg from "../../src/assets/brandimg.svg";
 import CategoryImg from "../../src/assets/categoryimg.svg";
 import "./Nav.css";
 import { getUserDetails } from "../actions/userActions";
+import {
+  IconButton,
+  Box,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerBody,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { GiHamburgerMenu } from "react-icons/gi";
+
 const Nav = () => {
   const cancelRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -48,6 +60,9 @@ const Nav = () => {
   const [signin, setSignin] = useState(null);
   const userProfile = useSelector((state) => state.userDetails);
   const { user } = userProfile;
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const btnRef = useRef();
+
   const onSearchSubmit = (e) => {
     e.preventDefault();
     if (searchKeyword.trim()) {
@@ -83,6 +98,16 @@ const Nav = () => {
 
   return (
     <nav className={`nav ${nav ? "active" : ""}`}>
+      <Box display={{ base: "block", md: "none" }}>
+        <IconButton
+          icon={<GiHamburgerMenu />}
+          ref={btnRef}
+          onClick={() => setMobileMenuOpen(true)}
+          variant="outline"
+          color="white"
+          aria-label="Open menu"
+        />
+      </Box>
       <NavLink to="/" className="logo">
         <img src={Logo} alt="logo" />
         <span className="logo-text">Kids Wear</span>
@@ -255,6 +280,76 @@ const Nav = () => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+      <Drawer
+        isOpen={isMobileMenuOpen}
+        placement="left"
+        onClose={() => setMobileMenuOpen(false)}
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent bg="orange.400" color="white">
+          <DrawerCloseButton />
+          <DrawerBody>
+            <ul
+              className="navLinks-mobile"
+              style={{
+                listStyle: "none",
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+                marginTop: "40px",
+                paddingLeft: "0",
+              }}
+            >
+              <li>
+                <NavLink
+                  style={{ color: "white", fontSize: "18px" }}
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Home
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  style={{ color: "white", fontSize: "18px" }}
+                  to="/products"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Categories
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  style={{ color: "white", fontSize: "18px" }}
+                  to="/Favorites"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Wishlist
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  style={{ color: "white", fontSize: "18px" }}
+                  to="/cart"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Bag
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  style={{ color: "white", fontSize: "18px" }}
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign In
+                </NavLink>
+              </li>
+            </ul>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </nav>
   );
 };
