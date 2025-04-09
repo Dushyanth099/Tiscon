@@ -14,8 +14,7 @@ import {
   DASHBOARD_ORDERS_FAIL,
 } from "../constants/dashboardConstants";
 
-
-  // const API_URL = process.env.REACT_APP_API_URL 
+const API_URL = process.env.REACT_APP_API_URL;
 // Fetch sales data
 export const getSalesData = (filter) => async (dispatch, getState) => {
   try {
@@ -30,7 +29,7 @@ export const getSalesData = (filter) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(
-      `/api/dashboard/sales?filter=${filter}`,
+      `${API_URL}/api/dashboard/sales?filter=${filter}`,
       config
     );
 
@@ -59,7 +58,7 @@ export const getRevenueData = (filter) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(
-      `/api/dashboard/revenue?filter=${filter}`,
+      `${API_URL}/api/dashboard/revenue?filter=${filter}`,
       config
     );
 
@@ -88,7 +87,7 @@ export const getTotalOrders = (filter) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(
-      `/api/dashboard/getTotalOrders?filter=${filter}`,
+      `${API_URL}/api/dashboard/getTotalOrders?filter=${filter}`,
       config
     );
 
@@ -116,7 +115,7 @@ export const getDashboardOrders = () => async (dispatch, getState) => {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     };
 
-    const { data } = await axios.get(`/api/dashboard/orders`, config);
+    const { data } = await axios.get(`${API_URL}/api/dashboard/orders`, config);
 
     dispatch({ type: DASHBOARD_ORDERS_SUCCESS, payload: data });
   } catch (error) {
